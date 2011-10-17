@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2011 IBM Corporation.
+   
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    and Eclipse Distribution License v. 1.0 which accompanies this distribution. 
+   
+    The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+    and the Eclipse Distribution License is available at 
+    http://www.eclipse.org/org/documents/edl-v10.php.
+   
+    Contributors:
+   
+       Jim Conallen - initial API and implementation
+ -->
+
+
+<rdf:RDF xml:base="http://open-services.net/shapes/rm#"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xml:lang="en-GB" xmlns:oslc="http://open-services.net/ns/core#"
+	xmlns:oslc_rm="http://open-services.net/ns/rm#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	<oslc:ResourceShape
+		rdf:about="https://doors.example.com:36677/oslc/shapes/modules/2302-32223">
+
+		<dcterms:title rdf:parseType="Literal">Sample shape describing a
+			DOORS object as an
+			OSLC Defined Requirement resource. This shape
+			resource describes DOORS objects in DOORS Module
+			/scratch/users/img/samples/module1.
+			</dcterms:title>
+		<oslc:describes rdf:resource="http://open-services.net/ns/rm#Requirement" />
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>description</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/description" />
+				<dcterms:title rdf:parseType="Literal">Description
+				</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Object Text
+					of the DOORS object.
+				</dcterms:description>
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+				<oslc:valueType
+					rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" />
+				<oslc:valueType rdf:resource="http://open-service.net/ns/core#LocalResource" />
+			</oslc:Property>
+		</oslc:property>
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>title</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/title" />
+				<dcterms:title rdf:parseType="Literal">Title</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Object Short
+					Text of the DOORS object. 
+				</dcterms:description>
+				<oslc:valueType
+					rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+			</oslc:Property>
+		</oslc:property>
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>identifier</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/identifier" />
+				<dcterms:title rdf:parseType="Literal">Identifier
+				</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">URN of the
+					DOORS object.
+				</dcterms:description>
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+			</oslc:Property>
+		</oslc:property>
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>shortTitle</oslc:name>
+				<oslc:propertyDefinition
+					rdf:resource="http://open-service.net/ns/core#shortTitle" />
+				<dcterms:title rdf:parseType="Literal">Short Title
+				</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Object
+					Identifier of the DOORS object. Security
+					restrictions may be such
+					that Module Prefix of the Object Identifier cannot be
+					accessed and
+					in
+					such cases the Absolute Number will instead be used for the Short
+					Title.
+				</dcterms:description>
+				<oslc:valueType
+					rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+
+				<!-- Core does not state this is necessary. Is omission equivalent to 
+					Any? -->
+				<oslc:range rdf:resource="http://open-services.net/ns/core#Any" />
+				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
+				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
+			</oslc:Property>
+		</oslc:property>
+
+		<!-- DOORS does not support dcterms:subject -->
+		<oslc:property>
+			<oslc:Property>
+				<!-- This property might be better modelled as a foaf:Person containing 
+					the DOORS user name and the DOORS user identifier and possibly other user 
+					information. -->
+				<oslc:name>creator</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/creator" />
+				<dcterms:title rdf:parseType="Literal">Creator</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Created By of
+					the DOORS object, as a DOORS user name.
+				</dcterms:description>
+				<oslc:readOnly>true</oslc:readOnly>
+				<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+			</oslc:Property>
+		</oslc:property>
+
+		<oslc:property>
+			<oslc:Property>
+				<!-- This property might be better modelled as a foaf:Person containing 
+					the DOORS user name and the DOORS user identifier and possibly other user 
+					information. -->
+				<oslc:name>contributor</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/contributor" />
+				<dcterms:title rdf:parseType="Literal">Contributor
+				</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Last Modified
+					By of the DOORS object, as a DOORS user name.
+				</dcterms:description>
+				<oslc:readOnly>true</oslc:readOnly>
+				<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+			</oslc:Property>
+		</oslc:property>
+		
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>created</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/created" />
+				<dcterms:title rdf:parseType="Literal">Created</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Created On of
+					the DOORS object.
+				</dcterms:description>
+				<oslc:readOnly>true</oslc:readOnly>
+				<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+			</oslc:Property>
+		</oslc:property>
+		
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>modified</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/modfied" />
+				<dcterms:title rdf:parseType="Literal">Modified</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Last Modified
+					By of the DOORS object.
+				</dcterms:description>
+				<oslc:readOnly>true</oslc:readOnly>
+				<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+			</oslc:Property>
+		</oslc:property>
+		
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>type</oslc:name>
+				<oslc:propertyDefinition
+					rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" />
+				<dcterms:title rdf:parseType="Literal">Type</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">RDF type of
+					the resource.
+					All DOORS objects have and only have rdf:type
+					oslc_rm:Requirement.
+				</dcterms:description>
+				<oslc:readOnly>true</oslc:readOnly>
+				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
+				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+			</oslc:Property>
+		</oslc:property>
+
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>serviceProvider</oslc:name>
+				<oslc:propertyDefinition
+					rdf:resource="http://open-services.net/ns/core#serviceProvider" />
+				<dcterms:title rdf:parseType="Literal">Service Provider
+				</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Associated
+					resource provider.
+				</dcterms:description>
+				<oslc:readOnly>true</oslc:readOnly>
+				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
+				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+				<!-- Could provide here URI of a Resource Shape which describes ServiceProvider 
+					resource -->
+			</oslc:Property>
+		</oslc:property>
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>instanceShape</oslc:name>
+				<oslc:propertyDefinition
+					rdf:resource="http://open-services.net/ns/core#instanceShape" />
+				<dcterms:title rdf:parseType="Literal">Instance Shape
+				</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Shape of this
+					DOORS object. Notice that this is the shape
+					of the resource, not the
+					shape of the resource state. The instance
+					shape reflects visibility
+					of the object's
+					type, as defined by security on the containing DOORS
+					module.
+				</dcterms:description>
+				<oslc:readOnly>true</oslc:readOnly>
+				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
+				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
+				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+			</oslc:Property>
+		</oslc:property>
+		
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>implementedBy</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://open-service.net/ns/rm#implementedBy" />
+				<dcterms:title rdf:parseType="Literal">Implemented By
+				</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Link to implementation-related resource.
+				</dcterms:description>
+				<oslc:readOnly>false</oslc:readOnly>
+                <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+				<oslc:range rdf:resource="http://open-services.net/ns/core#Any" />
+				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
+				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
+			</oslc:Property>
+		</oslc:property>
+
+		<oslc:property>
+			<oslc:Property>
+				<oslc:name>trackedBy</oslc:name>
+				<oslc:propertyDefinition rdf:resource="http://open-service.net/ns/rm#trackedBy" />
+				<dcterms:title rdf:parseType="Literal">Tracked By
+				</dcterms:title>
+				<dcterms:description rdf:parseType="Literal">Associated
+					Change Request. Presence of such a link does imply that the object is under RCR process control. Notice that
+					DOORS only supports OSLC Change Requests in this
+					role, and not other tracking resources.
+				</dcterms:description>
+				<oslc:readOnly>false</oslc:readOnly>
+                <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+				<oslc:range rdf:resource="http://open-services.net/ns/cm#ChangeRequest" />
+				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
+				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
+			</oslc:Property>
+		</oslc:property>
+
+		<!-- Additional trace properties, defined by the OSLC RM specification, 
+			are not supported by this DOORS configuration and thus are not present in 
+			this shape resource -->
+
+	</oslc:ResourceShape>
+
+</rdf:RDF>
