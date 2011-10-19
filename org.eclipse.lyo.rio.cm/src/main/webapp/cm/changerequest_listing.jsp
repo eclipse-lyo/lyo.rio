@@ -25,7 +25,7 @@ List<Map<String, RioValue>> results = (List<Map<String, RioValue>>) request.getA
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>RIO OSLC AM Resource Listing</title>
+<title>RIO OSLC CM Resource Listing</title>
 <link rel="SHORTCUT ICON" href="../oslc.png">
 <script>
 var oslcPrefix;
