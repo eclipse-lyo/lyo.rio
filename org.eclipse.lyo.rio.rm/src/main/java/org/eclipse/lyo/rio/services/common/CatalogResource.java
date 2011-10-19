@@ -39,7 +39,7 @@ public class CatalogResource extends RioResource {
 		String iconUrl = urlBase +  '/' + IRmConstants.RIO_RM_ICON;
 		publisher.setUriProperty( IConstants.OSLC_ICON, iconUrl) ;
 		this.setStringProperty(IConstants.OSLC_DOMAIN, IRmConstants.OSLC_RM_NAMESPACE);
-		this.setUriProperty(IConstants.OSLC_SERVICEPROVIDER, urlBase + "/service");
+		this.setUriProperty(IConstants.OSLC_SERVICEPROVIDER, urlBase + "/services");
 		
 	}
 
