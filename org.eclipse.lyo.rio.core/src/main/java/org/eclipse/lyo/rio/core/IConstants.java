@@ -150,9 +150,9 @@ public interface IConstants extends IRioConstants {
 	public static final String OSLC_DESCRIBES = OSLC_NAMESPACE + OSLC_TERM_DESCRIBES;
 	
 	// oslc properties 
-	public static final String OSLC_TERM_PERVICEPROVIDERCATALOG = "perviceProviderCatalog";
-	public static final String OSLC_PTERM_PERVICEPROVIDERCATALOG = OSLC_PREFIX + ':' + OSLC_TERM_PERVICEPROVIDERCATALOG;
-	public static final String OSLC_PERVICEPROVIDERCATALOG = OSLC_NAMESPACE + OSLC_TERM_PERVICEPROVIDERCATALOG;
+	public static final String OSLC_TERM_SERVICEPROVIDERCATALOG = "serviceProviderCatalog";
+	public static final String OSLC_PTERM_SERVICEPROVIDERCATALOG = OSLC_PREFIX + ':' + OSLC_TERM_SERVICEPROVIDERCATALOG;
+	public static final String OSLC_SERVICEPROVIDERCATALOG = OSLC_NAMESPACE + OSLC_TERM_SERVICEPROVIDERCATALOG;
 	public static final String OSLC_TERM_SERVICEPROVIDER = "serviceProvider";
 	public static final String OSLC_PTERM_SERVICEPROVIDER = OSLC_PREFIX + ':' + OSLC_TERM_SERVICEPROVIDER;
 	public static final String OSLC_SERVICEPROVIDER = OSLC_NAMESPACE + OSLC_TERM_SERVICEPROVIDER;
