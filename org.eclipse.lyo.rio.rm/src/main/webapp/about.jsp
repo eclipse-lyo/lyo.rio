@@ -33,7 +33,7 @@ String uriBase = store.getUriBase();
 Lifecycle Connectivity (OSLC) Requirements Management specification.  The official specification
 is available on the <a href="http://open-services.net/bin/view/Main/RmSpecificationV2">OSLC RM Wiki</a></p>
 
-<p>This application is distributed under a <a href="license/rio.jsp">Eclipse Distribution License Version 1.0 and Eclipse Public License 1.0</a>.</p> 
+<p>This application is distributed under a <a href="http://www.eclipse.org/org/documents/edl-v10.php">Eclipse Distribution License Version 1.0</a> and <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License 1.0</a>.</p> 
 
 <h3>Powered by:</h3>
 <blockquote>
