@@ -174,7 +174,7 @@ public class ChangeRequestService extends RioBaseService {
 			
 			// ok, then we update this resource
 			String contentType = request.getContentType();
-			if( !contentType.startsWith(IConstants.CT_RDF_XML) ) {
+			if( !(contentType.startsWith(IConstants.CT_RDF_XML) || contentType.startsWith(IConstants.CT_XML))) {
 				throw new RioServiceException(IConstants.SC_UNSUPPORTED_MEDIA_TYPE);
 			}
 			
@@ -273,6 +273,8 @@ public class ChangeRequestService extends RioBaseService {
 			} catch (RioServerException e) {
 				throw new RioServiceException(IConstants.SC_BAD, e);
 			}
+		} else {
+			throw new RioServiceException(IConstants.SC_UNSUPPORTED_MEDIA_TYPE);
 		}
 	}
 	

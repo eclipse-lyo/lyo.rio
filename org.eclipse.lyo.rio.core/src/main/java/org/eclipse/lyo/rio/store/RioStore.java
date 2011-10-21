@@ -732,7 +732,7 @@ public class RioStore {
 		if( pos > 0 ) {
 			contentType = contentType.substring(0,pos);
 		}
-		if( IConstants.CT_RDF_XML.equals(contentType) ){
+		if( IConstants.CT_RDF_XML.equals(contentType) || IConstants.CT_XML.equals(contentType) ){
 			return RDFFormat.RDFXML.getName();
 		} else if( IConstants.CT_APP_N3.equals(contentType) || IConstants.CT_TEXT_N3.equals(contentType) ){
 			return RDFFormat.N3.getName();
