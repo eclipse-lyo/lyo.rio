@@ -78,6 +78,8 @@ public class ServiceProviderService extends RioBaseService {
 					resp.setContentType(IConstants.CT_APP_N_TRIPLES); 
 					resp.getWriter().write(triples); 
 					resp.setStatus(IConstants.SC_OK);
+				} else {
+					throw new RioServiceException(IConstants.SC_NOT_ACCEPTABLE, "Accept header required" );
 				}
 				
 			} else {
