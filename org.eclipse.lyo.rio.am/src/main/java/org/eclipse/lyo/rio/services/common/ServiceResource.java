@@ -33,6 +33,7 @@ public class ServiceResource extends RioResource {
 		String urlBase = store.getUriBase();
 		
 		this.addRdfType(IConstants.OSLC_TYPE_SERVICEPROVIDER);
+		this.addUriProperty(IConstants.OSLC_DETAILS, urlBase + "/about.jsp");
 		this.setStringProperty(IConstants.DCTERMS_TITLE, "RIO AM Services");
 		this.setStringProperty(IConstants.DCTERMS_DESCRIPTION, "RIO AM Services" );
 		
