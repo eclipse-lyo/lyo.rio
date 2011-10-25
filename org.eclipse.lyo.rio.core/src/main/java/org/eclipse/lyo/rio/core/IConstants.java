@@ -237,7 +237,9 @@ public interface IConstants extends IRioConstants {
 	public static final String OSLC_TERM_OAUTHACCESSTOKENURI = "oauthAccessTokenURI";
 	public static final String OSLC_PTERM_OAUTHACCESSTOKENURI = OSLC_PREFIX + ':' + OSLC_TERM_OAUTHACCESSTOKENURI;
 	public static final String OSLC_OAUTHACCESSTOKENURI = OSLC_NAMESPACE + OSLC_TERM_OAUTHACCESSTOKENURI;
-
+	public static final String OSLC_TERM_TOTALCOUNT = "totalCount";
+	public static final String OSLC_PTERM_TOTALCOUNT = OSLC_PREFIX + ':' + OSLC_TERM_TOTALCOUNT;
+	public static final String OSLC_TOTALCOUNT = OSLC_NAMESPACE + OSLC_TERM_TOTALCOUNT;
 	// dcterms
 	public static final String DCTERMS_NAMESPACE = "http://purl.org/dc/terms/";
 	public static final String DCTERMS_PREFIX = "dcterms";

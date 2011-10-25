@@ -299,23 +299,33 @@ public class RequirementCollectionService extends RioBaseService {
 				rdf.setAttribute("xmlns:" + namespacePrefixes.get(namespace), namespace); //$NON-NLS-1$
 			}
 			
-			Element responseElement = doc.createElementNS(IConstants.OSLC_NAMESPACE, IConstants.OSLC_PTERM_RESPONSEINFO);
-			responseElement.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_ABOUT, reqUri);
-			rdf.appendChild(responseElement);
-			
+			Element queryDescrElement = doc.createElementNS(IConstants.RDF_NAMESPACE, IConstants.RDF_TYPE_PTERM_DESCRIPTION);
+			queryDescrElement.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_ABOUT, reqUri);
+			rdf.appendChild(queryDescrElement);
+
 			Element title = doc.createElementNS(IConstants.DCTERMS_NAMESPACE, IConstants.DCTERMS_PTERM_TITLE);
-			responseElement.appendChild(title);
-			title.setTextContent("Messages.QueryService_QUERY_RESULTS_TITLE");
+			queryDescrElement.appendChild(title);
+			title.setTextContent(Messages.getString("ResourceQuery.Title"));
 			
-			Element rdfDescr = doc.createElementNS(IConstants.RDF_NAMESPACE, IConstants.RDF_TYPE_PTERM_DESCRIPTION);
-			rdf.appendChild(rdfDescr);
-			rdfDescr.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_ABOUT, reqUri);
+			Element count = doc.createElementNS(IConstants.OSLC_NAMESPACE, IConstants.OSLC_PTERM_TOTALCOUNT);
+			queryDescrElement.appendChild(count);
+			count.setTextContent(Integer.toString(results.size()));
+			
+			Element rdfType = doc.createElementNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_TYPE);
+			rdfType.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_RESOURCE, IConstants.OSLC_RESPONSEINFO);
+			queryDescrElement.appendChild(rdfType);
+			
+			
+			Element resultDescr = doc.createElementNS(IConstants.RDF_NAMESPACE, IConstants.RDF_TYPE_PTERM_DESCRIPTION);
+			rdf.appendChild(resultDescr);
+			String baseUri = reqUri.split("\\?")[0];
+			resultDescr.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_ABOUT, baseUri);
 			
 			Iterator<Map<String, RioValue>> iterator = results.iterator();
 			while( iterator.hasNext() ) {
 				
 				Element rdfMem = doc.createElementNS(IConstants.RDFS_NAMESPACE, IConstants.RDFS_PTERM_MEMBER);
-				rdfDescr.appendChild(rdfMem);
+				resultDescr.appendChild(rdfMem);
 				Map<String, RioValue> map = iterator.next();
 				RioValue uri = map.get("uri"); //$NON-NLS-1$
 				rdfMem.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_RESOURCE, uri.stringValue());
