@@ -389,7 +389,8 @@ public class RequirementTcService extends RioBaseService {
 				String sparql = queryBuilder.getQueryString(IRmConstants.OSLC_RM_TYPE_REQUIREMENT);
 				
 				RioStore store = this.getStore();
-				String queryUri = request.getRequestURL().toString();
+				//don't add ?null if the the query is for queryBase			
+				String queryUri = (request.getQueryString() == null ) ? request.getRequestURL().toString() : request.getRequestURL().toString() + '?' + request.getQueryString();	
 				
 				List<Map<String, RioValue>> results = store.query(IConstants.SPARQL, sparql, 100);
 				
@@ -416,8 +417,7 @@ public class RequirementTcService extends RioBaseService {
 		 * @param reqUri
 		 * @return ret
 		 */
-		private String buildResponseResource(List<Map<String, RioValue>> results, Map<String, PName> propNames, String reqUri) throws RioServiceException {
-			// Start of user code for method buildResponseResource
+		private String buildResponseResource(List<Map<String, RioValue>> results, Map<String, PName> propNames, String reqUri) throws RioServiceException{
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(true);
 			factory.setNamespaceAware(true);
@@ -431,24 +431,54 @@ public class RequirementTcService extends RioBaseService {
 				for (String namespace : namespaces) {
 					rdf.setAttribute("xmlns:" + namespacePrefixes.get(namespace), namespace); //$NON-NLS-1$
 				}
+				//If there is are parameters on the request (e.g. ?oslc.where=...), create 2 subject URIs, one for the
+				//results and one to describe the query.   If this query was for the queryBase itself all predicates 
+				//go under the same subject.  
+				//TODO: Refactor the services for all RIO artifacts to eliminate duplicated code.
 				
-				Element responseElement = doc.createElementNS(IConstants.OSLC_NAMESPACE, IConstants.OSLC_PTERM_RESPONSEINFO);
-				responseElement.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_ABOUT, reqUri);
-				rdf.appendChild(responseElement);
+				Element resultDescr = doc.createElementNS(IConstants.RDF_NAMESPACE, IConstants.RDF_TYPE_PTERM_DESCRIPTION);
+				rdf.appendChild(resultDescr);
 				
+				//check for oslc query parameters
+				String uriSplit [] = reqUri.split("\\?",2);
+				String baseUri = uriSplit[0];
+				boolean isOslcQuery = false;
+				if (uriSplit.length > 1)
+					isOslcQuery = hasOSLCQuery(uriSplit[1]);
+				
+				resultDescr.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_ABOUT, baseUri);
+
+
+				//if there are oslc query parameters, put the predicates under the query subject
+				Element queryDescrElement = null;
+				if (isOslcQuery )
+				{
+				   queryDescrElement = doc.createElementNS(IConstants.RDF_NAMESPACE, IConstants.RDF_TYPE_PTERM_DESCRIPTION);
+				   queryDescrElement.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_ABOUT, reqUri);
+				   rdf.appendChild(queryDescrElement);
+				}
+				else {
+					//no oslc query parameters, everything goes under the queryBase subject
+				   queryDescrElement = resultDescr;
+				}
+
 				Element title = doc.createElementNS(IConstants.DCTERMS_NAMESPACE, IConstants.DCTERMS_PTERM_TITLE);
-				responseElement.appendChild(title);
+				queryDescrElement.appendChild(title);
 				title.setTextContent(Messages.getString("ResourceQuery.Title"));
 				
-				Element rdfDescr = doc.createElementNS(IConstants.RDF_NAMESPACE, IConstants.RDF_TYPE_PTERM_DESCRIPTION);
-				rdf.appendChild(rdfDescr);
-				rdfDescr.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_ABOUT, reqUri);
+				Element count = doc.createElementNS(IConstants.OSLC_NAMESPACE, IConstants.OSLC_PTERM_TOTALCOUNT);
+				queryDescrElement.appendChild(count);
+				count.setTextContent(Integer.toString(results.size()));
+				
+				Element rdfType = doc.createElementNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_TYPE);
+				rdfType.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_RESOURCE, IConstants.OSLC_RESPONSEINFO);
+				queryDescrElement.appendChild(rdfType);
 				
 				Iterator<Map<String, RioValue>> iterator = results.iterator();
 				while( iterator.hasNext() ) {
 					
 					Element rdfMem = doc.createElementNS(IConstants.RDFS_NAMESPACE, IConstants.RDFS_PTERM_MEMBER);
-					rdfDescr.appendChild(rdfMem);
+					resultDescr.appendChild(rdfMem);
 					Map<String, RioValue> map = iterator.next();
 					RioValue uri = map.get("uri"); //$NON-NLS-1$
 					rdfMem.setAttributeNS(IConstants.RDF_NAMESPACE, IConstants.RDF_PTERM_RESOURCE, uri.stringValue());
@@ -461,8 +491,20 @@ public class RequirementTcService extends RioBaseService {
 			} finally {
 				
 			}
-
-			// End of user code
+		}
+		
+		private boolean hasOSLCQuery(String parms)
+		{
+			boolean containsOslcParm = false;
+	        // not perfect - could have "oslc." in some random part of the parameters, but don't
+			// have access to the request at this point to use getPararmeterNames
+			String [] uriParts = parms.toLowerCase().split("oslc\\.",2);
+			if (uriParts.length > 1)
+			{
+				containsOslcParm = true;
+			}
+			
+			return containsOslcParm;
 		}
 		
 		// Start of user code to add methods for RequirementTcService
