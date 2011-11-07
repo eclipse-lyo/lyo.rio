@@ -261,8 +261,8 @@ public class ResourceService extends RioBaseService {
 		
 		boolean isFileUpload = ServletFileUpload.isMultipartContent(request);
 		String contentType = request.getContentType();
-		
-		if( !isFileUpload && !IConstants.CT_RDF_XML.equals(contentType) ) {
+
+		if( !isFileUpload && (RioStore.rdfFormatFromContentType(contentType) == null)) {
 			throw new RioServiceException(IConstants.SC_UNSUPPORTED_MEDIA_TYPE);
 		}
 		
