@@ -33,7 +33,7 @@ Title: (required)<br/>
 Description: (optional):<br/>
 <textarea name="description" rows="3" cols="100" style="width: 400px" id="description"></textarea>
 <br/>
-<button type="submit" onclick="window.opener.document.location.href=window.opener.document.location.href;window.close();">Create</button>
+<button type="button" onClick="createResourceForm.submit();window.close()">Create</button>
 <button type="button" onclick="javascript: window.close()">Cancel</button>
 </form>
 </body>

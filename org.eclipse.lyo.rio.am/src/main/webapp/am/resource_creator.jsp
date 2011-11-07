@@ -21,17 +21,23 @@ String uriBase = store.getUriBase();
  -->
 <html>
 <head>
-<title>ORI - Default Resource Creator</title>
+<title>RIO - Default Resource Creator</title>
 <link rel="SHORTCUT ICON" href="../oslc.png">
+<script language="JavaScript">
+function postForm() {
+	document.crForm.submit();
+	window.close();
+}
+</script>
 </head>
 <body>
-<form name="creatResourceForm" action="<%=uriBase%>/creator/resource" method="post">
+<form name="createResourceForm" action="<%=uriBase%>/creator/resource" method="post">
 Title: (required)<br/>
 <input name="title" type="text" style="width:400px" id="title" /><br/>
 Description: (optional):<br/>
 <textarea name="description" rows="3" cols="100" style="width:400px" id="description"></textarea>
 <br/>
-<button type="submit" onclick="window.opener.document.location.href=window.opener.document.location.href;window.close();">Create</button>
+<button type="button" onClick="createResourceForm.submit();window.close()">Create</button>
 <button type="button" onclick="window.close()">Cancel</button>
 </form>
 </body>
