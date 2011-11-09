@@ -377,7 +377,7 @@ public interface IConstants extends IRioConstants {
 
 
 	// foaf
-	public static final String FOAF_NAMESPACE = "http://http://xmlns.com/foaf/0.1/";
+	public static final String FOAF_NAMESPACE = "http://xmlns.com/foaf/0.1/";
 	public static final String FOAF_PREFIX = "foaf";
 	public static final String FOAF_XMLS_DECL = "\txmlns:" + FOAF_PREFIX + "=\"" + FOAF_NAMESPACE + "\"\n";
 
