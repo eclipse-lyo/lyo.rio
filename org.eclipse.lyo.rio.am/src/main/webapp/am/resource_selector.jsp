@@ -50,7 +50,7 @@ function select(){
 	if( list.length>0 && list.selectedIndex >= 0 ) {
 		option = list.options[list.selectedIndex];
 
-		var oslcResponse = '{ "oslc:results": [ ' +  
+		var oslcResponse = 'oslc-response:{ "oslc:results": [ ' +  
 			' { "oslc:label":"' + option.text + '", "rdf:resource":"' + option.value + '"} ' + 
 		' ]}';
 		
