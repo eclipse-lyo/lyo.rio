@@ -58,14 +58,14 @@ public class RdfXmlFormatter {
 			Set<String> keys= prefixes.keySet();
 			for (String ns : keys) {
 				String pr = prefixes.get(ns);
-				this.setNamespace(pr, ns, true);
+				this.setNamespace(pr, ns);
 			}
 
 			Map<String, String> storePrefixes = RioStore.getPredefinedNamespaceMappings();
 			keys = storePrefixes.keySet();
 			for (String ns : keys) {
 				String pr = storePrefixes.get(ns);
-				this.setNamespace(pr, ns, true);
+				this.setNamespace(pr, ns);
 			}
 			if( prefixes != null ) {
 			}

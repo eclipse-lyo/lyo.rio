@@ -54,7 +54,7 @@
     <servlet-name>ChangeRequestService</servlet-name>
     <url-pattern>/changerequest/*</url-pattern>
   </servlet-mapping>
-  
+  <!--  
   <servlet>
     <description></description>
     <display-name>ChangeRequestQueryService</display-name>
@@ -65,6 +65,7 @@
     <servlet-name>ChangeRequestQueryService</servlet-name>
     <url-pattern>/query/changerequest</url-pattern>
   </servlet-mapping>
+  -->
     <servlet>
     <description></description>
     <display-name>ChangeRequestCompactService</display-name>
