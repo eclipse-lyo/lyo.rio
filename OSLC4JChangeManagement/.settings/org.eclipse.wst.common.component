@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="oslc4j-change-management">
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/" source-path="/WebContent"/>
+        <property name="context-root" value="OSLC4JChangeManagement"/>
+        <property name="java-output-path" value="/OSLC4JChangeManagement/WebContent/WEB-INF/classes"/>
+    </wb-module>
+</project-modules>
