@@ -49,9 +49,11 @@ class ServiceProviderFactory
                                                                                                                                ServiceProviderRegistryURIs.getUIURI(),
                                                                                                                                "OSLC IBM Change Management Service Provider",
                                                                                                                                "Reference Implementation OSLC IBM Change Management Service Provider",
-                                                                                                                               new Publisher("Russell and Chris", "IBM"),
+                                                                                                                               new Publisher("Eclipse Lyo", "urn:oslc:ServiceProvider"),
                                                                                                                                RESOURCE_CLASSES
         );
+        URI detailsURIs[] = {new URI(baseURI)};
+        serviceProvider.setDetails(detailsURIs);
 
         final PrefixDefinition[] prefixDefinitions =
         {
