@@ -22,8 +22,8 @@ import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 
 public interface Constants
 {
-    public static String CHANGE_MANAGEMENT_DOMAIN                    = "http://ibm.com/ns/cm#";
-    public static String CHANGE_MANAGEMENT_NAMESPACE                 = "http://ibm.com/ns/cm#";
+    public static String CHANGE_MANAGEMENT_DOMAIN                    = "http://open-services.net/ns/cm#";
+    public static String CHANGE_MANAGEMENT_NAMESPACE                 = "http://open-services.net/ns/cm#";
     public static String CHANGE_MANAGEMENT_NAMESPACE_PREFIX          = "oslc_cm";
     public static String FOAF_NAMESPACE                              = "http://xmlns.com/foaf/0.1/";
     public static String FOAF_NAMESPACE_PREFIX                       = "foaf";
