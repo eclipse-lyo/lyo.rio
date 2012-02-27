@@ -37,6 +37,7 @@ import org.eclipse.lyo.oslc4j.client.OslcRestClient;
 import org.eclipse.lyo.oslc4j.client.ServiceProviderRegistryClient;
 import org.eclipse.lyo.oslc4j.core.model.Compact;
 import org.eclipse.lyo.oslc4j.core.model.CreationFactory;
+import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.model.QueryCapability;
 import org.eclipse.lyo.oslc4j.core.model.ResourceShape;
 import org.eclipse.lyo.oslc4j.core.model.Service;
@@ -323,15 +324,15 @@ public abstract class TestBase
         changeRequest.setDescription("Invalid installation instructions indicating invalid patches to be applied.");
         changeRequest.setDiscussedBy(new URI("http://example.com/bugs/2314/discussion"));
         changeRequest.setInstanceShape(new URI("http://example.com/shapes/defect"));
-        changeRequest.addRelatedChangeRequest(new URI("http://myserver/mycmapp/bugs/1235"));
+        changeRequest.addRelatedChangeRequest(new Link(new URI("http://myserver/mycmapp/bugs/1235"), "Bug 1235"));
         changeRequest.setSeverity(Severity.Major.toString());
         changeRequest.setShortTitle("Bug 2314");
         changeRequest.setStatus("InProgress");
         changeRequest.addSubject("doc");
         changeRequest.addSubject("install");
         changeRequest.setTitle("Invalid installation instructions");
-        changeRequest.addTracksRequirement(new URI("http://myserver/reqtool/req/34ef31af"));
-        changeRequest.addTracksRequirement(new URI("http://remoteserver/reqrepo/project1/req456"));
+        changeRequest.addTracksRequirement(new Link(new URI("http://myserver/reqtool/req/34ef31af")));
+        changeRequest.addTracksRequirement(new Link(new URI("http://remoteserver/reqrepo/project1/req456"), "Requirement 456"));
 
         final String creation = getCreation(mediaType,
                                             Constants.TYPE_CHANGE_REQUEST);

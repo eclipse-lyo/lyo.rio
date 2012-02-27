@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -37,6 +38,7 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcResourceShape;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcTitle;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcValueType;
 import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
+import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.model.Occurs;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.ValueType;
@@ -46,26 +48,26 @@ import org.eclipse.lyo.oslc4j.core.model.ValueType;
 public final class ChangeRequest
        extends AbstractResource
 {
-    private final Set<URI>     affectedByDefects           = new TreeSet<URI>();
-    private final Set<URI>     affectsPlanItems            = new TreeSet<URI>();
-    private final Set<URI>     affectsRequirements         = new TreeSet<URI>();
-    private final Set<URI>     affectsTestResults          = new TreeSet<URI>();
-    private final Set<URI>     blocksTestExecutionRecords  = new TreeSet<URI>();
-    private final Set<URI>     contributors                = new TreeSet<URI>();
-    private final Set<URI>     creators                    = new TreeSet<URI>();
-    private final Set<Type>    dctermsTypes                = new TreeSet<Type>();
-    private final Set<URI>     implementsRequirements      = new TreeSet<URI>();
-    private final Set<URI>     relatedChangeRequests       = new TreeSet<URI>();
-    private final Set<URI>     relatedResources            = new TreeSet<URI>(); // TODO - Extension to point to any other OSLC resource(s).
-    private final Set<URI>     relatedTestCases            = new TreeSet<URI>();
-    private final Set<URI>     relatedTestExecutionRecords = new TreeSet<URI>();
-    private final Set<URI>     relatedTestPlans            = new TreeSet<URI>();
-    private final Set<URI>     relatedTestScripts          = new TreeSet<URI>();
-    private final Set<String>  subjects                    = new TreeSet<String>();
-    private final Set<URI>     testedByTestCases           = new TreeSet<URI>();
-    private final Set<URI>     tracksChangeSets            = new TreeSet<URI>();
-    private final Set<URI>     tracksRequirements          = new TreeSet<URI>();
-    private final Set<URI>     rdfTypes                    = new TreeSet<URI>();
+    private final Set<Link>     affectedByDefects           = new HashSet<Link>();
+    private final Set<Link>     affectsPlanItems            = new HashSet<Link>();
+    private final Set<Link>     affectsRequirements         = new HashSet<Link>();
+    private final Set<Link>     affectsTestResults          = new HashSet<Link>();
+    private final Set<Link>     blocksTestExecutionRecords  = new HashSet<Link>();
+    private final Set<URI>      contributors                = new TreeSet<URI>();
+    private final Set<URI>      creators                    = new TreeSet<URI>();
+    private final Set<Type>     dctermsTypes                = new TreeSet<Type>();
+    private final Set<Link>     implementsRequirements      = new HashSet<Link>();
+    private final Set<Link>     relatedChangeRequests       = new HashSet<Link>();
+    private final Set<Link>     relatedResources            = new HashSet<Link>(); // TODO - Extension to point to any other OSLC resource(s).
+    private final Set<Link>     relatedTestCases            = new HashSet<Link>();
+    private final Set<Link>     relatedTestExecutionRecords = new HashSet<Link>();
+    private final Set<Link>     relatedTestPlans            = new HashSet<Link>();
+    private final Set<Link>     relatedTestScripts          = new HashSet<Link>();
+    private final Set<String>   subjects                    = new TreeSet<String>();
+    private final Set<Link>     testedByTestCases           = new HashSet<Link>();
+    private final Set<Link>     tracksChangeSets            = new HashSet<Link>();
+    private final Set<Link>     tracksRequirements          = new HashSet<Link>();
+    private final Set<URI>      rdfTypes                    = new TreeSet<URI>();
 
     private Boolean  approved;
     private Boolean  closed;
@@ -102,27 +104,27 @@ public final class ChangeRequest
         rdfTypes.add(new URI(Constants.TYPE_CHANGE_REQUEST));
     }
 
-    public void addAffectedByDefect(final URI affectedByDefect)
+    public void addAffectedByDefect(final Link affectedByDefect)
     {
         this.affectedByDefects.add(affectedByDefect);
     }
 
-    public void addAffectsPlanItem(final URI affectsPlanItem)
+    public void addAffectsPlanItem(final Link affectsPlanItem)
     {
         this.affectsPlanItems.add(affectsPlanItem);
     }
 
-    public void addAffectsRequirement(final URI affectsRequirement)
+    public void addAffectsRequirement(final Link affectsRequirement)
     {
         this.affectsRequirements.add(affectsRequirement);
     }
 
-    public void addAffectsTestResult(final URI affectsTestResult)
+    public void addAffectsTestResult(final Link affectsTestResult)
     {
         this.affectsTestResults.add(affectsTestResult);
     }
 
-    public void addBlocksTestExecutionRecord(final URI blocksTestExecutionRecord)
+    public void addBlocksTestExecutionRecord(final Link blocksTestExecutionRecord)
     {
         this.blocksTestExecutionRecords.add(blocksTestExecutionRecord);
     }
@@ -142,7 +144,7 @@ public final class ChangeRequest
         this.dctermsTypes.add(Type.fromString(dctermsType));
     }
 
-    public void addImplementsRequirement(final URI implementsRequirement)
+    public void addImplementsRequirement(final Link implementsRequirement)
     {
         this.implementsRequirements.add(implementsRequirement);
     }
@@ -152,32 +154,32 @@ public final class ChangeRequest
         this.rdfTypes.add(rdfType);
     }
 
-    public void addRelatedChangeRequest(final URI relatedChangeRequest)
+    public void addRelatedChangeRequest(final Link relatedChangeRequest)
     {
         this.relatedChangeRequests.add(relatedChangeRequest);
     }
 
-    public void addRelatedResource(final URI relatedResource)
+    public void addRelatedResource(final Link relatedResource)
     {
         this.relatedResources.add(relatedResource);
     }
 
-    public void addRelatedTestCase(final URI relatedTestCase)
+    public void addRelatedTestCase(final Link relatedTestCase)
     {
         this.relatedTestCases.add(relatedTestCase);
     }
 
-    public void addRelatedTestExecutionRecord(final URI relatedTestExecutionRecord)
+    public void addRelatedTestExecutionRecord(final Link relatedTestExecutionRecord)
     {
         this.relatedTestExecutionRecords.add(relatedTestExecutionRecord);
     }
 
-    public void addRelatedTestPlan(final URI relatedTestPlan)
+    public void addRelatedTestPlan(final Link relatedTestPlan)
     {
         this.relatedTestPlans.add(relatedTestPlan);
     }
 
-    public void addRelatedTestScript(final URI relatedTestScript)
+    public void addRelatedTestScript(final Link relatedTestScript)
     {
         this.relatedTestScripts.add(relatedTestScript);
     }
@@ -187,17 +189,17 @@ public final class ChangeRequest
         this.subjects.add(subject);
     }
 
-    public void addTestedByTestCase(final URI testedByTestCase)
+    public void addTestedByTestCase(final Link testedByTestCase)
     {
         this.testedByTestCases.add(testedByTestCase);
     }
 
-    public void addTracksChangeSet(final URI tracksChangeSet)
+    public void addTracksChangeSet(final Link tracksChangeSet)
     {
         this.tracksChangeSets.add(tracksChangeSet);
     }
 
-    public void addTracksRequirement(final URI tracksRequirement)
+    public void addTracksRequirement(final Link tracksRequirement)
     {
         this.tracksRequirements.add(tracksRequirement);
     }
@@ -208,9 +210,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_CHANGE_REQUEST)
     @OslcReadOnly(false)
     @OslcTitle("Affected By Defects")
-    public URI[] getAffectedByDefects()
+    public Link[] getAffectedByDefects()
     {
-        return affectedByDefects.toArray(new URI[affectedByDefects.size()]);
+        return affectedByDefects.toArray(new Link[affectedByDefects.size()]);
     }
 
     @OslcDescription("Change request affects a plan item. ")
@@ -219,9 +221,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_CHANGE_REQUEST)
     @OslcReadOnly(false)
     @OslcTitle("Affects Plan Items")
-    public URI[] getAffectsPlanItems()
+    public Link[] getAffectsPlanItems()
     {
-        return affectsPlanItems.toArray(new URI[affectsPlanItems.size()]);
+        return affectsPlanItems.toArray(new Link[affectsPlanItems.size()]);
     }
 
     @OslcDescription("Change request affecting a Requirement.")
@@ -230,9 +232,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_REQUIREMENT)
     @OslcReadOnly(false)
     @OslcTitle("Affects Requirements")
-    public URI[] getAffectsRequirements()
+    public Link[] getAffectsRequirements()
     {
-        return affectsRequirements.toArray(new URI[affectsRequirements.size()]);
+        return affectsRequirements.toArray(new Link[affectsRequirements.size()]);
     }
 
     @OslcDescription("Associated QM resource that is affected by this Change Request.")
@@ -241,9 +243,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_TEST_RESULT)
     @OslcReadOnly(false)
     @OslcTitle("Affects Test Results")
-    public URI[] getAffectsTestResults()
+    public Link[] getAffectsTestResults()
     {
-        return affectsTestResults.toArray(new URI[affectsTestResults.size()]);
+        return affectsTestResults.toArray(new Link[affectsTestResults.size()]);
     }
 
     @OslcDescription("Associated QM resource that is blocked by this Change Request.")
@@ -252,9 +254,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_TEST_EXECUTION_RECORD)
     @OslcReadOnly(false)
     @OslcTitle("Blocks Test Execution Records")
-    public URI[] getBlocksTestExecutionRecords()
+    public Link[] getBlocksTestExecutionRecords()
     {
-        return blocksTestExecutionRecords.toArray(new URI[blocksTestExecutionRecords.size()]);
+        return blocksTestExecutionRecords.toArray(new Link[blocksTestExecutionRecords.size()]);
     }
 
     @OslcDescription("The date at which no further activity or work is intended to be conducted. ")
@@ -348,9 +350,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_REQUIREMENT)
     @OslcReadOnly(false)
     @OslcTitle("Implements Requirements")
-    public URI[] getImplementsRequirements()
+    public Link[] getImplementsRequirements()
     {
-        return implementsRequirements.toArray(new URI[implementsRequirements.size()]);
+        return implementsRequirements.toArray(new Link[implementsRequirements.size()]);
     }
 
     @OslcDescription("Resource Shape that provides hints as to resource property value-types and allowed values. ")
@@ -386,18 +388,18 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_CHANGE_REQUEST)
     @OslcReadOnly(false)
     @OslcTitle("Related Change Requests")
-    public URI[] getRelatedChangeRequests()
+    public Link[] getRelatedChangeRequests()
     {
-        return relatedChangeRequests.toArray(new URI[relatedChangeRequests.size()]);
+        return relatedChangeRequests.toArray(new Link[relatedChangeRequests.size()]);
     }
 
     @OslcDescription("Related OSLC resources of any type.")
     @OslcName("relatedResource")
     @OslcPropertyDefinition(Constants.CHANGE_MANAGEMENT_NAMESPACE + "relatedResource")
     @OslcTitle("Related Resources")
-    public URI[] getRelatedResources()
+    public Link[] getRelatedResources()
     {
-        return relatedResources.toArray(new URI[relatedResources.size()]);
+        return relatedResources.toArray(new Link[relatedResources.size()]);
     }
 
     @OslcDescription("Related QM test case resource.")
@@ -406,9 +408,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_TEST_CASE)
     @OslcReadOnly(false)
     @OslcTitle("Related Test Cases")
-    public URI[] getRelatedTestCases()
+    public Link[] getRelatedTestCases()
     {
-        return relatedTestCases.toArray(new URI[relatedTestCases.size()]);
+        return relatedTestCases.toArray(new Link[relatedTestCases.size()]);
     }
 
     @OslcDescription("Related to a QM test execution resource.")
@@ -417,9 +419,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_TEST_EXECUTION_RECORD)
     @OslcReadOnly(false)
     @OslcTitle("Related Test Execution Records")
-    public URI[] getRelatedTestExecutionRecords()
+    public Link[] getRelatedTestExecutionRecords()
     {
-        return relatedTestExecutionRecords.toArray(new URI[relatedTestExecutionRecords.size()]);
+        return relatedTestExecutionRecords.toArray(new Link[relatedTestExecutionRecords.size()]);
     }
 
     @OslcDescription("Related QM test plan resource.")
@@ -428,9 +430,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_TEST_PLAN)
     @OslcReadOnly(false)
     @OslcTitle("Related Test Plans")
-    public URI[] getRelatedTestPlans()
+    public Link[] getRelatedTestPlans()
     {
-        return relatedTestPlans.toArray(new URI[relatedTestPlans.size()]);
+        return relatedTestPlans.toArray(new Link[relatedTestPlans.size()]);
     }
 
     @OslcDescription("Related QM test script resource.")
@@ -439,9 +441,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_TEST_SCRIPT)
     @OslcReadOnly(false)
     @OslcTitle("Related Test Scripts")
-    public URI[] getRelatedTestScripts()
+    public Link[] getRelatedTestScripts()
     {
-        return relatedTestScripts.toArray(new URI[relatedTestScripts.size()]);
+        return relatedTestScripts.toArray(new Link[relatedTestScripts.size()]);
     }
 
     @OslcDescription("The scope of a resource is a URI for the resource's OSLC Service Provider.")
@@ -496,9 +498,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_TEST_CASE)
     @OslcReadOnly(false)
     @OslcTitle("Tested by Test Cases")
-    public URI[] getTestedByTestCases()
+    public Link[] getTestedByTestCases()
     {
-        return testedByTestCases.toArray(new URI[testedByTestCases.size()]);
+        return testedByTestCases.toArray(new Link[testedByTestCases.size()]);
     }
 
     @OslcDescription("Title (reference: Dublin Core) or often a single line summary of the resource represented as rich text in XHTML content.")
@@ -517,9 +519,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_CHANGE_SET)
     @OslcReadOnly(false)
     @OslcTitle("Tracks Change Sets")
-    public URI[] getTracksChangeSets()
+    public Link[] getTracksChangeSets()
     {
-        return tracksChangeSets.toArray(new URI[tracksChangeSets.size()]);
+        return tracksChangeSets.toArray(new Link[tracksChangeSets.size()]);
     }
 
     @OslcDescription("Tracks the associated Requirement or Requirement ChangeSet resources.")
@@ -528,9 +530,9 @@ public final class ChangeRequest
     @OslcRange(Constants.TYPE_REQUIREMENT)
     @OslcReadOnly(false)
     @OslcTitle("Tracks Requirements")
-    public URI[] getTracksRequirements()
+    public Link[] getTracksRequirements()
     {
-        return tracksRequirements.toArray(new URI[tracksRequirements.size()]);
+        return tracksRequirements.toArray(new Link[tracksRequirements.size()]);
     }
 
     @OslcDescription("Whether or not the Change Request has been approved.")
@@ -588,7 +590,7 @@ public final class ChangeRequest
         return verified;
     }
 
-    public void setAffectedByDefects(final URI[] affectedByDefects)
+    public void setAffectedByDefects(final Link[] affectedByDefects)
     {
         this.affectedByDefects.clear();
 
@@ -598,7 +600,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setAffectsPlanItems(final URI[] affectsPlanItems)
+    public void setAffectsPlanItems(final Link[] affectsPlanItems)
     {
         this.affectsPlanItems.clear();
 
@@ -608,7 +610,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setAffectsRequirements(final URI[] affectsRequirements)
+    public void setAffectsRequirements(final Link[] affectsRequirements)
     {
         this.affectsRequirements.clear();
 
@@ -618,7 +620,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setAffectsTestResults(final URI[] affectsTestResults)
+    public void setAffectsTestResults(final Link[] affectsTestResults)
     {
         this.affectsTestResults.clear();
 
@@ -633,7 +635,7 @@ public final class ChangeRequest
         this.approved = approved;
     }
 
-    public void setBlocksTestExecutionRecords(final URI[] blocksTestExecutionRecords)
+    public void setBlocksTestExecutionRecords(final Link[] blocksTestExecutionRecords)
     {
         this.blocksTestExecutionRecords.clear();
 
@@ -711,7 +713,7 @@ public final class ChangeRequest
         this.identifier = identifier;
     }
 
-    public void setImplementsRequirements(final URI[] implementsRequirements)
+    public void setImplementsRequirements(final Link[] implementsRequirements)
     {
         this.implementsRequirements.clear();
 
@@ -746,7 +748,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setRelatedChangeRequests(final URI[] relatedChangeRequests)
+    public void setRelatedChangeRequests(final Link[] relatedChangeRequests)
     {
         this.relatedChangeRequests.clear();
 
@@ -756,7 +758,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setRelatedResources(final URI[] relatedResources)
+    public void setRelatedResources(final Link[] relatedResources)
     {
         this.relatedResources.clear();
 
@@ -766,7 +768,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setRelatedTestCases(final URI[] relatedTestCases)
+    public void setRelatedTestCases(final Link[] relatedTestCases)
     {
         this.relatedTestCases.clear();
 
@@ -776,7 +778,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setRelatedTestExecutionRecords(final URI[] relatedTestExecutionRecords)
+    public void setRelatedTestExecutionRecords(final Link[] relatedTestExecutionRecords)
     {
         this.relatedTestExecutionRecords.clear();
 
@@ -786,7 +788,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setRelatedTestPlans(final URI[] relatedTestPlans)
+    public void setRelatedTestPlans(final Link[] relatedTestPlans)
     {
         this.relatedTestPlans.clear();
 
@@ -796,7 +798,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setRelatedTestScripts(final URI[] relatedTestScripts)
+    public void setRelatedTestScripts(final Link[] relatedTestScripts)
     {
         this.relatedTestScripts.clear();
 
@@ -841,7 +843,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setTestedByTestCases(final URI[] testedByTestCases)
+    public void setTestedByTestCases(final Link[] testedByTestCases)
     {
         this.testedByTestCases.clear();
 
@@ -856,7 +858,7 @@ public final class ChangeRequest
         this.title = title;
     }
 
-    public void setTracksChangeSets(final URI[] tracksChangeSets)
+    public void setTracksChangeSets(final Link[] tracksChangeSets)
     {
         this.tracksChangeSets.clear();
 
@@ -866,7 +868,7 @@ public final class ChangeRequest
         }
     }
 
-    public void setTracksRequirements(final URI[] tracksRequirements)
+    public void setTracksRequirements(final Link[] tracksRequirements)
     {
         this.tracksRequirements.clear();
 
