@@ -102,6 +102,10 @@
 						<name>jetty.logs</name>
 						<value>${basedir}/target</value>
 					</systemProperty>
+					<systemProperty>
+						<name>jetty.port</name>
+						<value>8081</value>
+					</systemProperty>
 
 				</systemProperties>
 					
