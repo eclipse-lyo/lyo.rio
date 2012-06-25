@@ -32,6 +32,12 @@ package org.eclipse.lyo.rio.query;
     public List<String> getErrors() {
         return errors;
     }
+    
+    public 
+    OslcSelectParser(String select)
+    {
+        this(new CommonTokenStream(new OslcSelectLexer(new ANTLRStringStream(select))));
+    }
 }
 
 oslc_select	: properties
@@ -55,20 +61,10 @@ identifier	: prefixedName -> ^( 'prefixed_name' prefixedName )
 wildcard	: ASTERISK -> ^( 'wildcard' ASTERISK )
 	;
 
-uri_ref_esc	: '<' iriRef '>';
-
-string_esc	: STRING_LITERAL ;
-	
-iriRef
-    : IRI_REF
-    | prefixedName
-    ;
-
 prefixedName
     : PNAME_LN
     | PNAME_NS
     ;
-
 
 // $>
 
@@ -85,26 +81,6 @@ PNAME_NS
 
 PNAME_LN
     : PNAME_NS PN_LOCAL
-    ;
-
-
-IRI_REF
-    : LESS ( options {greedy=false;} : ~(LESS | GREATER | '"' | OPEN_CURLY_BRACE | CLOSE_CURLY_BRACE | '|' | '^' | '\\' | '`' | ('\u0000'..'\u0020')) )* GREATER 
-    ;
-
-
-
-STRING_LITERAL
-    : '"'  ( options {greedy=false;} : ~('\u0022' | '\u005C' | '\u000A' | '\u000D') | ECHAR )* '"'
-    ;
-
-STRING_LITERAL_LONG
-    :   '"""' ( options {greedy=false;} : ( '"' | '""' )? ( ~('"'|'\\') | ECHAR ) )* '"""'
-    ;
-
-fragment
-ECHAR
-    : '\\' ('t' | 'b' | 'n' | 'r' | 'f' | '\\' | '"' | '\'')
     ;
 
 fragment
@@ -204,27 +180,12 @@ COMMA
     : ','
     ;
 
-NOT
-    : '!'
-    ;
-
-DIVIDE
-    : '/'
-    ;
-
-EQUAL
-    : '='
-    ;
-
 LESS
     : '<'
     ;
 
 GREATER
     : '>'
-    ;
-
-ANY : .
     ;
 
 // $>

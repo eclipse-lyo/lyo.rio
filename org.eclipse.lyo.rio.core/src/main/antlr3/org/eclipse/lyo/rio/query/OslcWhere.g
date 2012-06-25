@@ -35,6 +35,12 @@ package org.eclipse.lyo.rio.query;
     public List<String> getErrors() {
         return errors;
     }
+    
+    public 
+    OslcWhereParser(String where)
+    {
+		this(new CommonTokenStream(new OslcWhereLexer(new ANTLRStringStream(where))));
+    }
 }
 
 
@@ -79,8 +85,6 @@ in_val        : '[' value (',' value)* ']' -> ^( 'in_values' value (value)* )
 
 value         : iriRef | literal_value ;
 
-uri_ref_esc   : '<' iriRef '>';
-
 literal_value : boolean_val | decimal | string_esc | typed_string  | langed_string
 	;
 	
@@ -93,7 +97,7 @@ langed_string
 	;
 
 
-boolean_val       : 'true' | 'false' ;
+boolean_val   : BOOLEAN ;
 
 decimal       : DECIMAL ;
 
@@ -146,7 +150,7 @@ IRI_REF
 
 
 LANGTAG
-    : '@' PN_CHARS_BASE+ (MINUS (PN_CHARS_BASE DIGIT)+)*
+    : '@' PN_CHARS_BASE+ (MINUS (PN_CHARS_BASE DIGIT)+)?
     ;
 
 INTEGER
@@ -268,6 +272,11 @@ DIGIT
 
 COMMENT 
     : '#' ( options{greedy=false;} : .)* EOL { $channel=HIDDEN; }
+    ;
+    
+BOOLEAN
+    : 'true'
+    | 'false'
     ;
 
 fragment
