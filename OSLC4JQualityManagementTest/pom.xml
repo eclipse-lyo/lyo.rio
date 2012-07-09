@@ -34,6 +34,11 @@
   		<artifactId>oslc4j-qm-common</artifactId>
   		<version>0.1.1-SNAPSHOT</version>
   	</dependency>
+  	<dependency>
+  		<groupId>org.glassfish</groupId>
+  		<artifactId>javax.servlet</artifactId>
+  		<version>3.1-b33</version>
+  	</dependency>
   </dependencies>
   
   <build>
