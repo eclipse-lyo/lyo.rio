@@ -47,8 +47,8 @@ class ServiceProviderFactory
     {
         final ServiceProvider serviceProvider = org.eclipse.lyo.oslc4j.core.model.ServiceProviderFactory.createServiceProvider(baseURI,
                                                                                                                                ServiceProviderRegistryURIs.getUIURI(),
-                                                                                                                               "OSLC IBM Change Management Service Provider",
-                                                                                                                               "Reference Implementation OSLC IBM Change Management Service Provider",
+                                                                                                                               "OSLC Lyo Change Management Service Provider",
+                                                                                                                               "Reference Implementation OSLC Eclipse Lyo Change Management Service Provider",
                                                                                                                                new Publisher("Eclipse Lyo", "urn:oslc:ServiceProvider"),
                                                                                                                                RESOURCE_CLASSES
         );

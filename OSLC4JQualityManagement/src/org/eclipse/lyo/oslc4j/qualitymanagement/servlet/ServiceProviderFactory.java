@@ -52,8 +52,8 @@ class ServiceProviderFactory
     {
         final ServiceProvider serviceProvider = org.eclipse.lyo.oslc4j.core.model.ServiceProviderFactory.createServiceProvider(baseURI,
                                                                                                                                ServiceProviderRegistryURIs.getUIURI(),
-                                                                                                                               "OSLC IBM Quality Management Service Provider",
-                                                                                                                               "Reference Implementation OSLC IBM Quality Management Service Provider",
+                                                                                                                               "OSLC Lyo Quality Management Service Provider",
+                                                                                                                               "Reference Implementation OSLC Eclipse Lyo Quality Management Service Provider",
                                                                                                                                new Publisher("Eclipse Lyo", "urn:oslc:ServiceProvider"),
                                                                                                                                RESOURCE_CLASSES
         );
