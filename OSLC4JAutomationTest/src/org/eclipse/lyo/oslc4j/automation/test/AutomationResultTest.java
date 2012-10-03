@@ -11,52 +11,68 @@
  *
  * Contributors:
  *
- *     Paul McMahan         - initial API and implementation
+ *    Michael Fiedler         - initial API and implementation
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation.test;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 
 
-import org.eclipse.lyo.oslc4j.automation.Constants;
-import org.eclipse.lyo.oslc4j.automation.AutomationRequest;
+import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
+import org.eclipse.lyo.oslc4j.automation.AutomationContribution;
+import org.eclipse.lyo.oslc4j.automation.AutomationResult;
 import org.eclipse.lyo.oslc4j.automation.ParameterInstance;
-import org.eclipse.lyo.oslc4j.automation.State;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
 
-public class AutomationResultTest extends TestAutomation<AutomationRequest> {
+public class AutomationResultTest extends TestAutomation<AutomationResult> {
 
 	public AutomationResultTest() {
-		super(AutomationRequest.class);
+		super(AutomationResult.class);
 	}
 
 	@Override
-	protected AutomationRequest getResource() {
-		AutomationRequest newAutoRequest = new AutomationRequest();
+	protected AutomationResult getResource() {
+		final AutomationResult newAutoResult = new AutomationResult();
 		
-		newAutoRequest.addContributor(URI.create("http://myserver/mycmapp/users/bob"));
-		newAutoRequest.addCreator(URI.create("http://myserver/mycmapp/users/jane"));
-
-		newAutoRequest.addState(URI.create(State.New.toString()));
-		ParameterInstance param1 = new ParameterInstance();
+		newAutoResult.addContributor(URI.create("http://myserver/mycmapp/users/bob"));
+		newAutoResult.addCreator(URI.create("http://myserver/mycmapp/users/jane"));
+		newAutoResult.addState(URI.create(AutomationConstants.STATE_COMPLETE));
+		newAutoResult.addVerdict(URI.create(AutomationConstants.VERDICT_PASSED));
+		
+		final ParameterInstance param1 = new ParameterInstance();
 		param1.setName("param1");
 		param1.setDescription("Description of param1");
 		param1.setValue("value of param1");
-		newAutoRequest.addInputParameter(param1);
+		newAutoResult.addInputParameter(param1);
+		newAutoResult.addOutputParameter(param1);
 		
-		newAutoRequest.setExecutesAutomationPlan(new Link(URI.create("http://example.com/automation/autoPlans/123"),"Build Plan 123"));
-		newAutoRequest.setInstanceShape(URI.create("http://example.com/shapes/autorequest"));
-		newAutoRequest.setTitle("Build Request for Product X");
-		newAutoRequest.setDescription("Here is the description of the build request");
+		final AutomationContribution contrib = new AutomationContribution(URI.create("http://example.com/myns#myContribution"));
+		
+		final Map<QName,Object> contribMap = new HashMap<QName,Object>();
+		contribMap.put(new QName("http://example.com/myns#myContribution"), "http://example.com/buildResults/789");
+		contrib.setExtendedProperties(contribMap);
+		//QName contributionQname = new QName(AutomationConstants.AUTOMATION_DOMAIN, "contribution");
+		//newAutoResult.getExtendedProperties().put(contributionQname, contrib);
+		newAutoResult.addContribution(contrib);
 
-		return newAutoRequest;
+		newAutoResult.setReportsOnAutomationPlan(new Link(URI.create("http://example.com/automation/autoPlans/123"),"Build Plan 123"));
+		newAutoResult.setProducedByAutomationRequest(new Link(URI.create("http://example.com/automation/autoRequests/456"),"Build Request 456"));
+		newAutoResult.setInstanceShape(URI.create("http://example.com/shapes/autorequest"));
+		newAutoResult.setTitle("Build Request for Product X");
+		
+
+		return newAutoResult;
 	}
 
 	@Override
 	protected String getResourceType() {
-		return Constants.TYPE_AUTO_REQUEST;
+		return AutomationConstants.TYPE_AUTOMATION_RESULT;
 	}
 
 }

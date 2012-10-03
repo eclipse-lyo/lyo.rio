@@ -11,42 +11,45 @@
  *
  * Contributors:
  *
- *     Paul McMahan         - initial API and implementation
+ *    Michael Fiedler         - initial API and implementation
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation.test;
 
 import java.net.URI;
 
-import org.eclipse.lyo.oslc4j.automation.Constants;
+import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.AutomationPlan;
-import org.eclipse.lyo.oslc4j.core.model.Link;
+import org.eclipse.lyo.oslc4j.core.model.Occurs;
+import org.eclipse.lyo.oslc4j.core.model.Property;
+import org.eclipse.lyo.oslc4j.core.model.ValueType;
 
-public class TestPlanTest extends TestQualityManagement<AutomationPlan> {
+public class AutomationPlanTest extends TestAutomation<AutomationPlan> {
 
-	public TestPlanTest() {
+	public AutomationPlanTest() {
 		super(AutomationPlan.class);
 	}
 
 	@Override
 	protected AutomationPlan getResource() {
-		AutomationPlan newTestPlan = new AutomationPlan();
+		final AutomationPlan newAutoPlan = new AutomationPlan();
 		
-		newTestPlan.addContributor(URI.create("http://myserver/mycmapp/users/bob"));
-		newTestPlan.addCreator(URI.create("http://myserver/mycmapp/users/jane"));
-		newTestPlan.setInstanceShape(URI.create("http://example.com/shapes/testplan"));
-		newTestPlan.addRelatedChangeRequest(new Link(URI.create("http://myserver/mycmapp/bugs/1235"), "Bug 1235"));
-		newTestPlan.setTitle("Systems Verification Plan for Product X");
-		newTestPlan.addUsesTestCase(new Link(URI.create("http://myserver/myqmapp/project1/case123"), "Test Case 123"));
-		newTestPlan.addUsesTestCase(new Link(URI.create("http://myserver/myqmapp/project1/case345"), "Test Case 456"));
-		newTestPlan.addValidatesRequirementCollection(new Link(URI.create("http://remoteserver/rmapp/project1/collection111"), "Requirement Collection 111"));
-		newTestPlan.addValidatesRequirementCollection(new Link(URI.create("http://remoteserver/rmapp/project1/collection222"), "Requirement Collection 222"));
+		newAutoPlan.addContributor(URI.create("http://myserver/mycmapp/users/bob"));
+		newAutoPlan.addCreator(URI.create("http://myserver/mycmapp/users/jane"));
+		newAutoPlan.addSubject("subject1");
+
+		final Property param1 = new Property("myParameter", Occurs.ExactlyOne, URI.create(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String);
+		newAutoPlan.addParameterDefinition(param1);
 		
-		return newTestPlan;
+		newAutoPlan.setInstanceShape(URI.create("http://example.com/shapes/autoplan"));
+		newAutoPlan.setTitle("Build Plan for Product X");
+		newAutoPlan.setDescription("Here is the description of the build plan");
+
+		return newAutoPlan;
 	}
 
 	@Override
 	protected String getResourceType() {
-		return Constants.TYPE_TEST_PLAN;
+		return AutomationConstants.TYPE_AUTOMATION_PLAN;
 	}
 
 }

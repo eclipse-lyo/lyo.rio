@@ -19,8 +19,8 @@
     @OslcNamespaceDefinition(prefix = OslcConstants.OSLC_DATA_NAMESPACE_PREFIX,           namespaceURI = OslcConstants.OSLC_DATA_NAMESPACE),
     @OslcNamespaceDefinition(prefix = OslcConstants.RDF_NAMESPACE_PREFIX,                 namespaceURI = OslcConstants.RDF_NAMESPACE),
     @OslcNamespaceDefinition(prefix = OslcConstants.RDFS_NAMESPACE_PREFIX,                namespaceURI = OslcConstants.RDFS_NAMESPACE),
-    @OslcNamespaceDefinition(prefix = Constants.FOAF_NAMESPACE_PREFIX,                    namespaceURI = Constants.FOAF_NAMESPACE),
-    @OslcNamespaceDefinition(prefix = Constants.AUTOMATION_PREFIX,                        namespaceURI = Constants.AUTOMATION_NAMESPACE),
+    @OslcNamespaceDefinition(prefix = AutomationConstants.FOAF_NAMESPACE_PREFIX,          namespaceURI = AutomationConstants.FOAF_NAMESPACE),
+    @OslcNamespaceDefinition(prefix = AutomationConstants.AUTOMATION_PREFIX,              namespaceURI = AutomationConstants.AUTOMATION_NAMESPACE),
 
 })
 package org.eclipse.lyo.oslc4j.automation;

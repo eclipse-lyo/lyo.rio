@@ -11,7 +11,7 @@
  *
  * Contributors:
  *
- *     Paul McMahan         - initial API and implementation
+ *     Michael Fiedler         - initial API and implementation
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation.test;
 
@@ -24,11 +24,10 @@ public class AllTests
     {
         final TestSuite suite = new TestSuite(AllTests.class.getName());
 
-        suite.addTestSuite(TestCaseTest.class);
-        suite.addTestSuite(TestExecutionRecordTest.class);
-        suite.addTestSuite(TestPlanTest.class);
-        suite.addTestSuite(TestResultTest.class);
-        suite.addTestSuite(TestScriptTest.class);
+        suite.addTestSuite(AutomationPlanTest.class);
+        suite.addTestSuite(AutomationRequestTest.class);
+        suite.addTestSuite(AutomationResultTest.class);
+        
 
         return suite;
     }

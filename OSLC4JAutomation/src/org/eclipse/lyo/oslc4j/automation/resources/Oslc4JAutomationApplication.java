@@ -24,7 +24,7 @@ import java.util.Set;
 import org.eclipse.lyo.oslc4j.application.OslcWinkApplication;
 import org.eclipse.lyo.oslc4j.automation.AutomationRequest;
 import org.eclipse.lyo.oslc4j.automation.AutomationResult;
-import org.eclipse.lyo.oslc4j.automation.Constants;
+import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.AutomationPlan;
 import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
@@ -46,9 +46,9 @@ public final class Oslc4JAutomationApplication
         RESOURCE_CLASSES.add(AutomationResultResource.class);
 
 
-        RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(Constants.PATH_AUTO_PLAN, AutomationPlan.class);
-        RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(Constants.PATH_AUTO_REQUEST, AutomationRequest.class);
-        RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(Constants.PATH_AUTO_RESULT, AutomationResult.class);
+        RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(AutomationConstants.PATH_AUTOMATION_PLAN, AutomationPlan.class);
+        RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(AutomationConstants.PATH_AUTOMATION_REQUEST, AutomationRequest.class);
+        RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(AutomationConstants.PATH_AUTOMATION_RESULT, AutomationResult.class);
 
     }
 

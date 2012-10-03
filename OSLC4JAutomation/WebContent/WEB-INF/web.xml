@@ -17,20 +17,20 @@
 
 
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
-  <display-name>OSLC4JQualityManagement</display-name>
+  <display-name>OSLC4JAutomation</display-name>
   <context-param>
   	<description>Scheme used for URI when registering ServiceProvider.  Can be overridden by System property of the same name.</description>
-  	<param-name>org.eclipse.lyo.oslc4j.qualitymanagement.servlet.scheme</param-name>
+  	<param-name>org.eclipse.lyo.oslc4j.automation.servlet.scheme</param-name>
   	<param-value>http</param-value>
   </context-param>
     <context-param>
   	<description>Port used for URI when registering ServiceProvider.  Can be overridden by System property of the same name.</description>
-  	<param-name>org.eclipse.lyo.oslc4j.qualitymanagement.servlet.port</param-name>
+  	<param-name>org.eclipse.lyo.oslc4j.automation.servlet.port</param-name>
   	<param-value>8080</param-value>
   </context-param>
   <listener>
     <description>Listener for JAX-RS Servlet</description>
-    <listener-class>org.eclipse.lyo.oslc4j.qualitymanagement.servlet.ServletListener</listener-class>
+    <listener-class>org.eclipse.lyo.oslc4j.automation.servlet.ServletListener</listener-class>
   </listener>
   <servlet>
     <description>JAX-RS Tools Generated - Do not modify</description>
@@ -38,7 +38,7 @@
     <servlet-class>org.apache.wink.server.internal.servlet.RestServlet</servlet-class>
     <init-param>
       <param-name>javax.ws.rs.Application</param-name>
-      <param-value>org.eclipse.lyo.oslc4j.qualitymanagement.resources.Oslc4JQualityManagementApplication</param-value>
+      <param-value>org.eclipse.lyo.oslc4j.automation.resources.Oslc4JAutomationApplication</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

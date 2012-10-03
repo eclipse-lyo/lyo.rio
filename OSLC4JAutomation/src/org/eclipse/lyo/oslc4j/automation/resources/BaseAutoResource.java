@@ -52,7 +52,7 @@ public class BaseAutoResource<T extends AutomationResource>
     public T[] getResources(final String where)
     {
 
-        final List<T> resources = Persistence.getQmResources(resourceType);
+        final List<T> resources = Persistence.getAutoResources(resourceType);
 
         for (final T resource : resources)
         {
@@ -66,7 +66,7 @@ public class BaseAutoResource<T extends AutomationResource>
     public T getResource(final HttpServletResponse httpServletResponse,
                          final String              resourceId)
     {
-        final T resource = Persistence.getQmResource(resourceId, resourceType);
+        final T resource = Persistence.getAutoResource(resourceId, resourceType);
 
         if (resource != null)
         {
@@ -87,7 +87,7 @@ public class BaseAutoResource<T extends AutomationResource>
                               @PathParam("resourceId") final String             resourceId)
            throws URISyntaxException
     {
-        final T resource = Persistence.getQmResource(resourceId, resourceType);
+        final T resource = Persistence.getAutoResource(resourceId, resourceType);
 
         if (resource != null)
         {
@@ -149,7 +149,7 @@ public class BaseAutoResource<T extends AutomationResource>
                                    final String              resourceId,
     		                       final T                   resource)
     {
-        final T originalResource = Persistence.getQmResource(resourceId, resourceType);
+        final T originalResource = Persistence.getAutoResource(resourceId, resourceType);
 
         if (originalResource != null)
         {

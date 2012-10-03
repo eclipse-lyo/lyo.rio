@@ -18,7 +18,7 @@ package org.eclipse.lyo.oslc4j.automation.servlet;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.eclipse.lyo.oslc4j.automation.Constants;
+import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.resources.AutomationPlanResource;
 import org.eclipse.lyo.oslc4j.automation.resources.AutomationRequestResource;
 import org.eclipse.lyo.oslc4j.automation.resources.AutomationResultResource;
@@ -63,8 +63,8 @@ class ServiceProviderFactory
             new PrefixDefinition(OslcConstants.OSLC_DATA_NAMESPACE_PREFIX,           new URI(OslcConstants.OSLC_DATA_NAMESPACE)),
             new PrefixDefinition(OslcConstants.RDF_NAMESPACE_PREFIX,                 new URI(OslcConstants.RDF_NAMESPACE)),
             new PrefixDefinition(OslcConstants.RDFS_NAMESPACE_PREFIX,                new URI(OslcConstants.RDFS_NAMESPACE)),
-            new PrefixDefinition(Constants.FOAF_NAMESPACE_PREFIX,                    new URI(Constants.FOAF_NAMESPACE)),
-            new PrefixDefinition(Constants.AUTOMATION_PREFIX,           new URI(Constants.AUTOMATION_NAMESPACE)),
+            new PrefixDefinition(AutomationConstants.FOAF_NAMESPACE_PREFIX,          new URI(AutomationConstants.FOAF_NAMESPACE)),
+            new PrefixDefinition(AutomationConstants.AUTOMATION_PREFIX,              new URI(AutomationConstants.AUTOMATION_NAMESPACE)),
         };
 
         serviceProvider.setPrefixDefinitions(prefixDefinitions);

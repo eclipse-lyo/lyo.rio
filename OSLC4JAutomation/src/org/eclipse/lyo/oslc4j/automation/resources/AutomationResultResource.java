@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation.resources;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +34,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.lyo.oslc4j.automation.AutomationResult;
-import org.eclipse.lyo.oslc4j.automation.Constants;
+import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcDialog;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcDialogs;
@@ -42,7 +43,7 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 
-@OslcService(Constants.AUTOMATION_DOMAIN)
+@OslcService(AutomationConstants.AUTOMATION_DOMAIN)
 @Path("autoResults")
 public class AutomationResultResource extends BaseAutoResource<AutomationResult> {
 
@@ -63,7 +64,7 @@ public class AutomationResultResource extends BaseAutoResource<AutomationResult>
              uri = "",
              hintWidth = "1000px",
              hintHeight = "600px",
-             resourceTypes = {Constants.TYPE_AUTO_RESULT},
+             resourceTypes = { AutomationConstants.TYPE_AUTOMATION_RESULT},
              usages = {OslcConstants.OSLC_USAGE_DEFAULT}
         ),
         @OslcDialog
@@ -73,16 +74,16 @@ public class AutomationResultResource extends BaseAutoResource<AutomationResult>
              uri = "UI/autoResuls/list.jsp",
              hintWidth = "1000px",
              hintHeight = "600px",
-             resourceTypes = {Constants.TYPE_AUTO_RESULT},
-             usages = {Constants.USAGE_LIST}
+             resourceTypes = {AutomationConstants.TYPE_AUTOMATION_RESULT},
+             usages = {AutomationConstants.USAGE_LIST}
         )
     })
     @OslcQueryCapability
     (
         title = "Automation Result Query Capability",
         label = "Automation Result Catalog Query",
-        resourceShape = OslcConstants.PATH_RESOURCE_SHAPES + "/" + Constants.PATH_AUTO_RESULT,
-        resourceTypes = {Constants.TYPE_AUTO_RESULT},
+        resourceShape = OslcConstants.PATH_RESOURCE_SHAPES + "/" + AutomationConstants.PATH_AUTOMATION_RESULT,
+        resourceTypes = {AutomationConstants.TYPE_AUTOMATION_RESULT},
         usages = {OslcConstants.OSLC_USAGE_DEFAULT}
     )
     @GET
@@ -105,8 +106,8 @@ public class AutomationResultResource extends BaseAutoResource<AutomationResult>
     (
          title = "Automation Result Creation Factory",
          label = "Automation Result Creation",
-         resourceShapes = {OslcConstants.PATH_RESOURCE_SHAPES + "/" + Constants.PATH_AUTO_RESULT},
-         resourceTypes = {Constants.TYPE_AUTO_RESULT},
+         resourceShapes = {OslcConstants.PATH_RESOURCE_SHAPES + "/" + AutomationConstants.PATH_AUTOMATION_RESULT},
+         resourceTypes = {AutomationConstants.TYPE_AUTOMATION_RESULT},
          usages = {OslcConstants.OSLC_USAGE_DEFAULT}
     )
     @POST
@@ -128,6 +129,10 @@ public class AutomationResultResource extends BaseAutoResource<AutomationResult>
                                         @PathParam("resourceId") final String              resourceId,
     		                                                          final AutomationResult       resource)
     {
+    	if (resource.getDesiredState() != null)
+    	{
+    		resource.setStates(new URI[]{resource.getDesiredState()});
+    	}
     	return super.updateResource(httpServletResponse, eTagHeader, resourceId, resource);
     }
     

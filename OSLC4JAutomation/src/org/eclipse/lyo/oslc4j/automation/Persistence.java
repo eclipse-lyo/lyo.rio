@@ -86,9 +86,9 @@ public class Persistence
 					if (resources != null) {
 						for (final Object resource : resources) {
 							if (resource instanceof AutomationResource) {
-								final AutomationResource qmResource = (AutomationResource) resource;
+								final AutomationResource autoResource = (AutomationResource) resource;
 
-								final String identifier = qmResource
+								final String identifier = autoResource
 										.getIdentifier();
 
 								final long longIdentifier = Long
@@ -98,7 +98,7 @@ public class Persistence
 										MAX_IDENTIFIER);
 
 								RESOURCES_MAP.put(Long.valueOf(longIdentifier),
-										qmResource);
+										autoResource);
 							}
 						}
 					}
@@ -170,7 +170,7 @@ public class Persistence
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends AutomationResource> List<T> getQmResources(final Class<T> clazz)
+    public static <T extends AutomationResource> List<T> getAutoResources(final Class<T> clazz)
     {
     	List<T> resources = new ArrayList<T>();
     	
@@ -186,7 +186,7 @@ public class Persistence
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends AutomationResource> T getQmResource(final String identifier, final Class<T> clazz)
+    public static <T extends AutomationResource> T getAutoResource(final String identifier, final Class<T> clazz)
     {
         synchronized (RESOURCES_MAP)
         {

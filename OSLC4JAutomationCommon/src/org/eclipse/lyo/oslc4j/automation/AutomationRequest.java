@@ -11,15 +11,13 @@
  *
  * Contributors:
  *
- *     Michael Fiedler         - initial API and implementation
+ *     Paul McMahan <pmcmahan@us.ibm.com>        - initial implementation
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,81 +37,108 @@ import org.eclipse.lyo.oslc4j.core.model.Occurs;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.ValueType;
 
-@OslcResourceShape(title = "Automation Resource Shape", describes = Constants.TYPE_AUTO_REQUEST)
-@OslcNamespace(Constants.AUTOMATION_NAMESPACE)
+@OslcResourceShape(title = "Automation Request Resource Shape", describes = AutomationConstants.TYPE_AUTOMATION_REQUEST)
+@OslcNamespace(AutomationConstants.AUTOMATION_NAMESPACE)
 /**
  * @see http://open-services.net/wiki/automation/OSLC-Automation-Specification-Version-2.0/#Resource_AutomationRequest
  */
 public final class AutomationRequest
-       extends AutomationResource
+extends AutomationResource
 {
-    private final Set<State>                 states                      = new TreeSet<State>();
-    private final Set<ParameterInstance>     inputParameters             = new TreeSet<ParameterInstance>();
+	private final Set<URI>      contributors                = new TreeSet<URI>();
+    private final Set<URI>      creators                    = new TreeSet<URI>();
+    private final Set<URI>      rdfTypes                    = new TreeSet<URI>();
+    private final Set<String>   subjects                    = new TreeSet<String>();
+    private final Set<URI>      states                      = new TreeSet<URI>();
+    private final Set<ParameterInstance> inputParameters    = new TreeSet<ParameterInstance>();
     
-
+    private Date     created;
     private String   description;
-    private State    desiredState;
-    private Link     executesAutomationPlan;
+    private String   identifier;
+    private URI      instanceShape;
+    private Date     modified;
+    private URI      serviceProvider;
+    private String   title;
+    private URI      desiredState;
+    private Link      executesAutomationPlan;
 
-    public AutomationRequest()
-    {
-        super();
-    }
+	public AutomationRequest()
+	{
+		super();
+		
+		rdfTypes.add(URI.create(AutomationConstants.TYPE_AUTOMATION_REQUEST));
+	}
+	
+    public AutomationRequest(final URI about)
+     {
+         super(about);
+
+		rdfTypes.add(URI.create(AutomationConstants.TYPE_AUTOMATION_REQUEST));
+     }
 
     protected URI getRdfType() {
-    	return URI.create(Constants.TYPE_AUTO_REQUEST);
+    	return URI.create(AutomationConstants.TYPE_AUTOMATION_REQUEST);
     }
     
+    public void addContributor(final URI contributor)
+    {
+        this.contributors.add(contributor);
+    }
+
+    public void addCreator(final URI creator)
+    {
+        this.creators.add(creator);
+    }
+    
+    public void addRdfType(final URI rdfType)
+    {
+        this.rdfTypes.add(rdfType);
+    }
+
+    public void addSubject(final String subject)
+    {
+        this.subjects.add(subject);
+    }
+
     public void addState(final URI state)
     {
-        this.states.add(State.fromURI(state));
+        this.states.add(state);
+    }
+    
+    public void addInputParameter(final ParameterInstance parameter)
+    {
+        this.inputParameters.add(parameter);
+    }
+    
+    @OslcDescription("The person(s) who are responsible for the work needed to complete the automation request.")
+    @OslcName("contributor")
+    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "contributor")
+    @OslcRange(AutomationConstants.TYPE_PERSON)
+    @OslcTitle("Contributors")
+    public URI[] getContributors()
+    {
+        return contributors.toArray(new URI[contributors.size()]);
     }
 
-    public void addInputParameter(final ParameterInstance inputParameter)
+    @OslcDescription("Timestamp of resource creation.")
+    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "created")
+    @OslcReadOnly
+    @OslcTitle("Created")
+    public Date getCreated()
     {
-        this.inputParameters.add(inputParameter);
+        return created;
     }
-    
-	@OslcAllowedValue({Constants.AUTOMATION_NAMESPACE + "new",
-		Constants.AUTOMATION_NAMESPACE + "inProgress",
-		Constants.AUTOMATION_NAMESPACE + "queued",
-		Constants.AUTOMATION_NAMESPACE + "canceling",
-		Constants.AUTOMATION_NAMESPACE + "canceled",
-		Constants.AUTOMATION_NAMESPACE + "complete"})	
-	@OslcDescription("See list of allowed values for oslc_auto:state")
-	@OslcValueType(ValueType.Resource)
-	@OslcOccurs(Occurs.OneOrMany)
-	@OslcPropertyDefinition(Constants.AUTOMATION_NAMESPACE + "state")
-	@OslcReadOnly
-	@OslcTitle("Automation Request States")
-	public URI[] getStates() {
-		List<URI> returnStates = new ArrayList<URI>();
-		for (State state : this.states) {
-			if (state != null) {
-				try {
-					URI thisState = new URI(state.toString());
-					returnStates.add(thisState);
-				} catch (final URISyntaxException exception) {
-					// This should never happen since we control the possible values of the ValueType enum.
-					throw new RuntimeException(exception);
-				}
-			}
-		}
 
-		return returnStates.toArray(new URI[states.size()]);
-	}
-    
-    @OslcDescription("Parameters provided when Automation Requests are created")
-    @OslcName("inputParameter")
-    @OslcPropertyDefinition(Constants.AUTOMATION_NAMESPACE + "inputParameter")
-    @OslcRange(Constants.TYPE_AUTO_PARM_INSTANCE)
-    @OslcOccurs(Occurs.ZeroOrMany)
-    @OslcTitle("Input Parameters")
-    public ParameterInstance[] getInputParameters()
+    @OslcDescription("Creator or creators of resource.")
+    @OslcName("creator")
+    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "creator")
+    @OslcRange(AutomationConstants.TYPE_PERSON)
+    @OslcTitle("Creators")
+    public URI[] getCreators()
     {
-        return inputParameters.toArray(new ParameterInstance[inputParameters.size()]);
+        return creators.toArray(new URI[creators.size()]);
     }
-    
+
     @OslcDescription("Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content.")
     @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "description")
     @OslcTitle("Description")
@@ -123,75 +148,232 @@ public final class AutomationRequest
         return description;
     }
 
-    @OslcDescription("Automation Plan run by the Automation Request.")
-    @OslcName("executesAutomationPlan")
-    @OslcPropertyDefinition(Constants.AUTOMATION_NAMESPACE+ "executesAutomationPlan")
-    @OslcRange(Constants.TYPE_AUTO_PLAN)
-    @OslcReadOnly(false)
+    @OslcDescription("A unique identifier for a resource. Assigned by the service provider when a resource is created. Not intended for end-user display.")
     @OslcOccurs(Occurs.ExactlyOne)
-    @OslcTitle("Automation Plan Executed")
+    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "identifier")
+    @OslcReadOnly
+    @OslcTitle("Identifier")
+    public String getIdentifier()
+    {
+        return identifier;
+    }
+
+    @OslcDescription("Resource Shape that provides hints as to resource property value-types and allowed values. ")
+    @OslcPropertyDefinition(OslcConstants.OSLC_CORE_NAMESPACE + "instanceShape")
+    @OslcRange(OslcConstants.TYPE_RESOURCE_SHAPE)
+    @OslcTitle("Instance Shape")
+    public URI getInstanceShape()
+    {
+        return instanceShape;
+    }
+
+    @OslcDescription("Timestamp last latest resource modification.")
+    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "modified")
+    @OslcReadOnly
+    @OslcTitle("Modified")
+    public Date getModified()
+    {
+        return modified;
+    }
+
+    @OslcDescription("The resource type URIs.")
+    @OslcName("type")
+    @OslcPropertyDefinition(OslcConstants.RDF_NAMESPACE + "type")
+    @OslcTitle("Types")
+    public URI[] getRdfTypes()
+    {
+        return rdfTypes.toArray(new URI[rdfTypes.size()]);
+    }
+
+    @OslcDescription("The scope of a resource is a URI for the resource's OSLC Service Provider.")
+    @OslcPropertyDefinition(OslcConstants.OSLC_CORE_NAMESPACE + "serviceProvider")
+    @OslcTitle("Service Provider")
+    public URI getServiceProvider()
+    {
+        return serviceProvider;
+    }
+
+    @OslcDescription("Used to indicate the desired state of the Automation Request based on values defined by the service provider.")
+    @OslcPropertyDefinition(AutomationConstants.AUTOMATION_NAMESPACE + "desiredState")
+    @OslcName("desiredState")
+    @OslcOccurs(Occurs.ZeroOrOne)
+    @OslcTitle("Desired State")
+    @OslcAllowedValue({
+    	AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_NEW,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_IN_PROGRESS,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_QUEUED,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_CANCELING,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_CANCELED,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_COMPLETE})
+    public URI getDesiredState()
+    {
+        return desiredState;
+    }
+    
+    @OslcDescription("Automation Plan run by the Automation Request.")
+    @OslcPropertyDefinition(AutomationConstants.AUTOMATION_NAMESPACE + "executesAutomationPlan")
+    @OslcName("executesAutomationPlan")
+    @OslcOccurs(Occurs.ExactlyOne)
+    @OslcTitle("Executes Automation Plan")
     public Link getExecutesAutomationPlan()
     {
         return executesAutomationPlan;
     }
     
-    @OslcAllowedValue({Constants.AUTOMATION_NAMESPACE + "new",
-		Constants.AUTOMATION_NAMESPACE + "inProgress",
-		Constants.AUTOMATION_NAMESPACE + "queued",
-		Constants.AUTOMATION_NAMESPACE + "canceling",
-		Constants.AUTOMATION_NAMESPACE + "canceled",
-		Constants.AUTOMATION_NAMESPACE + "complete"})
-    @OslcDescription("Used to indicate the desired state of the Automation Request based on values defined by the service provider.")
-    @OslcName("desiredState")
-    @OslcPropertyDefinition(Constants.AUTOMATION_NAMESPACE+ "desiredState")
+    @OslcDescription("Tag or keyword for a resource. Each occurrence of a dcterms:subject property denotes an additional tag for the resource.")
+    @OslcName("subject")
+    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "subject")
     @OslcReadOnly(false)
-    @OslcValueType(ValueType.Resource)
-    @OslcOccurs(Occurs.ZeroOrOne)
-    @OslcTitle("Desired State")
-    public URI getDesiredState()
+    @OslcTitle("Subjects")
+    public String[] getSubjects()
     {
-    	try {
-           return new URI(desiredState.toString());
-    	} catch (final URISyntaxException exception) {
-            // This should never happen since we control the possible values of the ValueType enum.
-            throw new RuntimeException(exception);
-        }
+        return subjects.toArray(new String[subjects.size()]);
     }
-    
-    public void setStates(final URI[] states)
-    {
-        this.states.clear();
 
-        for (URI state : states) {
-        	if (state != null)
-        	{
-        		this.states.add(State.fromURI(state));
-        	}
-        }
+    @OslcDescription("Title (reference: Dublin Core) or often a single line summary of the resource represented as rich text in XHTML content.")
+    @OslcOccurs(Occurs.ExactlyOne)
+    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "title")
+    @OslcTitle("Title")
+    @OslcValueType(ValueType.XMLLiteral)
+    public String getTitle()
+    {
+        return title;
     }
     
-    public void setInputParameters(final ParameterInstance[] inputParameters) {
-    	this.inputParameters.clear();
-    	if (inputParameters != null) {
-    		this.inputParameters.addAll(Arrays.asList(inputParameters));
-    	}
+    @OslcDescription("Used to indicate the state of the automation request based on values defined by the service provider.")
+    @OslcOccurs(Occurs.OneOrMany)
+    @OslcReadOnly(true)
+    @OslcName("state")
+    @OslcPropertyDefinition(AutomationConstants.AUTOMATION_NAMESPACE + "state")
+    @OslcTitle("States")
+    @OslcAllowedValue({
+    	AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_NEW,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_IN_PROGRESS,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_QUEUED,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_CANCELING,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_CANCELED,
+		AutomationConstants.AUTOMATION_NAMESPACE + AutomationConstants.STATE_COMPLETE})
+    public URI[] getStates()
+    {
+        return states.toArray(new URI[states.size()]);
+    }
+
+    
+    @OslcDescription("Parameters provided when Automation Requests are created.")
+    @OslcOccurs(Occurs.ZeroOrMany)
+    @OslcName("inputParameter")
+    @OslcPropertyDefinition(AutomationConstants.AUTOMATION_NAMESPACE + "inputParameter")
+    @OslcReadOnly(false)
+    @OslcValueType(ValueType.LocalResource)
+    @OslcTitle("Input Parameter")
+    public ParameterInstance[] getInputParameters()
+    {
+        return inputParameters.toArray(new ParameterInstance[inputParameters.size()]);
+    }
+
+    public void setContributors(final URI[] contributors)
+    {
+        this.contributors.clear();
+
+        if (contributors != null)
+        {
+            this.contributors.addAll(Arrays.asList(contributors));
+        }
+    }
+
+    public void setCreated(final Date created)
+    {
+        this.created = created;
+    }
+
+    public void setCreators(final URI[] creators)
+    {
+        this.creators.clear();
+
+        if (creators != null)
+        {
+            this.creators.addAll(Arrays.asList(creators));
+        }
+    }
+
+    public void setDescription(final String description)
+    {
+        this.description = description;
+    }
+
+    public void setIdentifier(final String identifier)
+    {
+        this.identifier = identifier;
+    }
+    
+    public void setInstanceShape(final URI instanceShape)
+    {
+        this.instanceShape = instanceShape;
+    }
+
+    public void setModified(final Date modified)
+    {
+        this.modified = modified;
+    }
+
+    public void setRdfTypes(final URI[] rdfTypes)
+    {
+        this.rdfTypes.clear();
+
+        if (rdfTypes != null)
+        {
+            this.rdfTypes.addAll(Arrays.asList(rdfTypes));
+        }
+    }
+
+    public void setServiceProvider(final URI serviceProvider)
+    {
+        this.serviceProvider = serviceProvider;
+    }
+
+    public void setDesiredState(final URI desiredState)
+    {
+        this.desiredState = desiredState;
     }
 
     public void setExecutesAutomationPlan(final Link executesAutomationPlan)
     {
         this.executesAutomationPlan = executesAutomationPlan;
-
     }
     
-    public void setDescription(final String description)
+    public void setSubjects(final String[] subjects)
     {
-        this.description = description;
+        this.subjects.clear();
+
+        if (subjects != null)
+        {
+            this.subjects.addAll(Arrays.asList(subjects));
+        }
+    }
+
+    public void setTitle(final String title)
+    {
+        this.title = title;
+    }
+
+    public void setStates(final URI[] states)
+    {
+        this.states.clear();
+
+        if (states != null)
+        {
+            this.states.addAll(Arrays.asList(states));
+        }
     }
     
-    public void setDesiredState(final URI desiredState)
+    public void setInputParameters(final ParameterInstance[] parameters)
     {
-        this.desiredState = State.fromURI(desiredState);
+        this.inputParameters.clear();
 
+        if (parameters != null)
+        {
+            this.inputParameters.addAll(Arrays.asList(parameters));
+        }
     }
 
 }

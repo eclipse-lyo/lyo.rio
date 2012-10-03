@@ -20,10 +20,10 @@ import java.net.URISyntaxException;
 import org.eclipse.lyo.oslc4j.automation.AutomationResource;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 
-public abstract class TestQualityManagement<T extends AutomationResource>
+public abstract class TestAutomation<T extends AutomationResource>
        extends TestBase<T>
 {
-    public TestQualityManagement(Class<T> resourceType)
+    public TestAutomation(Class<T> resourceType)
     {
         super(resourceType);
     }
@@ -39,7 +39,7 @@ public abstract class TestQualityManagement<T extends AutomationResource>
     public void testCreate()
            throws URISyntaxException
     {
-        testCreate(OslcMediaType.APPLICATION_JSON);
+        //testCreate(OslcMediaType.APPLICATION_JSON);
         testCreate(OslcMediaType.APPLICATION_RDF_XML);
         testCreate(OslcMediaType.APPLICATION_XML);
     }

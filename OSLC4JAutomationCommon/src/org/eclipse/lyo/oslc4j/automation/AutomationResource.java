@@ -86,7 +86,7 @@ public abstract class AutomationResource
     @OslcDescription("The person(s) who are responsible for the work needed to complete the test case.")
     @OslcName("contributor")
     @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "contributor")
-    @OslcRange(Constants.TYPE_PERSON)
+    @OslcRange(AutomationConstants.TYPE_PERSON)
     @OslcTitle("Contributors")
     public URI[] getContributors()
     {
@@ -96,7 +96,7 @@ public abstract class AutomationResource
     @OslcDescription("Creator or creators of resource.")
     @OslcName("creator")
     @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "creator")
-    @OslcRange(Constants.TYPE_PERSON)
+    @OslcRange(AutomationConstants.TYPE_PERSON)
     @OslcTitle("Creators")
     public URI[] getCreators()
     {

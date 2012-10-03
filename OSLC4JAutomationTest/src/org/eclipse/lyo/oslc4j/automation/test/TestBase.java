@@ -11,7 +11,7 @@
  *
  * Contributors:
  *
- *     Paul McMahan         - initial API and implementation
+ *     Michael Fiedler         - initial API and implementation
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation.test;
 
@@ -27,7 +27,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.wink.client.ClientResponse;
-import org.eclipse.lyo.oslc4j.automation.Constants;
+import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.AutomationResource;
 import org.eclipse.lyo.oslc4j.client.OslcRestClient;
 import org.eclipse.lyo.oslc4j.client.ServiceProviderRegistryClient;
@@ -51,12 +51,13 @@ public abstract class TestBase<T extends AutomationResource>
         PROVIDERS.addAll(Json4JProvidersRegistry.getProviders());
     }
 
-    private static URI CREATED_QM_RESOURCE_URI;
+    private static URI CREATED_AUTO_RESOURCE_URI;
 
     private final Class<T> resourceType;
     private final Class<T[]> resourceArrayType;
     
-    protected TestBase(Class<T> resourceType)
+    @SuppressWarnings("unchecked")
+	protected TestBase(Class<T> resourceType)
     {
         super();
         this.resourceType = resourceType;
@@ -79,7 +80,7 @@ public abstract class TestBase<T extends AutomationResource>
 
             for (final Service service : services)
             {
-                if (Constants.QUALITY_MANAGEMENT_DOMAIN.equals(String.valueOf(service.getDomain())))
+                if (AutomationConstants.AUTOMATION_DOMAIN.equals(String.valueOf(service.getDomain())))
                 {
                     final CreationFactory[] creationFactories = service.getCreationFactories();
 
@@ -115,7 +116,7 @@ public abstract class TestBase<T extends AutomationResource>
 
             for (final Service service : services)
             {
-                if (Constants.QUALITY_MANAGEMENT_DOMAIN.equals(String.valueOf(service.getDomain())))
+                if (AutomationConstants.AUTOMATION_DOMAIN.equals(String.valueOf(service.getDomain())))
                 {
                     final QueryCapability[] queryCapabilities = service.getQueryCapabilities();
 
@@ -151,7 +152,7 @@ public abstract class TestBase<T extends AutomationResource>
 
             for (final Service service : services)
             {
-                if (Constants.QUALITY_MANAGEMENT_DOMAIN.equals(String.valueOf(service.getDomain())))
+                if (AutomationConstants.AUTOMATION_DOMAIN.equals(String.valueOf(service.getDomain())))
                 {
                     final QueryCapability[] queryCapabilities = service.getQueryCapabilities();
 
@@ -305,10 +306,10 @@ public abstract class TestBase<T extends AutomationResource>
                                final String normalMediaType)
               throws URISyntaxException
     {
-        assertNotNull(CREATED_QM_RESOURCE_URI);
+        assertNotNull(CREATED_AUTO_RESOURCE_URI);
 
         final OslcRestClient oslcRestClient = new OslcRestClient(PROVIDERS,
-                                                                 CREATED_QM_RESOURCE_URI,
+                                                                 CREATED_AUTO_RESOURCE_URI,
                                                                  compactMediaType);
 
         final Compact compact = oslcRestClient.getOslcResource(Compact.class);
@@ -320,7 +321,7 @@ public abstract class TestBase<T extends AutomationResource>
     protected void testCreate(final String mediaType)
               throws URISyntaxException
     {
-        CREATED_QM_RESOURCE_URI = null;
+        CREATED_AUTO_RESOURCE_URI = null;
 
         final AutomationResource qmResource = getResource();
 
@@ -339,15 +340,15 @@ public abstract class TestBase<T extends AutomationResource>
         		addedResource,
                             true);
 
-        CREATED_QM_RESOURCE_URI = addedResource.getAbout();
+        CREATED_AUTO_RESOURCE_URI = addedResource.getAbout();
     }
 
     protected void testDelete(final String mediaType)
     {
-        assertNotNull(CREATED_QM_RESOURCE_URI);
+        assertNotNull(CREATED_AUTO_RESOURCE_URI);
 
         final OslcRestClient oslcRestClient = new OslcRestClient(PROVIDERS,
-                                                                 CREATED_QM_RESOURCE_URI,
+                                                                 CREATED_AUTO_RESOURCE_URI,
                                                                  mediaType);
 
         final ClientResponse clientResponse = oslcRestClient.removeOslcResourceReturnClientResponse();
@@ -357,16 +358,16 @@ public abstract class TestBase<T extends AutomationResource>
 
         assertNull(oslcRestClient.getOslcResource(resourceType));
 
-        CREATED_QM_RESOURCE_URI = null;
+        CREATED_AUTO_RESOURCE_URI = null;
     }
 
     protected void testRetrieve(final String mediaType)
               throws URISyntaxException
     {
-        assertNotNull(CREATED_QM_RESOURCE_URI);
+        assertNotNull(CREATED_AUTO_RESOURCE_URI);
 
         final OslcRestClient oslcRestClient = new OslcRestClient(PROVIDERS,
-                                                                 CREATED_QM_RESOURCE_URI,
+                                                                 CREATED_AUTO_RESOURCE_URI,
                                                                  mediaType);
 
         final AutomationResource qmResource = oslcRestClient.getOslcResource(resourceType);
@@ -379,7 +380,7 @@ public abstract class TestBase<T extends AutomationResource>
     protected void testRetrieves(final String mediaType)
               throws URISyntaxException
     {
-        assertNotNull(CREATED_QM_RESOURCE_URI);
+        assertNotNull(CREATED_AUTO_RESOURCE_URI);
 
         final String queryBase = getQueryBase(mediaType,
                                               getResourceType());
@@ -404,7 +405,7 @@ public abstract class TestBase<T extends AutomationResource>
                                 qmResource,
                                 true);
 
-            if (CREATED_QM_RESOURCE_URI.equals(qmResource.getAbout()))
+            if (CREATED_AUTO_RESOURCE_URI.equals(qmResource.getAbout()))
             {
                 found = true;
             }
@@ -416,10 +417,10 @@ public abstract class TestBase<T extends AutomationResource>
     protected void testUpdate(final String mediaType)
               throws URISyntaxException
     {
-        assertNotNull(CREATED_QM_RESOURCE_URI);
+        assertNotNull(CREATED_AUTO_RESOURCE_URI);
 
         final OslcRestClient oslcRestClient = new OslcRestClient(PROVIDERS,
-                                                                 CREATED_QM_RESOURCE_URI,
+                                                                 CREATED_AUTO_RESOURCE_URI,
                                                                  mediaType);
 
         final AutomationResource qmResource = oslcRestClient.getOslcResource(resourceType);

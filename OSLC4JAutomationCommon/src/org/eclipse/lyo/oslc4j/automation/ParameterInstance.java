@@ -11,7 +11,7 @@
  *
  * Contributors:
  *
- *     Michael Fiedler         - initial API and implementation
+ *     Paul McMahan <pmcmahan@us.ibm.com>        - initial implementation
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation;
 
@@ -34,10 +34,13 @@ import org.eclipse.lyo.oslc4j.core.model.Occurs;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.ValueType;
 
-@OslcResourceShape(title = "Automation Resource Shape", describes = Constants.TYPE_AUTO_PARM_INSTANCE)
-@OslcNamespace(Constants.AUTOMATION_NAMESPACE)
-public abstract class ParameterInstance
-       extends AbstractResource
+@OslcResourceShape(title = "Parameter Instance Resource Shape", describes = AutomationConstants.TYPE_PARAMETER_INSTANCE)
+@OslcNamespace(AutomationConstants.AUTOMATION_NAMESPACE)
+/**
+ * @see http://open-services.net/wiki/automation/OSLC-Automation-Specification-Version-2.0/#Resource_ParameterInstance
+ */
+public final class ParameterInstance
+extends AbstractResource implements Comparable<ParameterInstance>
 {
     private final Set<URI>      rdfTypes                    = new TreeSet<URI>();
     
@@ -47,54 +50,29 @@ public abstract class ParameterInstance
     private URI      instanceShape;
     private URI      serviceProvider;
 
-    
-
-    public ParameterInstance()
-     {
-         super();
-
-         rdfTypes.add(getRdfType());
-     }
-
-     public ParameterInstance(final URI about)
-     {
+	public ParameterInstance()
+	{
+		super();
+		
+		rdfTypes.add(URI.create(AutomationConstants.TYPE_PARAMETER_INSTANCE));
+	}
+	
+    public ParameterInstance(final URI about)
+    {
          super(about);
 
-         rdfTypes.add(getRdfType());
-     }
-     
-     protected URI getRdfType() {
-     	return URI.create(Constants.TYPE_AUTO_PARM_INSTANCE);
+		rdfTypes.add(URI.create(AutomationConstants.TYPE_PARAMETER_INSTANCE));
      }
 
+    protected URI getRdfType() {
+    	return URI.create(AutomationConstants.TYPE_PARAMETER_INSTANCE);
+    }
+    
     public void addRdfType(final URI rdfType)
     {
         this.rdfTypes.add(rdfType);
     }
- 
-    
-    @OslcDescription("The name of the parameter instance.")
-    @OslcName("name")
-    @OslcPropertyDefinition(OslcConstants.OSLC_CORE_NAMESPACE + "name")
-    @OslcValueType(ValueType.String)
-    @OslcTitle("Name")
-    @OslcOccurs(Occurs.ExactlyOne)
-    public String getName()
-    {
-        return name;
-    }
 
-    @OslcDescription("The value of the parameter. rdf:datatype SHOULD be used to indicate the type of the parameter instance value.")
-    @OslcName("value")
-    @OslcPropertyDefinition(OslcConstants.RDF_NAMESPACE + "value")
-    @OslcOccurs(Occurs.ZeroOrOne)
-    @OslcValueType(ValueType.String)
-    @OslcTitle("Value")
-    public String getValue()
-    {
-        return value;
-    }
-    
     @OslcDescription("Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content.")
     @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "description")
     @OslcTitle("Description")
@@ -104,6 +82,24 @@ public abstract class ParameterInstance
         return description;
     }
 
+    @OslcDescription("The name of the parameter instance.")
+    @OslcOccurs(Occurs.ExactlyOne)
+    @OslcPropertyDefinition(OslcConstants.OSLC_CORE_NAMESPACE + "name")
+    @OslcTitle("Name")
+    public String getName()
+    {
+        return name;
+    }
+
+    @OslcDescription("The value of the parameter.")
+    @OslcOccurs(Occurs.ZeroOrOne)
+    @OslcPropertyDefinition(OslcConstants.RDF_NAMESPACE + "value")
+    @OslcTitle("Value")
+    public String getValue()
+    {
+        return value;
+    }
+    
     @OslcDescription("Resource Shape that provides hints as to resource property value-types and allowed values. ")
     @OslcPropertyDefinition(OslcConstants.OSLC_CORE_NAMESPACE + "instanceShape")
     @OslcRange(OslcConstants.TYPE_RESOURCE_SHAPE)
@@ -131,21 +127,19 @@ public abstract class ParameterInstance
         return serviceProvider;
     }
 
-
+    public void setDescription(final String description)
+    {
+        this.description = description;
+    }
 
     public void setName(final String name)
     {
         this.name = name;
     }
-
+    
     public void setValue(final String value)
     {
         this.value = value;
-    }
-    
-    public void setDescription(final String description)
-    {
-        this.description = description;
     }
     
     public void setInstanceShape(final URI instanceShape)
@@ -167,5 +161,9 @@ public abstract class ParameterInstance
     {
         this.serviceProvider = serviceProvider;
     }
-    
+
+	public int compareTo(ParameterInstance o) {
+		return o.getName().compareTo(name);
+	}
+
 }
