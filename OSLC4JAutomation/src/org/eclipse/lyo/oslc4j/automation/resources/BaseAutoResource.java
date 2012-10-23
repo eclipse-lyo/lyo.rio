@@ -18,20 +18,26 @@ package org.eclipse.lyo.oslc4j.automation.resources;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.lyo.oslc4j.automation.AutomationPlan;
 import org.eclipse.lyo.oslc4j.automation.Persistence;
 import org.eclipse.lyo.oslc4j.automation.AutomationResource;
 import org.eclipse.lyo.oslc4j.automation.servlet.ServiceProviderSingleton;
@@ -111,6 +117,51 @@ public class BaseAutoResource<T extends AutomationResource>
         }
 
         throw new WebApplicationException(Status.NOT_FOUND);
+    }
+    
+    @GET
+    @Path("selector")
+    @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
+    
+    public void autoPlanSelector(@Context                 final HttpServletRequest httpServletRequest,
+    		                     @Context                 final HttpServletResponse httpServletResponse,
+    		                     @Context                 final UriInfo uriInfo,
+    		                     @QueryParam("searchFor") final String searchFor)
+    {
+    	httpServletRequest.setAttribute("selectionUri",uriInfo.getAbsolutePath().toString());
+    	if (searchFor == null)
+    	{
+    		try {	
+                RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/automation/autoresource_selector.jsp"); 
+	    		rd.forward(httpServletRequest, httpServletResponse);
+				
+			} catch (Exception e) {
+				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+			}
+    	} else
+    	{
+    		List<AutomationResource> matchingResources = new ArrayList<AutomationResource>();
+    		
+    		for (AutomationResource thisResource:Persistence.getAutoResources())
+    		{
+    			String title = thisResource.getTitle();
+    			if (title != null)
+    			{
+    				if (title.toUpperCase().matches(searchFor.toUpperCase()))
+    				{
+    					matchingResources.add(thisResource);
+    				}
+    			}
+    		}
+    		try {
+    			httpServletRequest.setAttribute("results", matchingResources);
+    			RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/automation/autoresource_filtered.jsp"); 
+    			rd.forward(httpServletRequest, httpServletResponse);
+    		} catch (Exception e) {
+				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+			}
+    		
+    	}
     }
 
     public Response addResource(final HttpServletRequest  httpServletRequest,
