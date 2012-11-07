@@ -32,6 +32,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+
 import org.eclipse.lyo.oslc4j.automation.AutomationPlan;
 import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
@@ -60,7 +61,7 @@ public class AutomationPlanResource extends BaseAutoResource<AutomationPlan> {
         (
              title = "Automation Plan Selection Dialog",
              label = "Automation Plan Selection Dialog",
-             uri = "",
+             uri = "selector",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {AutomationConstants.TYPE_AUTOMATION_PLAN},
@@ -100,6 +101,8 @@ public class AutomationPlanResource extends BaseAutoResource<AutomationPlan> {
     {
     	return super.getResource(httpServletResponse, resourceId);
     }
+    
+
     
     @OslcCreationFactory
     (
