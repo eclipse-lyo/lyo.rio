@@ -4,7 +4,7 @@
   <artifactId>oslc4j-auto-common</artifactId>
   <version>0.1.2-SNAPSHOT</version>
   <build>
-    <sourceDirectory>${basedir}/src/</sourceDirectory>
+    
   	<plugins>
   		<plugin>
   			<groupId>org.apache.maven.plugins</groupId>

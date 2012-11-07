@@ -38,12 +38,20 @@
   	</dependency>
   </dependencies>
   <build>
-    <sourceDirectory>${basedir}/src/</sourceDirectory>
-    <testResources>
-      <testResource>
-        <directory>test/resources</directory>
-      </testResource>
-    </testResources>
+  
+  	<resources>
+		<resource>
+			<directory>src/main/resources</directory>
+			<filtering>true</filtering>
+		</resource>
+	</resources>
+
+	<testResources>
+		<testResource>
+			<directory>src/test/resources</directory>
+			<filtering>true</filtering>
+		</testResource>
+	</testResources>
     
   	<plugins>
   		<plugin>
@@ -60,11 +68,11 @@
   			<artifactId>maven-war-plugin</artifactId>
   			<version>2.1.1</version>
   			<configuration>
-  			    <warSourceDirectory>WebContent</warSourceDirectory>
-    			<webXml>WebContent\WEB-INF\web.xml</webXml> 
+  			    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+    			<webXml>src/main/webapp/WEB-INF/web.xml</webXml> 
     			<webResources>
             		<resource>
-              			<directory>src</directory>
+              			<directory>src/main/resources</directory>
               			<include>log4j.properties</include>
               			<targetPath>WEB-INF/classes</targetPath>
             		</resource>
@@ -99,22 +107,21 @@
 						<contextPath>/OSLC4JRegistry</contextPath>
 					</contextHandler>
 				</contextHandlers>
-
+				
 				<!-- Jetty config adds logging -->
 				<jettyConfig>${project.build.directory}/test-classes/jetty.xml</jettyConfig>
 
 				<!-- enable hot deploy -->
 				<reload>automatic</reload>
 				<scanIntervalSeconds>5</scanIntervalSeconds>
-				<scanTargets>
-					<scanTarget>WebContent</scanTarget>
-				</scanTargets>
+				
+
 					
     			<systemProperties>
 
 					<systemProperty>
 						<name>config.dir</name>
-						<value>${basedir}/test/resources</value>
+						<value>${basedir}/src/test/resources</value>
 					</systemProperty>
 
 					<systemProperty>
