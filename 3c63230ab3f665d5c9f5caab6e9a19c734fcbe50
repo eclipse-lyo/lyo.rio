@@ -1,0 +1,9 @@
+Change-Id: I3c63230ab3f665d5c9f5caab6e9a19c734fcbe50
+Code-Review+2: Michael Fiedler <fiedler.mf@gmail.com>
+IP-Clean+1: Michael Fiedler <fiedler.mf@gmail.com>
+Verified+1: Michael Fiedler <fiedler.mf@gmail.com>
+Submitted-by: Michael Fiedler <fiedler.mf@gmail.com>
+Submitted-at: Wed, 07 Nov 2012 13:56:01 -0500
+Reviewed-on: https://git.eclipse.org/r/8583
+Project: lyo/org.eclipse.lyo.rio
+Branch: refs/heads/master
