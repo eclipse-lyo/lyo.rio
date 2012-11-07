@@ -18,14 +18,18 @@ package org.eclipse.lyo.oslc4j.automation.resources;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -38,8 +42,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.namespace.QName;
 
@@ -47,9 +55,12 @@ import org.apache.wink.client.ClientResponse;
 import org.eclipse.lyo.oslc4j.automation.AutomationContribution;
 import org.eclipse.lyo.oslc4j.automation.AutomationPlan;
 import org.eclipse.lyo.oslc4j.automation.AutomationRequest;
+import org.eclipse.lyo.oslc4j.automation.AutomationResource;
 import org.eclipse.lyo.oslc4j.automation.AutomationResult;
 import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.ParameterInstance;
+import org.eclipse.lyo.oslc4j.automation.Persistence;
+import org.eclipse.lyo.oslc4j.automation.servlet.ServiceProviderSingleton;
 import org.eclipse.lyo.oslc4j.client.OslcRestClient;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcDialog;
@@ -59,6 +70,7 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
+import org.eclipse.lyo.oslc4j.core.model.Property;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaProvidersRegistry;
 
 @OslcService(AutomationConstants.AUTOMATION_DOMAIN)
@@ -126,6 +138,145 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
     	return super.getResource(httpServletResponse, resourceId);
     }
     
+    @GET
+    @Path("creator")
+    @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
+    
+    public void autoRequestCreator(@Context                 final HttpServletRequest httpServletRequest,
+    		                       @Context                 final HttpServletResponse httpServletResponse,
+    		                       @Context                 final UriInfo uriInfo,
+    		                       @QueryParam("autoPlan")  final String autoPlan)
+    {
+    	httpServletRequest.setAttribute("creatorUri",uriInfo.getAbsolutePath().toString());
+
+    	if (autoPlan == null)
+    	{
+	    	Map<String,String> autoPlanIDs = new HashMap<String,String>();
+	    		
+	    	for (AutomationResource thisResource:Persistence.getAutoResources())
+	    	{
+	    		if (thisResource.getClass().equals(AutomationPlan.class))
+	    		{
+	    			autoPlanIDs.put(thisResource.getIdentifier(), thisResource.getTitle());
+	    		}
+	    	}
+	    	try {
+				httpServletRequest.setAttribute("autoPlans", autoPlanIDs);
+				RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/autorequest_creator.jsp"); 
+				rd.forward(httpServletRequest, httpServletResponse);
+			} catch (Exception e) {
+				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+			}
+    	} else {
+    		AutomationPlan selectedPlan = Persistence.getAutoResource(autoPlan, AutomationPlan.class);
+    		if (selectedPlan != null)
+    		{
+    			Map<String,String> params = new HashMap<String,String>();
+    			for (Property paramDefinition : selectedPlan.getParameterDefinitions())
+    			{
+    				String defaultValue = paramDefinition.getDefaultValue();
+    				if (defaultValue == null)
+    					defaultValue="";
+    				params.put(paramDefinition.getName(), defaultValue);
+    				
+    			}
+    			try {
+    				httpServletRequest.setAttribute("params", params);
+    				RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/autorequest_params_json.jsp"); 
+    				rd.forward(httpServletRequest, httpServletResponse);
+    			} catch (Exception e) {
+    				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+    			}
+    		}
+    	}
+    }
+    
+    @POST
+    @Path("creator")
+    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response createHtmlAutoRequest (@Context final HttpServletRequest  httpServletRequest,
+                                           @Context final HttpServletResponse httpServletResponse,
+                                           MultivaluedMap<String, String>     formParams) 
+    {
+    	Response response;
+    	String planId = formParams.getFirst("planId");
+    	if ((planId != null) && !planId.isEmpty())
+    	{
+    		AutomationPlan autoPlan = Persistence.getAutoResource(planId, AutomationPlan.class);
+    		if (autoPlan != null)
+    		{
+    			AutomationRequest newRequest = new AutomationRequest();
+    			newRequest.setTitle("Execution request for: " + autoPlan.getTitle());
+    			newRequest.setExecutesAutomationPlan(new Link(autoPlan.getAbout()));
+    			
+    			//Add all other formParams (other than planId) as parameter instances
+    			
+    			for (String paramName : formParams.keySet()) 
+    			{
+    				if (!paramName.equalsIgnoreCase("planId") && ! paramName.isEmpty())
+    				{
+    					ParameterInstance paramInstance = new ParameterInstance();
+    					try {
+							paramInstance.setName(URLDecoder.decode(paramName,"utf-8"));
+						} catch (UnsupportedEncodingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    					//assuming no duplicates for now
+    					paramInstance.setValue(formParams.getFirst(paramName)); 
+    					newRequest.addInputParameter(paramInstance);
+    				}
+    			}
+    			
+    			final URI creationFactory = AutomationUtils.getCreation(PROVIDERS, 
+						                                                ServiceProviderSingleton.getServiceProviderURI(),
+						                                                URI.create(AutomationConstants.AUTOMATION_DOMAIN),
+						                                                URI.create(AutomationConstants.TYPE_AUTOMATION_REQUEST));
+    			OslcRestClient client = new OslcRestClient(PROVIDERS, creationFactory, "application/rdf+xml");
+    			
+    			
+    			AutomationRequest createdResource = client.addOslcResource(newRequest);
+    			try
+    			{
+	    			if (createdResource != null)
+	    			{
+	    				
+	    				httpServletResponse.setContentType("application/json");
+	    	    		httpServletResponse.setStatus(Status.CREATED.getStatusCode());
+	    	    		httpServletResponse.addHeader("Location", createdResource.getAbout().toString());
+	    	    		
+	    	    		response = Response.created(createdResource.getAbout()).entity(createdResource).build();
+	    	    	
+	    	    		
+	    			} else {
+	    				final org.eclipse.lyo.oslc4j.core.model.Error error = new org.eclipse.lyo.oslc4j.core.model.Error();
+	    				error.setStatusCode(Status.INTERNAL_SERVER_ERROR.toString());
+	    				error.setMessage("Error creating automation request");
+	    				response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
+	    			}
+	    			
+    			} catch (Exception e)
+    			{
+    				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+    			}
+    		} else {
+    			final org.eclipse.lyo.oslc4j.core.model.Error error = new org.eclipse.lyo.oslc4j.core.model.Error();
+				error.setStatusCode(Status.NOT_FOUND.toString());
+				error.setMessage("Requested AutomationPlan not found");
+				response = Response.status(Status.NOT_FOUND).entity(error).build();
+    		}
+    	} else {
+    		final org.eclipse.lyo.oslc4j.core.model.Error error = new org.eclipse.lyo.oslc4j.core.model.Error();
+			error.setStatusCode(Status.INTERNAL_SERVER_ERROR.toString());
+			error.setMessage("planId parameter missing or invalid");
+			response = Response.status(Status.BAD_REQUEST).entity(error).build();
+    	}
+    	return response;
+    	
+    }
+    								
+    
     @OslcCreationFactory
     (
          title = "Automation Request Creation Factory",
@@ -169,7 +320,7 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
 		    	    	final AutomationResult updatedResult = executeCommand(resource,autoResult);
 		    	    	if (updatedResult != null)
 		    	    	{
-		    	    		return Response.ok(updatedResult).build();
+		    	    		return Response.created(resource.getAbout()).entity(resource).build();
 		    	    	}
 		    	    	else
 		    	    	{

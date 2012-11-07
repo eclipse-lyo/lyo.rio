@@ -28,7 +28,7 @@
 <html>
 <head>
 
-<script type="text/javascript" src="../../autoDialogs.js"></script>
+<script type="text/javascript" src="../../web/autoDialogs.js"></script>
 
 <style type="text/css">
 body {	
@@ -38,7 +38,7 @@ body {
 h2 {
    padding: 15px 0 0 5px;
    float: left;
-   margin-top: 50px;
+   margin-top: 20px;
    margin-left: 25px;
    margin-bottom: 25px;
    }
@@ -57,7 +57,7 @@ img {
 }
 
 #thebody {	
-	width: 500px;
+	width: 550px;
 	margin: 0 auto;
 	background-color: #FAFAD2;
 	border: 5px solid #191970;
@@ -69,7 +69,7 @@ img {
 
 td {
 	width:100px;
-	height:55px;
+	height:20px;
 	text-align:center;
 } 
 </style>
@@ -78,35 +78,37 @@ td {
 <body style="padding: 50px;">
 	<div id="thebody">
 		
-    	<img src="http://oslc-tools.sourceforge.net/images/OSLC_FullCol_Title.png" alt="Logo" width="71" height="80" align= "left"/>
+    	<img src="http://open-services.net/css/images/logo-forflip.png" alt="Logo" width="71" height="80" align= "left"/>
     	<h2> <font face="verdana">Automation Request Creation Dialog </font></h2>
 
  
     <form id="Create" method="POST" >
 			
 			
-		<table style="clear: both;">
+		<table style="clear: both;" id="inputTable">
 			
 				<tr>
-					<th class="field_label required">Title:</th>
-					<td><input name="title" class="required text_input"
-						type="text" style="width: 400px; border-radius: 5px;" id="title" required autofocus></td>
+					<th class="field_label">Automation Plan:</th>
+					<td><select id="plan">
+							<%
+								for (String id : autoPlans.keySet()) {
+									String title = autoPlans.get(id);
+							%>
+							<option value="<%=id%>"><%=id%>: <%=title%></option>
+							<%
+								}
+							%>
+					</select></td>
+					<td>
+						<button style="float: left; margin-left: 10px; margin-bottom: 5px;" type="button"
+				             onclick="requestParams( '<%= creatorUri %>' )">Get Params</button>
+				    </td>
 				</tr>
-			
-	
 				<tr>
-					<th class="field_label required">Status:</th>
-					<td><input name="status" class="required text_input"
-						type="text" style="width: 400px; border-radius: 5px" id="status" required autofocus></td>
-				</tr>
-		
-		
-				<tr>
-					<th class="field_label">Description:</th>
-					<td><textarea style="width: 400px; height: 150px; border-radius: 7px"
-							id="description" name="description"></textarea></td>
-				</tr>
-						
+					<td>
+						<div style="float: left; margin-left: 15px;" id="paramInput"><p><b>Parameters:</b></p></div>		
+					</td>
+				</tr>			
 				<tr>
 					<td></td>
 					<td>
@@ -118,7 +120,8 @@ td {
 			</table>
 
 			<div style="width: 500px;">				
-			</div>			
+			</div>		
+			
 		</form>
 
 		<div style="clear: both;"></div>

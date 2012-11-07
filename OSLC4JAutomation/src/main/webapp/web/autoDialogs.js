@@ -13,6 +13,8 @@
  *  
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+var numParams = 0;
+
 function search(baseUrl){
 	var ie = window.navigator.userAgent.indexOf("MSIE");
 	list = document.getElementById("results");
@@ -47,6 +49,43 @@ function search(baseUrl){
 	xmlhttp.send();
 }
 
+
+function requestParams(baseUrl){
+	var ie = window.navigator.userAgent.indexOf("MSIE");
+    table = document.getElementById("inputTable");
+    
+    //Clear any old parameter rows from the table
+    if (table.rows.length > 3)
+    {
+       var index = 2;
+       while (index < (table.rows.length-1)) {
+       	  table.deleteRow(index++);
+       }
+    }
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			// populate results
+			txt = xmlhttp.responseText;
+			resp = eval('(' + txt + ')');
+			numParams = resp.results.length;
+			var row = 2;
+			for( var i=0; i<numParams; i=i+1 ) {
+ 				var newRow = table.insertRow(row++);
+ 				var nameCell = newRow.insertCell(0);
+ 				nameCell.innerHTML = '<div style="margin-left: 25px;"><p>' + resp.results[i].name + ':  </p></div>';
+ 				var valueCell = newRow.insertCell(1);
+ 				valueCell.innerHTML = '<input type="text" size="35" name="' + resp.results[i].name + '" id=param' + i + ' value="' +   resp.results[i].value + '">';
+			}
+
+		}
+	};
+	planId = document.getElementById("plan").value;
+	xmlhttp.open("GET", baseUrl + "?autoPlan=" + encodeURIComponent(planId), true);	
+
+	xmlhttp.send();
+}
+
 function create(baseUrl){
 	var form = document.getElementById("Create");
 	xmlhttp = new XMLHttpRequest();
@@ -55,20 +94,30 @@ function create(baseUrl){
 			txt = xmlhttp.responseText;
 			resp = eval('(' + txt + ')');
 			// Send response to listener
-			sendResponse(resp.title, resp.resource);
+			sendResponse(resp["dcterms:title"], resp["rdf:about"]);
 		}
 	};
+	
  	var postData=""; 
+ 	var planId = document.getElementById("plan").value;
  	
- 	if (form.title) {
- 		postData += "&title="+encodeURIComponent(form.title.value);
+ 	if (planId) {
+ 	   postData += "&planId=" + encodeURIComponent(planId);
  	}
- 	if (form.status) {
- 		postData += "&status="+encodeURIComponent(form.status.value);
+ 	
+ 	if (numParams > 0) {
+ 	 	
+	 	for (var i=0; i < numParams; i++) {
+	 		var thisParam = document.getElementById('param'+i);
+	 		var thisParamName = thisParam.name;
+	 		var thisParamValue = encodeURIComponent(thisParam.value);
+	 		if (thisParamValue) {
+	 		   postData += "&" + thisParamName + "=" + thisParamValue;	 		   
+	 	    }	 		
+	 	}
+	 	
  	}
-	if (form.description) {
-		postData += "&description="+encodeURIComponent(form.description.value);	
-	}
+ 	
 	xmlhttp.open("POST", baseUrl, true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 	xmlhttp.setRequestHeader("Content-length",postData.length);
