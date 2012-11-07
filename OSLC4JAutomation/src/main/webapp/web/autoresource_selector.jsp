@@ -68,7 +68,7 @@ img {
 	
 	<div id="thebody">
 		
-    	<img src="http://oslc-tools.sourceforge.net/images/OSLC_FullCol_Title.png" alt="Logo" width="71" height="80" align= "left"/>
+    	<img src="http://open-services.net/css/images/logo-forflip.png" alt="Logo" width="71" height="80" align= "left"/>
     	<h2> <font face="verdana">OSLC Selection Dialog</font></h2>
     	<div>
     		<h3> <font face="verdana">Resource Type: <%= resourceType %></font></h3>

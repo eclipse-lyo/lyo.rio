@@ -17,13 +17,12 @@
     Malcolm McKinney - design and UI integration
 --%>
 
-<%@page import="org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest"%>
+<%@page import="org.eclipse.lyo.oslc4j.automation.AutomationResource"%>
 <%@page import="org.eclipse.lyo.oslc4j.core.model.ServiceProvider"%>
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%
-    List<ChangeRequest> changeRequests = (List<ChangeRequest>) request.getAttribute("results");
-    ServiceProvider serviceProvider = (ServiceProvider) request.getAttribute("serviceProvider");		
+    List<AutomationResource> autoResources = (List<AutomationResource>) request.getAttribute("results");		
 	
 %>
 <html>
@@ -34,25 +33,30 @@
 body {margin: 0 auto;}
 p { text-indent: 25px;}
 
-h1 {
-   padding: 15px 0 0 5px;
-   float: left;
-   font-size: 55px;
-   margin-top: 50px;
-   }
 
-h2 {
+
+#reslist {
+    width: 600px;
+	text-align: left;
+	float: left;
+	margin-left: 10px;
+	clear: both;
+}
+#head {
+    width: 600px;
 	text-align: center;
+	float: left;
+	margin-left: 10px;
+	clear: both;
 }
 img {
-	margin-top: 50px;
-	margin-left: 60px;
+	margin-top: 10px;
+	margin-left: 10px;
 }
 
 #thebody {	
-	width: 64%;
+	width: 600px;
 	margin: 0 auto;
-    width: 27em;
 	background-color: #FAFAD2;
 	border: 5px solid #191970;
 	border-radius:35px;
@@ -64,30 +68,30 @@ img {
 </style>
 </head>
 <body style="padding: 50px;">
-	<div id="thebody">
-		
-    	<img src="http://oslc-tools.sourceforge.net/images/OSLC_FullCol_Title.png" alt="O" width="71" height="80" align= "left"/>
-    	<h1> <font face="verdana">SLC Collection </font></h1>
-    	<br> </br>
-    	<br> </br>
-    	
-    
-				<h2>Query Results</h2>
-
-                <% for (ChangeRequest changeRequest : changeRequests) { %>                
-                <p>Summary: <%= changeRequest.getTitle() %><br /><a href="<%= changeRequest.getAbout() %>">
-                	<%= changeRequest.getAbout() %></a></p>
+	<div id="thebody">		
+		<div id="head">
+    		<img src="http://open-services.net/css/images/logo-forflip.png" alt="O" width="71" height="80" align= "left"/>
+    		<h1> <font face="verdana">OSLC Collection </font></h1>
+    	</div>
+    	<div id="head">
+	    	<h2>Query Results</h2>
+	    </div>
+        <div id="reslist"> 
+        	<br/><br/>
+                <% for (AutomationResource autoResource : autoResources) { %>                
+                <p><a href="<%=autoResource.getAbout() %>">
+                	<%=autoResource.getTitle() %></a></p>
 			    <% } %>
-           
+        </div>   
 		<div id="footer">
 			<div class="intro"></div>
 			<div class="outro">
 				
-					<b>OSLC Tools Adapter Server 0.1</b> brought to you by <a href="http://eclipse.org/lyo">Eclipse Lyo</a><br />
+					<p>Brought to you by <a href="http://eclipse.org/lyo">Eclipse Lyo</a></p><br />
 				<br></br>
-		</div>
 			</div>
 		</div>
-	</body>
+	</div>
+</body>
 </html>
 

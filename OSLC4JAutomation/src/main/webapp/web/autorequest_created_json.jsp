@@ -21,14 +21,15 @@
 
 {
 <% 
-List<AutomationResource> results = (List<AutomationResource>)request.getAttribute("results");
+Map<String,String> params = (Map<String,String>)request.getAttribute("params");
 %>
 results: [
-<% int i = 0; for (AutomationResource b : results) { %>
+<% int i = 0; for (String name : params.keySet()) { %>
    <% if (i > 0) { %>,<% } %>
-   {  "title" : "<%= b.getIdentifier() %>: <%= b.getTitle() %>",
-      "resource" : "<%= b.getAbout() %>"
+   {  "name" : "<%= name %>",
+      "value" : "<%= params.get(name) %>"
    }
 <% i++; } %>
 ]
 }
+

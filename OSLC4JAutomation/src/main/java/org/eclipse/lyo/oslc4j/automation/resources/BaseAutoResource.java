@@ -69,6 +69,26 @@ public class BaseAutoResource<T extends AutomationResource>
 
         return resources.toArray((T[]) Array.newInstance(resourceType, resources.size()));
     }
+    
+    @GET
+    @Produces({MediaType.TEXT_HTML})
+    public Response getHtmlResources(@Context HttpServletRequest  httpServletRequest,
+    		                         @Context HttpServletResponse httpServletResponse)
+    {
+    	final List<T> resources = Persistence.getAutoResources(resourceType);
+    	httpServletRequest.setAttribute("results",resources);
+    		
+    	try {	
+    		RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/autoresource_collection_html.jsp"); 
+	    	rd.forward(httpServletRequest, httpServletResponse);
+				
+		} catch (Exception e) {
+			throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+		}
+        
+    	
+    	throw new WebApplicationException(Status.NOT_FOUND);
+    }
 
     public T getResource(final HttpServletResponse httpServletResponse,
                          final String              resourceId)
@@ -85,7 +105,7 @@ public class BaseAutoResource<T extends AutomationResource>
         }
 
         throw new WebApplicationException(Status.NOT_FOUND);
-    }
+    }  
 
     @GET
     @Path("{resourceId}")
@@ -124,7 +144,7 @@ public class BaseAutoResource<T extends AutomationResource>
     @Path("selector")
     @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
     
-    public void autoPlanSelector(@Context                 final HttpServletRequest httpServletRequest,
+    public void autoResourceSelector(@Context                 final HttpServletRequest httpServletRequest,
     		                     @Context                 final HttpServletResponse httpServletResponse,
     		                     @Context                 final UriInfo uriInfo,
     		                     @QueryParam("searchFor") final String searchFor)
