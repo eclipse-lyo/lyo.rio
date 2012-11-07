@@ -61,7 +61,7 @@ public class AutomationResultResource extends BaseAutoResource<AutomationResult>
         (
              title = "Automation Result Selection Dialog",
              label = "Automation Result Selection Dialog",
-             uri = "",
+             uri = "selector",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = { AutomationConstants.TYPE_AUTOMATION_RESULT},
@@ -71,7 +71,7 @@ public class AutomationResultResource extends BaseAutoResource<AutomationResult>
         (
              title = "Automation Result List Dialog",
              label = "Automation Result List Dialog",
-             uri = "UI/autoResuls/list.jsp",
+             uri = "",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {AutomationConstants.TYPE_AUTOMATION_RESULT},
@@ -102,6 +102,16 @@ public class AutomationResultResource extends BaseAutoResource<AutomationResult>
     	return super.getResource(httpServletResponse, resourceId);
     }
     
+    @OslcDialog
+    (
+         title = "Automation Result Creation Dialog",
+         label = "Automation Result Creation Dialog",
+         uri = "creator",
+         hintWidth = "1000px",
+         hintHeight = "600px",
+         resourceTypes = {AutomationConstants.TYPE_AUTOMATION_RESULT},
+         usages = {OslcConstants.OSLC_USAGE_DEFAULT}
+    )
     @OslcCreationFactory
     (
          title = "Automation Result Creation Factory",

@@ -97,7 +97,7 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
         (
              title = "Automation Request Selection Dialog",
              label = "Automation Request Selection Dialog",
-             uri = "",
+             uri = "selector",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {AutomationConstants.TYPE_AUTOMATION_REQUEST},
@@ -107,7 +107,7 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
         (
              title = "Automation Request List Dialog",
              label = "Automation Request List Dialog",
-             uri = "UI/autoRequests/list.jsp",
+             uri = "",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {AutomationConstants.TYPE_AUTOMATION_REQUEST},
@@ -276,7 +276,16 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
     	
     }
     								
-    
+    @OslcDialog
+    (
+         title = "Automation Request Creation Dialog",
+         label = "Automation Request Creation Dialog",
+         uri = "creator",
+         hintWidth = "1000px",
+         hintHeight = "600px",
+         resourceTypes = {AutomationConstants.TYPE_AUTOMATION_REQUEST},
+         usages = {OslcConstants.OSLC_USAGE_DEFAULT}
+    )
     @OslcCreationFactory
     (
          title = "Automation Request Creation Factory",

@@ -71,7 +71,7 @@ public class AutomationPlanResource extends BaseAutoResource<AutomationPlan> {
         (
              title = "Automation Plan List Dialog",
              label = "TAutomation Plan List Dialog",
-             uri = "UI/autoPlans/list.jsp",
+             uri = "",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {AutomationConstants.TYPE_AUTOMATION_PLAN},
@@ -103,7 +103,16 @@ public class AutomationPlanResource extends BaseAutoResource<AutomationPlan> {
     }
     
 
-    
+    @OslcDialog
+    (
+         title = "Automation Plan Creation Dialog",
+         label = "Automation Plan Creation Dialog",
+         uri = "creator",
+         hintWidth = "1000px",
+         hintHeight = "600px",
+         resourceTypes = {AutomationConstants.TYPE_AUTOMATION_PLAN},
+         usages = {OslcConstants.OSLC_USAGE_DEFAULT}
+    )
     @OslcCreationFactory
     (
          title = "Automation Plan Creation Factory",
