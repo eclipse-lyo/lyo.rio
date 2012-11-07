@@ -32,6 +32,7 @@ import javax.servlet.ServletContextListener;
 
 import org.eclipse.lyo.oslc4j.automation.Persistence;
 import org.eclipse.lyo.oslc4j.client.ServiceProviderRegistryClient;
+import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
 import org.eclipse.lyo.oslc4j.core.model.ServiceProvider;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaProvidersRegistry;
 
@@ -104,19 +105,25 @@ public class ServletListener
     {
         final ServletContext servletContext = servletContextEvent.getServletContext();
 
-        String scheme = System.getProperty(PROPERTY_SCHEME);
-        if (scheme == null)
+        String publicUri = OSLC4JUtils.getPublicURI();
+        if (publicUri == null || publicUri.isEmpty())
         {
-            scheme = servletContext.getInitParameter(PROPERTY_SCHEME);
+	        String scheme = System.getProperty(PROPERTY_SCHEME);
+	        if (scheme == null)
+	        {
+	            scheme = servletContext.getInitParameter(PROPERTY_SCHEME);
+	        }
+	
+	        String port = System.getProperty(PROPERTY_PORT);
+	        if (port == null)
+	        {
+	            port = servletContext.getInitParameter(PROPERTY_PORT);
+	        }
+	        
+	        publicUri = scheme + "://" + HOST + ":" + port + servletContext.getContextPath();
         }
 
-        String port = System.getProperty(PROPERTY_PORT);
-        if (port == null)
-        {
-            port = servletContext.getInitParameter(PROPERTY_PORT);
-        }
-
-        return scheme + "://" + HOST + ":" + port + servletContext.getContextPath() + SERVICE_PATH;
+        return publicUri + SERVICE_PATH;
     }
 
     private static String getHost()
