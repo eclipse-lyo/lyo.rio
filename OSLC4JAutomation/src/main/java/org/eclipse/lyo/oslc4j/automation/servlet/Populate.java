@@ -21,6 +21,7 @@ import java.util.Date;
 
 import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.AutomationRequest;
+import org.eclipse.lyo.oslc4j.automation.AutomationResult;
 import org.eclipse.lyo.oslc4j.automation.ParameterInstance;
 import org.eclipse.lyo.oslc4j.automation.Persistence;
 import org.eclipse.lyo.oslc4j.automation.AutomationResource;
@@ -70,6 +71,13 @@ final class Populate
     				                                            "autoRequests",
     				                                            autoPlan);
     	Persistence.addResource(autoRequest);
+    	
+    	AutomationResult autoResult = createAutomationResult("Sample Automation Result",
+    													     "A sample automation result - does not represent an actual execution",
+    													     "autoResults",
+    													     autoPlan,
+    													     autoRequest);
+    	Persistence.addResource(autoResult);
     }
 
    
@@ -133,5 +141,40 @@ final class Populate
         
         return autoRequest;
 	}
+	
+	private AutomationResult createAutomationResult(final String title,
+            final String description,
+            final String path,
+            final AutomationPlan autoPlan,
+            final AutomationRequest autoRequest) throws URISyntaxException
+	{
+		final AutomationResult autoResult = new AutomationResult();
+		
+		final long identifier = Persistence.getNextIdentifier();
+		
+		final URI about = new URI(basePath + "/" + path + "/" + identifier);
+		
+		autoResult.setAbout(about);
+		autoResult.setIdentifier(String.valueOf(identifier));
+		autoResult.setServiceProvider(serviceProviderURI);
+		autoResult.setTitle(title);
+
+		
+		final ParameterInstance param1 = new ParameterInstance();
+		param1.setName("command");
+		param1.setValue("ls");
+		
+		autoResult.addInputParameter(param1);
+		
+		autoResult.setReportsOnAutomationPlan(new Link(autoPlan.getAbout()));
+		autoResult.setProducedByAutomationRequest(new Link(autoRequest.getAbout()));
+		
+		final Date date = new Date();
+		autoResult.setCreated(date);
+		autoResult.setModified(date);
+		
+		return autoResult;
+	}
+	
     
 }
