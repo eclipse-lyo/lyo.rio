@@ -126,6 +126,7 @@ final class Populate
         autoRequest.setServiceProvider(serviceProviderURI);
         autoRequest.setTitle(title);
         autoRequest.setDescription(description);
+        autoRequest.setStates(new URI[] {new URI(AutomationConstants.STATE_IN_PROGRESS)});
         
         final ParameterInstance param1 = new ParameterInstance();
         param1.setName("command");
@@ -158,6 +159,9 @@ final class Populate
 		autoResult.setIdentifier(String.valueOf(identifier));
 		autoResult.setServiceProvider(serviceProviderURI);
 		autoResult.setTitle(title);
+		
+		autoResult.setStates(new URI[] { new URI(AutomationConstants.STATE_COMPLETE) } );
+		autoResult.setVerdicts(new URI[] { new URI(AutomationConstants.VERDICT_PASSED) } );
 
 		
 		final ParameterInstance param1 = new ParameterInstance();
