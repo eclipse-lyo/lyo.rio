@@ -39,10 +39,10 @@
 				<dcterms:description rdf:parseType="Literal">Object Text
 					of the DOORS object.
 				</dcterms:description>
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
 				<oslc:valueType
 					rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" />
-				<oslc:valueType rdf:resource="http://open-service.net/ns/core#LocalResource" />
+				<oslc:valueType rdf:resource="http://open-services.net/ns/core#LocalResource" />
 			</oslc:Property>
 		</oslc:property>
 		<oslc:property>
@@ -55,7 +55,7 @@
 				</dcterms:description>
 				<oslc:valueType
 					rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
 			</oslc:Property>
 		</oslc:property>
 		<oslc:property>
@@ -67,14 +67,14 @@
 				<dcterms:description rdf:parseType="Literal">URN of the
 					DOORS object.
 				</dcterms:description>
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
 			</oslc:Property>
 		</oslc:property>
 		<oslc:property>
 			<oslc:Property>
 				<oslc:name>shortTitle</oslc:name>
 				<oslc:propertyDefinition
-					rdf:resource="http://open-service.net/ns/core#shortTitle" />
+					rdf:resource="http://open-services.net/ns/core#shortTitle" />
 				<dcterms:title rdf:parseType="Literal">Short Title
 				</dcterms:title>
 				<dcterms:description rdf:parseType="Literal">Object
@@ -88,7 +88,7 @@
 				</dcterms:description>
 				<oslc:valueType
 					rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
 
 				<!-- Core does not state this is necessary. Is omission equivalent to 
 					Any? -->
@@ -112,7 +112,7 @@
 				</dcterms:description>
 				<oslc:readOnly>true</oslc:readOnly>
 				<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
 			</oslc:Property>
 		</oslc:property>
 
@@ -130,7 +130,7 @@
 				</dcterms:description>
 				<oslc:readOnly>true</oslc:readOnly>
 				<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
 			</oslc:Property>
 		</oslc:property>
 		
@@ -144,7 +144,7 @@
 				</dcterms:description>
 				<oslc:readOnly>true</oslc:readOnly>
 				<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
 			</oslc:Property>
 		</oslc:property>
 		
@@ -158,7 +158,7 @@
 				</dcterms:description>
 				<oslc:readOnly>true</oslc:readOnly>
 				<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
 			</oslc:Property>
 		</oslc:property>
 		
@@ -176,7 +176,7 @@
 				<oslc:readOnly>true</oslc:readOnly>
 				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
 				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
 			</oslc:Property>
 		</oslc:property>
 
@@ -193,7 +193,7 @@
 				<oslc:readOnly>true</oslc:readOnly>
 				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
 				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
 				<!-- Could provide here URI of a Resource Shape which describes ServiceProvider 
 					resource -->
 			</oslc:Property>
@@ -217,20 +217,20 @@
 				<oslc:readOnly>true</oslc:readOnly>
 				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
 				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
-				<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+				<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
 			</oslc:Property>
 		</oslc:property>
 		
 		<oslc:property>
 			<oslc:Property>
 				<oslc:name>implementedBy</oslc:name>
-				<oslc:propertyDefinition rdf:resource="http://open-service.net/ns/rm#implementedBy" />
+				<oslc:propertyDefinition rdf:resource="http://open-services.net/ns/rm#implementedBy" />
 				<dcterms:title rdf:parseType="Literal">Implemented By
 				</dcterms:title>
 				<dcterms:description rdf:parseType="Literal">Link to implementation-related resource.
 				</dcterms:description>
 				<oslc:readOnly>false</oslc:readOnly>
-                <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+                <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
 				<oslc:range rdf:resource="http://open-services.net/ns/core#Any" />
 				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
 				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
@@ -240,7 +240,7 @@
 		<oslc:property>
 			<oslc:Property>
 				<oslc:name>trackedBy</oslc:name>
-				<oslc:propertyDefinition rdf:resource="http://open-service.net/ns/rm#trackedBy" />
+				<oslc:propertyDefinition rdf:resource="http://open-services.net/ns/rm#trackedBy" />
 				<dcterms:title rdf:parseType="Literal">Tracked By
 				</dcterms:title>
 				<dcterms:description rdf:parseType="Literal">Associated
@@ -249,7 +249,7 @@
 					role, and not other tracking resources.
 				</dcterms:description>
 				<oslc:readOnly>false</oslc:readOnly>
-                <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+                <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
 				<oslc:range rdf:resource="http://open-services.net/ns/cm#ChangeRequest" />
 				<oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
 				<oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />

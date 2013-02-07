@@ -26,7 +26,7 @@
 	<oslc:property>
 		<oslc:Property>
              <oslc:name>title</oslc:name>
-             <oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+             <oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
              <oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/title" />
              <oslc:valueType rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" />
 	         <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</oslc:readOnly>
@@ -36,7 +36,7 @@
    <oslc:property>
       <oslc:Property>
          <oslc:name>type</oslc:name>
-         <oslc:occurs rdf:resource="http://open-service.net/ns/core#One-or-many" />
+         <oslc:occurs rdf:resource="http://open-services.net/ns/core#One-or-many" />
          <oslc:propertyDefinition rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" />
          <oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
          <oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
@@ -47,7 +47,7 @@
 	<oslc:property>
 		<oslc:Property>
              <oslc:name>identifier</oslc:name>
-             <oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+             <oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
              <oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/identifier" />
              <oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
              <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -57,7 +57,7 @@
 	<oslc:property>
 		<oslc:Property>
              <oslc:name>description</oslc:name>
-             <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+             <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
              <oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/description" />
              <oslc:valueType rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" />
              <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</oslc:readOnly>
@@ -67,7 +67,7 @@
 	<oslc:property>
          <oslc:Property>
              <oslc:name>type description</oslc:name>
-             <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+             <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
              <oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/type" />
              <oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
              <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</oslc:readOnly>
@@ -77,7 +77,7 @@
 	<oslc:property>
          <oslc:Property>
              <oslc:name>Status</oslc:name>
-             <oslc:occurs rdf:resource="http://open-service.net/ns/core#Exactly-one" />
+             <oslc:occurs rdf:resource="http://open-services.net/ns/core#Exactly-one" />
              <oslc:propertyDefinition rdf:resource="http://open-services.net/ns/cm#status" />
              <oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
              <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</oslc:readOnly>
@@ -87,7 +87,7 @@
 	<oslc:property>
 		<oslc:Property>
 			<oslc:name>Approved</oslc:name>
-			<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+			<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
 			<oslc:propertyDefinition rdf:resource="http://open-services.net/ns/cm#approved" />
 			<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#boolean" />
 			<oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -97,7 +97,7 @@
 	<oslc:property>
 		<oslc:Property>
 			<oslc:name>Closed</oslc:name>
-			<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+			<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
 			<oslc:propertyDefinition rdf:resource="http://open-services.net/ns/cm#closed" />
 			<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#boolean" />
 			<oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -107,7 +107,7 @@
 	<oslc:property>
 		<oslc:Property>
 			<oslc:name>Fixed</oslc:name>
-			<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+			<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
 			<oslc:propertyDefinition rdf:resource="http://open-services.net/ns/cm#fixed" />
 			<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#boolean" />
 			<oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -117,7 +117,7 @@
 	<oslc:property>
 		<oslc:Property>
 			<oslc:name>In Progress</oslc:name>
-			<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+			<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
 			<oslc:propertyDefinition rdf:resource="http://open-services.net/ns/cm#inProgress" />
 			<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#boolean" />
 			<oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -127,7 +127,7 @@
 	<oslc:property>
 		<oslc:Property>
 			<oslc:name>Reviewed</oslc:name>
-			<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+			<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
 			<oslc:propertyDefinition rdf:resource="http://open-services.net/ns/cm#reviewed" />
 			<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#boolean" />
 			<oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -137,7 +137,7 @@
 	<oslc:property>
 		<oslc:Property>
 			<oslc:name>Verified</oslc:name>
-			<oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+			<oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
 			<oslc:propertyDefinition rdf:resource="http://open-services.net/ns/cm#verified" />
 			<oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#boolean" />
 			<oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -151,8 +151,8 @@
          <oslc:propertyDefinition rdf:resource="http://open-services.net/ns/cm#relatedChangeRequest" />
          <oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
          <oslc:range rdf:resource="http://open-services.net/ns/cm#ChangeRequest" />
-         <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
-         <oslc:representation rdf:resource="http://open-service.net/ns/core#Reference" />
+         <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
+         <oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
       </oslc:Property>
    </oslc:property>
 
@@ -162,7 +162,7 @@
          <oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/creator" />
          <oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
          <oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
-         <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+         <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
          <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
       </oslc:Property>
    </oslc:property>
@@ -173,7 +173,7 @@
          <oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/contributor" />
          <oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
          <oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
-         <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+         <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
          <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
       </oslc:Property>
    </oslc:property>
@@ -181,7 +181,7 @@
      <oslc:property>
          <oslc:Property>
              <oslc:name>created</oslc:name>
-             <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+             <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
              <oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/created" />
              <oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime" />
              <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -191,7 +191,7 @@
      <oslc:property>
          <oslc:Property>
              <oslc:name>modified</oslc:name>
-             <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-one" />
+             <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-one" />
              <oslc:propertyDefinition rdf:resource="http://purl.org/dc/terms/modified" />
              <oslc:valueType rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime" />
              <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
@@ -202,7 +202,7 @@
          <oslc:Property>
             <oslc:name>serviceProvider</oslc:name>
             <oslc:propertyDefinition rdf:resource="http://open-services.net/ns/core#serviceProvider" />
-            <oslc:occurs rdf:resource="http://open-service.net/ns/core#Zero-or-many" />
+            <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many" />
             <oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource" />
             <oslc:representation rdf:resource="http://open-services.net/ns/core#Reference" />
             <oslc:readOnly rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</oslc:readOnly>
