@@ -11,13 +11,7 @@
 	<artifactId>org.eclipse.lyo.rio.trs</artifactId>
 	<description>Reference Application demonstrating a Tracked Resource Set integration utilizing the TRS toolkit.</description>
 	<packaging>war</packaging>
-	
-	<repositories>
-		<repository>
-			<id>integration.sdk</id>
-			<url>http://gearbox-build.rtp.raleigh.ibm.com:8081/nexus/content/repositories/integration.sdk/</url>
-		</repository> 		
-	</repositories>
+
 	
 	<dependencies>
 		<dependency>
