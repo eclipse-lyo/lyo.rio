@@ -22,76 +22,41 @@
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%
-    List<AutomationResource> autoResources = (List<AutomationResource>) request.getAttribute("results");		
+    List<AutomationResource> autoResources = (List<AutomationResource>) request.getAttribute("results");
+    String resourceType = (String) request.getAttribute("resourceType");
 	
 %>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-		
-<style type="text/css">
-body {margin: 0 auto;}
-p { text-indent: 25px;}
+	
+<head>
 
+	<link rel="stylesheet" type="text/css" href="../web/jquery-ui-1.8.18.custom.css"></link>
+	<style>
+		#logo {
+			padding-top: 35px;
+		}
+		body  {
+			width: 700px;
+			padding: 50px 0px 0px 50px;
+		}
+	</style>
 
-
-#reslist {
-    width: 600px;
-	text-align: left;
-	float: left;
-	margin-left: 10px;
-	clear: both;
-}
-#head {
-    width: 600px;
-	text-align: center;
-	float: left;
-	margin-left: 10px;
-	clear: both;
-}
-img {
-	margin-top: 10px;
-	margin-left: 10px;
-}
-
-#thebody {	
-	width: 600px;
-	margin: 0 auto;
-	background-color: #FAFAD2;
-	border: 5px solid #191970;
-	border-radius:35px;
-	-moz-box-shadow: -5px -5px 5px #888;
-	-webkit-box-shadow: -5px -5px 5px #888;
-	box-shadow: -5px -5px 5px #888;
-}
-
-</style>
 </head>
-<body style="padding: 50px;">
-	<div id="thebody">		
-		<div id="head">
-    		<img src="http://open-services.net/css/images/logo-forflip.png" alt="O" width="71" height="80" align= "left"/>
-    		<h1> <font face="verdana">OSLC Collection </font></h1>
+
+<body>		
+		<div>
+    		<img src="http://open-services.net/css/images/logo-forflip.png" id="logo" alt="O" width="71" height="80" align= "left"/>
     	</div>
-    	<div id="head">
-	    	<h2>Query Results</h2>
-	    </div>
-        <div id="reslist"> 
-        	<br/><br/>
+    	<div>
+    		<h2 class="ui-widget-header">OSLC Automation <%=resourceType %> Collection </h2>
+	    	<h3>Query Results</h3>
+        	<div class="ui-widget-content"> 
                 <% for (AutomationResource autoResource : autoResources) { %>                
                 <p><a href="<%=autoResource.getAbout() %>">
                 	<%=autoResource.getTitle() %></a></p>
 			    <% } %>
-        </div>   
-		<div id="footer">
-			<div class="intro"></div>
-			<div class="outro">
-				
-					<p>Brought to you by <a href="http://eclipse.org/lyo">Eclipse Lyo</a></p><br />
-				<br></br>
-			</div>
+        	</div>   
 		</div>
-	</div>
 </body>
 </html>
 

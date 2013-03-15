@@ -42,7 +42,7 @@ function search(baseUrl){
 			loadingMessage.style.display = 'none';
 		}
 	};
-	terms = document.getElementById("searchTerms").value;
+	terms = document.getElementById("searchterms").value;
 	xmlhttp.open("GET", baseUrl + "?searchFor=" + encodeURIComponent(terms), true);	
 	searchMessage.style.display = 'none';
 	loadingMessage.style.display = 'block';
@@ -73,9 +73,9 @@ function requestParams(baseUrl){
 			for( var i=0; i<numParams; i=i+1 ) {
  				var newRow = table.insertRow(row++);
  				var nameCell = newRow.insertCell(0);
- 				nameCell.innerHTML = '<div style="margin-left: 25px;"><p>' + resp.results[i].name + ':  </p></div>';
+ 				nameCell.innerHTML = '<div>' + resp.results[i].name + ':</div>';
  				var valueCell = newRow.insertCell(1);
- 				valueCell.innerHTML = '<input type="text" size="35" name="' + resp.results[i].name + '" id=param' + i + ' value="' +   resp.results[i].value + '">';
+ 				valueCell.innerHTML = '<input class="ui-widget" type="text" size="35" name="' + resp.results[i].name + '" id=param' + i + ' value="' +   resp.results[i].value + '">';
 			}
 
 		}

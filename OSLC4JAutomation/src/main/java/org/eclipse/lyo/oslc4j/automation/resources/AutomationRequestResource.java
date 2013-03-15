@@ -133,9 +133,31 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
     @Path("{resourceId}")
     @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
     public AutomationRequest getResource(@Context                      final HttpServletResponse httpServletResponse,
-                                          @PathParam("resourceId") final String              resourceId)
+                                         @PathParam("resourceId")      final String              resourceId)
     {
     	return super.getResource(httpServletResponse, resourceId);
+    }
+    
+    @GET
+    @Path("{resourceId}")
+    @Produces({MediaType.TEXT_HTML})
+    public Response getResource(@Context                 final HttpServletRequest  httpServletRequest,
+    		                    @Context                 final HttpServletResponse httpServletResponse,
+                                @PathParam("resourceId") final String              resourceId)
+    {
+
+    	httpServletRequest.setAttribute("autoRequest",super.getResource(httpServletResponse, resourceId));
+    	
+    	try {	
+    		RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/autorequest_html.jsp"); 
+	    	rd.forward(httpServletRequest, httpServletResponse);
+				
+		} catch (Exception e) {
+			throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+		}
+        
+    	
+    	throw new WebApplicationException(Status.NOT_FOUND);
     }
     
     @GET

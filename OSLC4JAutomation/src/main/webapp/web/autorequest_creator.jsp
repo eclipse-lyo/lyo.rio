@@ -28,68 +28,48 @@
 <html>
 <head>
 
-<script type="text/javascript" src="../../web/autoDialogs.js"></script>
+	<script type="text/javascript" src="../../web/autoDialogs.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="../../web/jquery-ui-1.8.18.custom.min.js"></script>
+	<script>
+	$(function() {
+	    $("#submit").click(function() {
+	        create('<%= creatorUri %>');
+	     });
+	    $("#cancel").click(function() {
+	        cancel();
+	     });
+	    $("#requestParams").click(function() {
+	    	requestParams('<%= creatorUri %>');
+	    });
+	  });
+	</script>
+	<link rel="stylesheet" type="text/css" href="../../web/jquery-ui-1.8.18.custom.css"></link>
+	<style>
+		#logo {
+			padding-top: 20px;
+		}
+		body  {
+			width: 700px;
+		}
+	</style>
 
-<style type="text/css">
-body {	
-	margin: 0 auto;
-}
-
-h2 {
-   padding: 15px 0 0 5px;
-   float: left;
-   margin-top: 20px;
-   margin-left: 25px;
-   margin-bottom: 25px;
-   }
-   
-h3 {
-   padding: 15px 0 0 5px;
-   float: left;
-   margin-top: 25px;
-   margin-left: 25px;
-   }
-   
-img {
-	margin-top: 50px;
-	margin-left: 25px;
-	margin-bottom: 25px;
-}
-
-#thebody {	
-	width: 550px;
-	margin: 0 auto;
-	background-color: #FAFAD2;
-	border: 5px solid #191970;
-	border-radius:35px;
-	-moz-box-shadow: -5px -5px 5px #888;
-	-webkit-box-shadow: -5px -5px 5px #888;
-	box-shadow: -5px -5px 5px #888;
-}
-
-td {
-	width:100px;
-	height:20px;
-	text-align:center;
-} 
-</style>
 </head>
 
-<body style="padding: 50px;">
-	<div id="thebody">
-		
-    	<img src="http://open-services.net/css/images/logo-forflip.png" alt="Logo" width="71" height="80" align= "left"/>
-    	<h2> <font face="verdana">Automation Request Creation Dialog </font></h2>
+<body>
+		<div>
+    	<img src="http://open-services.net/css/images/logo-forflip.png" alt="Logo" id="logo" width="71" height="80" align= "left" style="padding-top: 20px"/>
+    	</div>
+		<div>
+    	<h2 class="ui-widget-header">Automation Request Creation Dialog</h2>
 
- 
-    <form id="Create" method="POST" >
-			
-			
-		<table style="clear: both;" id="inputTable">
-			
+ 		
+    	<form class="ui-widget input" id="Create" method="POST" >
+			<table class="ui-widget-content" id="inputTable">
 				<tr>
-					<th class="field_label">Automation Plan:</th>
-					<td><select id="plan">
+					<th>Automation Plan:</th>
+					<td>
+						<select class="ui-widget select" id="plan">
 							<%
 								for (String id : autoPlans.keySet()) {
 									String title = autoPlans.get(id);
@@ -98,34 +78,30 @@ td {
 							<%
 								}
 							%>
-					</select></td>
+						</select>
+					</td>
 					<td>
-						<button style="float: left; margin-left: 10px; margin-bottom: 5px;" type="button"
-				             onclick="requestParams( '<%= creatorUri %>' )">Get Params</button>
+						<input class="ui-button" type="button" id="requestParams" value="Get Params">
 				    </td>
 				</tr>
 				<tr>
 					<td>
-						<div style="float: left; margin-left: 15px;" id="paramInput"><p><b>Parameters:</b></p></div>		
+						<p id="paramInput">Parameters:<p>		
 					</td>
 				</tr>			
 				<tr>
-					<td></td>
 					<td>
-						<input type="button" value="Cancel" onclick="javascript: cancel()">
-						<input type="button" value="Submit" onclick="javascript: create( '<%= creatorUri %>' )">
+					</td>
+					<td>
+						<input class="ui-button" type="button" id=cancel value="Cancel">
+						<input class="ui-button" type="button" id="submit" value="Submit">
 						
 					</td>
 				</tr>
 			</table>
 
-			<div style="width: 500px;">				
-			</div>		
-			
 		</form>
-
-		<div style="clear: both;"></div>
-	</div>
+		</div>
 </body>
 </html>
 

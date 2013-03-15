@@ -37,6 +37,8 @@ final class Populate
     private final URI    serviceProviderURI;
     
     private static final String REMOTE_COMMAND_PLAN = "Remote Command Automation Plan";
+    private static final String BUILD_PLAN = "Demo Project Build Plan";
+    private static final String TEST_PLAN = "Demo Project Test Automation Plan";
 
     public Populate(final String  basePath,
                     final URI     serviceProviderURI)
@@ -60,24 +62,33 @@ final class Populate
     public void populate()
            throws URISyntaxException
     {
-    	AutomationPlan autoPlan = createAutomationPlan(REMOTE_COMMAND_PLAN, 
-    			                                       "This automation plan will attempt to execute the system command provided " +
-    			                                       "in the command parameter of the Automation request",
-    			                                       "autoPlans");
-    	Persistence.addResource(autoPlan);
     	
+    	AutomationPlan autoPlan3 = createAutomationPlan(REMOTE_COMMAND_PLAN, 
+                "This automation plan will attempt to execute the system command provided " +
+                "in the command parameter of the Automation request",
+                "autoPlans");
+    	Persistence.addResource(autoPlan3);
+
+
     	AutomationRequest autoRequest = createAutomationRequest("Sample Remote Command Automation Request",
-    				                                            "A sample automation request for copy/paste - adjust all URLs accordingly",
-    				                                            "autoRequests",
-    				                                            autoPlan);
+                         "A sample automation request for copy/paste - adjust all URLs accordingly",
+                         "autoRequests",
+                         autoPlan3);
     	Persistence.addResource(autoRequest);
     	
-    	AutomationResult autoResult = createAutomationResult("Sample Automation Result",
-    													     "A sample automation result - does not represent an actual execution",
-    													     "autoResults",
-    													     autoPlan,
-    													     autoRequest);
-    	Persistence.addResource(autoResult);
+    	AutomationPlan autoPlan2 = createAutomationPlan(TEST_PLAN,
+				"This automation plan will run automated tests for the Demo project ", 
+				"autoPlans");
+
+    	Persistence.addResource(autoPlan2);
+    	
+    	AutomationPlan autoPlan1 = createAutomationPlan(BUILD_PLAN,
+			    "This automation plan will build the Demo project ", 
+				"autoPlans");
+
+    	Persistence.addResource(autoPlan1);
+
+    	
     }
 
    

@@ -77,6 +77,7 @@ public class BaseAutoResource<T extends AutomationResource>
     {
     	final List<T> resources = Persistence.getAutoResources(resourceType);
     	httpServletRequest.setAttribute("results",resources);
+    	httpServletRequest.setAttribute("resourceType", resourceType.getSimpleName());
     		
     	try {	
     		RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/autoresource_collection_html.jsp"); 
