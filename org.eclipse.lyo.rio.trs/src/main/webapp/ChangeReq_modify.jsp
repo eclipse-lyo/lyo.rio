@@ -10,7 +10,7 @@
  <%@ page import="java.io.Console"%>
  <%@ page import="org.eclipse.lyo.rio.trs.cm.Severity" %>
  <%@ page import="org.eclipse.lyo.rio.trs.cm.ChangeRequest" %>
- <%@ page import="org.eclipse.lyo.rio.trs.util.Persistence" %>
+ <%@ page import="org.eclipse.lyo.rio.trs.cm.Persistence" %>
  <% 
  	String modifyUri = (String) request.getAttribute("modifyUri");
 	String scriptPath = (String) request.getContextPath()+"/TestApp.js";

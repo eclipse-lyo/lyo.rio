@@ -58,7 +58,7 @@ import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.oslc4j.core.model.ResponseInfoArray;
 import org.eclipse.lyo.rio.trs.cm.ChangeRequest;
 import org.eclipse.lyo.rio.trs.cm.Constants;
-import org.eclipse.lyo.rio.trs.util.Persistence;
+import org.eclipse.lyo.rio.trs.cm.Persistence;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
 @OslcService(Constants.CHANGE_MANAGEMENT_DOMAIN)

@@ -12,9 +12,10 @@
  * Contributors:
  * 
  *    Ernest Mah - Initial implementation
+ *    David Terry - Add Listener Mechanisms
  *******************************************************************************/
 
-package org.eclipse.lyo.rio.trs.util;
+package org.eclipse.lyo.rio.trs.cm;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,6 +25,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Observable;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.ws.rs.WebApplicationException;
@@ -33,10 +38,8 @@ import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaModelHelper;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
-import org.eclipse.lyo.rio.trs.cm.ChangeRequest;
-import org.eclipse.lyo.rio.trs.cm.Constants;
-import org.eclipse.lyo.rio.trs.cm.Type;
 
+import com.hp.hpl.jena.graph.impl.FileGraph.NotifyOnClose;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileUtils;
@@ -45,8 +48,10 @@ public class Persistence {
 	private final static TreeMap<Long, ChangeRequest> CHANGE_REQUESTS_MAP = new TreeMap<Long, ChangeRequest>();
 	private static boolean CHANGE_REQUESTS_LOADED = false;
 	private static long MAX_IDENTIFIER;
-
 	public static int PAGE_SIZE = 3;
+	
+	private static Set<ChangeRequestListener> listeners = new HashSet<ChangeRequestListener>();
+	
 	private Persistence() {
 		super();
 	}
@@ -259,6 +264,9 @@ public class Persistence {
 			
 			// save out to file here				
 			save(Constants.PATH_FLAT_FILE);
+			
+			// Notify any listeners of creation event
+			notifyListeners(changeRequest, "create");
 		}
 	}
 
@@ -276,6 +284,9 @@ public class Persistence {
 				// save out to file here				
 				save(Constants.PATH_FLAT_FILE);
 				
+				// Notify any listeners of the update event
+				notifyListeners(changeRequest, "update");
+				
 				return changeRequest;
 			}
 		}
@@ -291,9 +302,28 @@ public class Persistence {
 			if (result != null) {
 				// save out to file here				
 				save(Constants.PATH_FLAT_FILE);
+				
+				// Notify any listeners of the deletion event
+				notifyListeners(result, "delete");
 			}
 			
 			return result; 
+		}
+	}
+	
+	public static void addListner(ChangeRequestListener listener) {
+		listeners.add(listener);
+	}
+
+	public static void removeListener(ChangeRequestListener listener) {
+		listeners.remove(listener);
+	}
+
+	private static void notifyListeners(ChangeRequest changeRequest, String type) {
+		Iterator<ChangeRequestListener> iter = listeners.iterator();
+
+		while (iter.hasNext()) {
+			iter.next().changeRequestAltered(changeRequest, type);
 		}
 	}
 }

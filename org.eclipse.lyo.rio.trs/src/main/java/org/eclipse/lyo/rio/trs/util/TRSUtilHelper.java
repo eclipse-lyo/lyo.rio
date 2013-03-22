@@ -33,6 +33,7 @@ import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
 import org.eclipse.lyo.rio.trs.cm.ChangeRequest;
+import org.eclipse.lyo.rio.trs.cm.Persistence;
 
 public class TRSUtilHelper {
 
