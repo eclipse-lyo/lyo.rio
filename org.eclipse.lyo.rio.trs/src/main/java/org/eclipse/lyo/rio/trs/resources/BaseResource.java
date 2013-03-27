@@ -18,8 +18,6 @@ package org.eclipse.lyo.rio.trs.resources;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -34,9 +32,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.wink.common.annotations.Workspace;
 import org.eclipse.lyo.core.trs.Base;
+import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
-import org.eclipse.lyo.core.trs.TRSConstants;
 
 /**
  * RESTful service endpoints for returning the Base of a Tracked Resource Set in pages.
@@ -75,7 +73,7 @@ public class BaseResource {
 	 */
 	@GET
 	@Produces({ "application/rdf+xml", MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Base> getBase() throws URISyntaxException{
+	public Base getBase() throws URISyntaxException{
 	    
         URI requestURI = uriInfo.getRequestUri();
         boolean endsWithSlash = requestURI.getPath().endsWith("/");
@@ -90,7 +88,7 @@ public class BaseResource {
 	@GET
 	@Path("{page}")
 	@Produces({ "application/rdf+xml", MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<Base> getBasePage(@PathParam("page")Long page) throws URISyntaxException{
+	public Base getBasePage(@PathParam("page")Long page) throws URISyntaxException{
 	    TRSUtil.updateTRSResourceURI(uriInfo.getBaseUri());
 	    
 	    // from uri find out which Inner container to access...
@@ -99,8 +97,6 @@ public class BaseResource {
 		if (TRSUtil.getTrsBase(requestURI).isEmpty() || !TRSUtil.getTrsBase(requestURI).containsKey(page))
 			throw new WebApplicationException(Status.NOT_FOUND);
 		
-		List<Base> results = new ArrayList<Base>();
-		results.add(TRSUtil.getTrsBase(requestURI).get(page));
-		return results;
+		return TRSUtil.getTrsBase(requestURI).get(page);
 	}
 }
