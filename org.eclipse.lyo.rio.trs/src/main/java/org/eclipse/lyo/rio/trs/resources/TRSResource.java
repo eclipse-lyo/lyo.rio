@@ -42,6 +42,7 @@ import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.core.trs.TrackedResourceSet;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
+import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
 /**
@@ -80,8 +81,9 @@ public class TRSResource {
 	 * page of the Change Log or EmptyChangeLog if no change logs pages exist
 	 */
 	@GET
-	@Produces({ "application/rdf+xml", MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public TrackedResourceSet getTrackedResourceSet() throws URISyntaxException{
+		
 		// from uri find out which Inner container to access...
 		URI requestURI = uriInfo.getRequestUri();
 		
@@ -106,7 +108,7 @@ public class TRSResource {
 	 */
 	@GET
 	@Path("changelog")
-	@Produces({ "application/rdf+xml", MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public AbstractChangeLog getChangeLog() throws URISyntaxException{
 		// from uri find out which Inner container to access...
 		URI requestURI = uriInfo.getRequestUri();
@@ -121,7 +123,7 @@ public class TRSResource {
 	 */	
 	@GET
 	@Path("changelog/{page}")
-	@Produces({ "application/rdf+xml", MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public AbstractChangeLog getChangeLogPage(@PathParam("page") final Long page) throws URISyntaxException{
 		// from uri find out which Inner container to access...
 		URI requestURI = uriInfo.getRequestUri();

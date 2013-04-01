@@ -34,6 +34,7 @@ import org.apache.wink.common.annotations.Workspace;
 import org.eclipse.lyo.core.trs.Base;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
+import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
 /**
@@ -72,7 +73,7 @@ public class BaseResource {
 	 * paged Base resources of the Tracked Resource Set
 	 */
 	@GET
-	@Produces({ "application/rdf+xml", MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Base getBase() throws URISyntaxException{
 	    
         URI requestURI = uriInfo.getRequestUri();
@@ -87,7 +88,7 @@ public class BaseResource {
 	 */	
 	@GET
 	@Path("{page}")
-	@Produces({ "application/rdf+xml", MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Base getBasePage(@PathParam("page")Long page) throws URISyntaxException{
 	    TRSUtil.updateTRSResourceURI(uriInfo.getBaseUri());
 	    
