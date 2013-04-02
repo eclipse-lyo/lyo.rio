@@ -28,11 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
-import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.core.trs.TrackedResourceSet;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
+import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 /**
  * RESTful service endpoints for returning the Tracked Resource Set  at a given
@@ -82,7 +83,8 @@ public class TRSGeneric extends HttpServlet {
 		URI requestBase;
 		try {
 			requestBase = new URI(request.getRequestURL().toString());
-			AbstractChangeLog changeLog = TRSUtil.getTrsChangelogMap(requestBase).isEmpty() ? new EmptyChangeLog() : TRSUtil.getCurrentChangelog(requestBase);
+			TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestBase);
+			AbstractChangeLog changeLog = trsObject.getCurrentChangeLog();
 			URI base = requestBase.resolve("trs/"+TRSConstants.TRS_TERM_BASE+"/");
 			set.setBase(base);
 			set.setChangeLog(changeLog);

@@ -19,8 +19,8 @@ package org.eclipse.lyo.rio.trs.resources;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.TreeMap;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -38,11 +38,14 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.wink.common.annotations.Workspace;
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.trs.ChangeEvent;
+import org.eclipse.lyo.core.trs.ChangeLog;
 import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.core.trs.TrackedResourceSet;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
+import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
 /**
@@ -73,7 +76,6 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
 public class TRSResource {
 	@Context
 	protected UriInfo uriInfo;
-	@Context private HttpServletRequest httpServletRequest;
 	@Context private HttpServletResponse httpServletResponse;
 	
 	/**
@@ -86,9 +88,10 @@ public class TRSResource {
 		
 		// from uri find out which Inner container to access...
 		URI requestURI = uriInfo.getRequestUri();
+		TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
 		
-		AbstractChangeLog changeLog = TRSUtil.getTrsChangelogMap(requestURI).isEmpty() ? new EmptyChangeLog() : TRSUtil.getCurrentChangelog(requestURI);
-			
+		AbstractChangeLog changeLog = trsObject.getCurrentChangeLog();
+		
 		TrackedResourceSet set = new TrackedResourceSet();
 
 		set.setAbout(requestURI);
@@ -112,8 +115,11 @@ public class TRSResource {
 	public AbstractChangeLog getChangeLog() throws URISyntaxException{
 		// from uri find out which Inner container to access...
 		URI requestURI = uriInfo.getRequestUri();
+
+		TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
 		
-		AbstractChangeLog changeLog = TRSUtil.getCurrentChangelog(requestURI);
+		AbstractChangeLog changeLog = trsObject.getCurrentChangeLog();
+		
 		return changeLog;
 	}
 	
@@ -127,11 +133,12 @@ public class TRSResource {
 	public AbstractChangeLog getChangeLogPage(@PathParam("page") final Long page) throws URISyntaxException{
 		// from uri find out which Inner container to access...
 		URI requestURI = uriInfo.getRequestUri();
+		TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
 		
-		if (!TRSUtil.getTrsChangelogMap(requestURI).isEmpty() && !TRSUtil.getTrsChangelogMap(requestURI).containsKey(page))
+		AbstractChangeLog changeLog = trsObject.getChangeLogPage(page);
+		
+		if (changeLog == null)
 			throw new WebApplicationException(Status.NOT_FOUND);
-		
-		AbstractChangeLog changeLog = TRSUtil.getTrsChangelogMap(requestURI).isEmpty() ? new EmptyChangeLog() : TRSUtil.getTrsChangelogMap(requestURI).get(page); 
 			
 		return changeLog;
 	}

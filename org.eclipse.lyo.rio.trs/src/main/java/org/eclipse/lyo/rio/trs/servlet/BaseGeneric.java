@@ -34,6 +34,8 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.lyo.core.trs.Base;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
+import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
 /**
@@ -92,13 +94,15 @@ public class BaseGeneric extends HttpServlet {
 				Object[]  oArray;
 				try {
 					requestBase = new URI(request.getRequestURL().toString());
-					TRSUtil.updateTRSResourceURI(requestBase);
+					TRSUtil.updateTRSResourceURI(PersistenceResourceUtil.instance, requestBase);
 					
-					if (TRSUtil.getTrsBase(requestBase).isEmpty() || !TRSUtil.getTrsBase(requestBase).containsKey(page))
+					TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestBase);
+					Base base = trsObject.getBasePage(page);
+					if (base == null)
 						throw new WebApplicationException(Status.NOT_FOUND);
 					
 					List<Base> results = new ArrayList<Base>();
-					results.add(TRSUtil.getTrsBase(requestBase).get(page));
+					results.add(base);
 					// return results;
 					OSLC4JContext context = OSLC4JContext.newInstance();
 					OSLC4JMarshaller marshaller = context.createMarshaller();

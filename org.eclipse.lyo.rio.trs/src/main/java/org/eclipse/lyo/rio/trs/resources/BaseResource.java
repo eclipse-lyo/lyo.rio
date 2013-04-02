@@ -35,6 +35,8 @@ import org.eclipse.lyo.core.trs.Base;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
+import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
 /**
@@ -67,7 +69,6 @@ public class BaseResource {
 	@Context
 	protected UriInfo uriInfo;
 	
-	
 	/**
 	 * getBase() on the root URI performs a redirect to page 1 in this implementation to represent
 	 * paged Base resources of the Tracked Resource Set
@@ -90,14 +91,18 @@ public class BaseResource {
 	@Path("{page}")
 	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Base getBasePage(@PathParam("page")Long page) throws URISyntaxException{
-	    TRSUtil.updateTRSResourceURI(uriInfo.getBaseUri());
+	    TRSUtil.updateTRSResourceURI(PersistenceResourceUtil.instance, uriInfo.getBaseUri());
 	    
 	    // from uri find out which Inner container to access...
 	    URI requestURI = uriInfo.getRequestUri();
 	    
-		if (TRSUtil.getTrsBase(requestURI).isEmpty() || !TRSUtil.getTrsBase(requestURI).containsKey(page))
+	    TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
+	    
+	    Base base = trsObject.getBasePage(page);
+	    
+		if (base == null)
 			throw new WebApplicationException(Status.NOT_FOUND);
 		
-		return TRSUtil.getTrsBase(requestURI).get(page);
+		return base;
 	}
 }
