@@ -17,21 +17,24 @@
 package org.eclipse.lyo.rio.trs.util;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.TreeMap;
 
-import org.eclipse.lyo.core.trs.AbstractChangeLog;
-import org.eclipse.lyo.core.trs.Base;
 import org.eclipse.lyo.core.trs.ChangeEvent;
-import org.eclipse.lyo.core.trs.ChangeLog;
-import org.eclipse.lyo.core.trs.Creation;
-import org.eclipse.lyo.core.trs.Deletion;
-import org.eclipse.lyo.core.trs.Modification;
-import org.eclipse.lyo.core.trs.TRSConstants;
 
+/**
+ * @author ernest
+ *
+ * This class is used to manage a set of TRSObject's.  Typical applications would just use
+ * the TRSObject directly.  The sole purpose of this class is to manage a set of TRSObjects
+ * that represent changes to the same type of resource.  In this reference application we 
+ * show surfacing a TRS feed through JAX-RS and then also through simple servlets.
+ * TRSUtil is needed to make sure the same change is propogated to both TRSObjects.  The reason
+ * we need more than one is that the objects contained in the TRSObject have
+ * references to urls to access other resources in the same set (say several pages of base
+ * resources or several pages of change logs). 
+ */
 public class TRSUtil {
+	private final  TreeMap<String, TRSObject> trs_object_map = new TreeMap<String, TRSObject>();	
 	
 	/**
 	 * insertEventTypeToChangeLog - Insert an event corresponding to the trsEvent for the resource
@@ -40,34 +43,17 @@ public class TRSUtil {
 	 * @param resource - URI of the resource that has undergone the change identified by trsEvent
 	 */
 	public static void insertEventTypeToChangeLog(String trsEvent, URI resource) {
-		ChangeEvent event = null;			
-		// increment the event number to maintain event order
-		int eventNumber = (TRSUtil.LATEST_EVENT != null) ? TRSUtil.LATEST_EVENT.getOrder() + 1 : 0;
-		
-		if (trsEvent.equals(TRSConstants.TRS_TYPE_CREATION)) {
-			event = new Creation(getCurrentTimeStampURN(), resource, eventNumber);
-		}
-		else if (trsEvent.equals(TRSConstants.TRS_TYPE_MODIFICATION)) {
-			event = new Modification(getCurrentTimeStampURN(), resource, eventNumber);
-		}
-		else if (trsEvent.equals(TRSConstants.TRS_TYPE_DELETION)) {
-			event = new Deletion(getCurrentTimeStampURN(), resource, eventNumber);
-		}
 		// add the event to each inner container helper obj representing JAXRS and generic implementation.
 		for (int i = 0 ; i <innerHelpr.length; i++ )
-			innerHelpr[i].insertEventToPagedChangeLog(event, resource);
-
+			innerHelpr[i].insertEventTypeToChangeLog(trsEvent, resource);
 	}
 
 	// if required, this routine will update the URI
 	// and prime the base resources
-	public static void initialize(URI baseURI) {		
-		updateTRSResourceURI(baseURI);
-		// initialize each inner container helper obj representing JAXRS and generic implementation.
-		for (int i = 0 ; i <innerHelpr.length; i++ )
-			innerHelpr[i].initialize();
-		
+	public static void initialize(IResourceUtil resourceUtil, URI baseURI) {		
+		updateTRSResourceURI(resourceUtil, baseURI);
 	}
+	
 	private static boolean IsGenericImplDesired(URI inURI){
 		String sUri = inURI.getPath();
 		if (sUri.contains(TRS_GENERIC_MARKER))
@@ -76,18 +62,18 @@ public class TRSUtil {
 			return false;		
 	}
 	
-	public static TreeMap<Long, Base> getTrsBase(URI inURI) {
+	public static TRSObject getTrsObject(IResourceUtil resourceUtil, URI inURI) {
 		if (!TRS_URI_INITIALIZED) {	
-			initialize(inURI);
+			initialize(resourceUtil, inURI);
 		}
 		// from uri find out which Inner container to access...
 		if(!IsGenericImplDesired(inURI))
-			return innerHelpr[0].getTrsBaseInner(); 
+			return innerHelpr[0];
 		else
-			return innerHelpr[1].getTrsBaseInner(); 
-	}	
+			return innerHelpr[1];
+	}
 	
-	public static void updateTRSResourceURI(URI resource) {
+	public static void updateTRSResourceURI(IResourceUtil resourceUtil, URI resource) {
 		if (!TRS_URI_INITIALIZED) {	
 			String sPath = resource.getPath();
 			String sContext = null;
@@ -100,7 +86,6 @@ public class TRSUtil {
 			TRS_URI_INITIALIZED = true;
 			// initialize both inner container helper obj representing JAXRS and generic implementation.
 			for (int i = 0 ; i <innerHelpr.length; i++ ){
-			    innerHelpr[i] =  new TRSUtilHelper();
 				URI trs_Uri;
 				if (i == 0){
 					trs_Uri = resource.resolve("/" + sContext + TRS_URI_PATH);
@@ -108,59 +93,19 @@ public class TRSUtil {
 				else{
 					trs_Uri = resource.resolve("/" + sContext + TRS_URI_PATH2);
 				}
-				innerHelpr[i].set_TRS_URI(trs_Uri);
+			    innerHelpr[i] =  new TRSObject(resourceUtil, trs_Uri);
 			}					
 		}
 	}
 	
-	public static TreeMap<Long, ChangeLog> getTrsChangelogMap(URI inURI) {
-		if (!TRS_URI_INITIALIZED) {	
-			initialize(inURI);
-		}
-		// from uri find out which Inner container to access...
-		if(!IsGenericImplDesired(inURI))
-			return innerHelpr[0].getTrsChangelogMapInner();
-		else
-			return innerHelpr[1].getTrsChangelogMapInner();
-	}
-	
-	public static AbstractChangeLog getCurrentChangelog(URI inURI) {
-		if (!TRS_URI_INITIALIZED) {	
-			initialize(inURI);
-		}
-		// from uri find out which Inner container to access...
-		if(!IsGenericImplDesired(inURI))
-			return innerHelpr[0].getCurrentChangeLogInner();
-		else
-			return innerHelpr[1].getCurrentChangeLogInner();
-	}
-	
-	public static final int PAGE_SIZE = 3;
 	public final static String TRS_URI_PATH = "/rest/trs/";
 	public final static String TRS_URI_PATH2 = "/restx/trs/";
 	public final static String TRS_GENERIC_MARKER = "/restx/";
 		
 	// inner container helper obj representing JAXRS and generic implementation.
-	private static TRSUtilHelper[] innerHelpr = new TRSUtilHelper[2]; 
+	private static TRSObject[] innerHelpr = new TRSObject[2]; 
 	public static boolean TRS_URI_INITIALIZED = false;
 
-	private static URI getCurrentTimeStampURN() {
-		URI timestampURI = null;
-		try {
-			timestampURI = new URI("urn:urn-3:cm1.example.com:" + getCurrentTimeStamp());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} 
-		return timestampURI;
-	}
-
-	private static String getCurrentTimeStamp() {
-		Date currDate = new Date();
-		SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SS");
-		String currDateStr = dateFormatGmt.format(currDate);
-		return currDateStr;
-	}
-	
 	public static void modifyCutoffEvent(ChangeEvent inCutOffEvent)	{
 		for (int i = 0 ; i <innerHelpr.length; i++ )
 			innerHelpr[i].modifyCutoffEventInner(inCutOffEvent);		
@@ -170,6 +115,5 @@ public class TRSUtil {
 		// since the same set of event is kept in both the helper's changelog;  access the first helper. 
 		return innerHelpr[0].getChangeEventInner(uriAbout);
 	}
-	public static ChangeEvent LATEST_EVENT;
 
 }

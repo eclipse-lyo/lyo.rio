@@ -29,9 +29,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
-import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
+import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
 /**
@@ -53,7 +54,8 @@ public class ChangeLogGeneric extends HttpServlet {
 		URI requestBase;
 		try {
 			requestBase = new URI(request.getRequestURL().toString());
-		
+			TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestBase);
+			
 			path = request.getPathInfo();
 			if ( path != null){
 				// find the page number
@@ -64,14 +66,13 @@ public class ChangeLogGeneric extends HttpServlet {
 					page = (long) Integer.parseInt(arrofStr[1]);
 				}			
 				
-				if (!TRSUtil.getTrsChangelogMap(requestBase).isEmpty() && !TRSUtil.getTrsChangelogMap(requestBase).containsKey(page))
+				changeLog = trsObject.getChangeLogPage(page);
+				if (changeLog == null)
 					throw new WebApplicationException(Status.NOT_FOUND);
-				
-				changeLog = TRSUtil.getTrsChangelogMap(requestBase).isEmpty() ? new EmptyChangeLog() : TRSUtil.getTrsChangelogMap(requestBase).get(page); 
 			}
 			else
 			{
-				changeLog = TRSUtil.getTrsChangelogMap(requestBase).isEmpty() ? new EmptyChangeLog() : TRSUtil.getCurrentChangelog(requestBase);
+				changeLog = trsObject.getCurrentChangeLog();
 			}
 		} catch (URISyntaxException e) {
 			e.printStackTrace();

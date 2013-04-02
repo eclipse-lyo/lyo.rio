@@ -57,6 +57,7 @@ import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.oslc4j.core.model.ResponseInfoArray;
 import org.eclipse.lyo.rio.trs.cm.ChangeRequest;
+import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
 import org.eclipse.lyo.rio.trs.cm.Constants;
 import org.eclipse.lyo.rio.trs.cm.Persistence;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
@@ -81,7 +82,7 @@ public class ChangeRequestResource
 			URI baseURI = uriInfo.getBaseUri();
 			
 			// Initialize the base before adding / deleting any resource.  
-			TRSUtil.initialize(baseURI);
+			TRSUtil.initialize(PersistenceResourceUtil.instance, baseURI);
 			
 			ChangeRequest cr = Persistence.createChangeRequest(description,
 	                title, filedAgainst);
@@ -323,7 +324,7 @@ public class ChangeRequestResource
     {
 		URI baseURI = uriInfo.getBaseUri();
 		// Initialize the base before adding / deleting any resource.  
-		TRSUtil.initialize(baseURI);
+		TRSUtil.initialize(PersistenceResourceUtil.instance, baseURI);
 		
         final ChangeRequest changeRequest = Persistence.deleteChangeRequest(changeRequestId);
 
@@ -353,7 +354,7 @@ public class ChangeRequestResource
     	URI baseURI = uriInfo.getBaseUri();
     	
     	// Initialize the base before adding / deleting any resource.  
-    	TRSUtil.initialize(baseURI);
+    	TRSUtil.initialize(PersistenceResourceUtil.instance, baseURI);
     	
     	ChangeRequest changeRequest = null;
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Unable to execute Apache Tomcat due to missing Java runtime environment (JRE).",
