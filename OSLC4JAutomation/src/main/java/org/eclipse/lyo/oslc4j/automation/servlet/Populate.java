@@ -37,8 +37,8 @@ final class Populate
     private final URI    serviceProviderURI;
     
     private static final String REMOTE_COMMAND_PLAN = "Remote Command Automation Plan";
-    private static final String BUILD_PLAN = "Demo Project Build Plan";
-    private static final String TEST_PLAN = "Demo Project Test Automation Plan";
+    private static final String BUILD_PLAN = "Build Account Inquiry Site";
+    private static final String TEST_PLAN = "Account Inquiry Test Automation Plan";
 
     public Populate(final String  basePath,
                     final URI     serviceProviderURI)
@@ -62,11 +62,13 @@ final class Populate
     public void populate()
            throws URISyntaxException
     {
+    	Property[] params3 = {new Property("command", Occurs.ExactlyOne, new URI(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String)};
     	
     	AutomationPlan autoPlan3 = createAutomationPlan(REMOTE_COMMAND_PLAN, 
                 "This automation plan will attempt to execute the system command provided " +
                 "in the command parameter of the Automation request",
-                "autoPlans");
+                "autoPlans", params3);
+    	
     	Persistence.addResource(autoPlan3);
 
 
@@ -76,26 +78,55 @@ final class Populate
                          autoPlan3);
     	Persistence.addResource(autoRequest);
     	
+    	AutomationResult autoResult = createAutomationResult("Sample Automation Result",
+			     "A sample automation result - does not represent an actual execution",
+			     "autoResults",
+			     autoPlan3,
+			     autoRequest);
+    	Persistence.addResource(autoResult);
+    	
+    	Property[] params2 = {new Property("test_environment", Occurs.ZeroOrOne, new URI(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String),
+    			              new Property("test_type", Occurs.ExactlyOne, new URI(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String),
+    			              new Property("test_plan", Occurs.ExactlyOne, new URI(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String),
+    			              };
+    	params2[1].setDefaultValue("Integration"); params2[2].setDefaultValue("Account Inquiry Test Plan"); 
+    	
     	AutomationPlan autoPlan2 = createAutomationPlan(TEST_PLAN,
 				"This automation plan will run automated tests for the Demo project ", 
-				"autoPlans");
+				"autoPlans", params2);
 
     	Persistence.addResource(autoPlan2);
     	
+    	Property[] params1 = {new Property("build_type", Occurs.ExactlyOne, new URI(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String)};
+    	params1[0].setDefaultValue("Production");
+    	
     	AutomationPlan autoPlan1 = createAutomationPlan(BUILD_PLAN,
 			    "This automation plan will build the Demo project ", 
-				"autoPlans");
+				"autoPlans", params1);
 
     	Persistence.addResource(autoPlan1);
-
     	
+    	AutomationRequest autoRequest2 = createAutomationRequest("Build Account Inquiry Site",
+                "Continuous Build of Account Inquiry Site",
+                "autoRequests",
+                autoPlan1);
+    	Persistence.addResource(autoRequest2);
+    	
+    	AutomationResult autoResult2 = createAutomationResult("Build Account Inquiry Site",
+			     "Result for Continuous Build of Account Inquiry Site",
+			     "autoResults",
+			     autoPlan1,
+			     autoRequest2);
+    	Persistence.addResource(autoResult2);
+
     }
 
    
 
 	private AutomationPlan createAutomationPlan (final String   title,
                                                  final String   description,
-                                                 final String path)
+                                                 final String path,
+                                                 final Property[] params)
             throws URISyntaxException
     {
         final AutomationPlan autoPlan = new AutomationPlan();
@@ -110,9 +141,9 @@ final class Populate
         autoPlan.setTitle(title);
         autoPlan.setDescription(description);
         
-        Property param1 = new Property("command", Occurs.ExactlyOne, new URI(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String);
-        autoPlan.addParameterDefinition(param1);
-        
+        for (Property param : params) {
+        	autoPlan.addParameterDefinition(param);
+        }
 
         final Date date = new Date();
         autoPlan.setCreated(date);
