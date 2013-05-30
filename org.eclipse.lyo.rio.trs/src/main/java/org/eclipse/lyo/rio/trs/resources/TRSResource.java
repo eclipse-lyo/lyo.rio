@@ -85,8 +85,8 @@ public class TRSResource {
 	@GET
 	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public TrackedResourceSet getTrackedResourceSet() throws URISyntaxException{
+		init();
 		
-		// from uri find out which Inner container to access...
 		URI requestURI = uriInfo.getRequestUri();
 		TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
 		
@@ -113,7 +113,8 @@ public class TRSResource {
 	@Path("changelog")
 	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public AbstractChangeLog getChangeLog() throws URISyntaxException{
-		// from uri find out which Inner container to access...
+		init();		
+
 		URI requestURI = uriInfo.getRequestUri();
 
 		TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
@@ -131,7 +132,8 @@ public class TRSResource {
 	@Path("changelog/{page}")
 	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public AbstractChangeLog getChangeLogPage(@PathParam("page") final Long page) throws URISyntaxException{
-		// from uri find out which Inner container to access...
+		init();
+		
 		URI requestURI = uriInfo.getRequestUri();
 		TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
 		
@@ -170,4 +172,9 @@ public class TRSResource {
 		}
 	
 	}
+	
+	private void init() {
+		// Initialize the base before adding / deleting any resource.  
+		TRSUtil.initialize(PersistenceResourceUtil.instance, uriInfo.getBaseUri());
+	}	
 }

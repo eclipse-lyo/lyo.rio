@@ -62,7 +62,7 @@ public class TRSObject {
 	private ChangeEvent last_cut_off_event = null;
 	public boolean trs_base_initialized = false;
 	private IResourceUtil resourceUtil;
-	private int PAGE_SIZE = 3;
+	private int PAGE_SIZE = 25;
 
 	/**
 	 * @param resourceUtil - IResourceUtil object capable of return an array of all the resources known to the
@@ -86,7 +86,7 @@ public class TRSObject {
 	private void initialize() {
 		synchronized (trs_base_map) {
 			trs_base_initialized = true;
-			AbstractResource[] abstractResources = resourceUtil.getAllResources();
+			List<URI> uris = resourceUtil.getAllResourceURIs();
 	
 			// initialize TRS Base
 			int currentPageSize = 0;
@@ -94,14 +94,14 @@ public class TRSObject {
 			Base currentBase = null;
 	
 			// if there are no known resources, then create an empty base object
-			if (abstractResources.length == 0) {
+			if (uris.size() == 0) {
 				currentBase = createNewBase();
 				getTrsBaseMapInner().put(currentPageNumber, currentBase);
 				return;
 			}
 	
 			// inventory of all CR resources
-			for (AbstractResource abstractResource : abstractResources) {
+			for (URI uri : uris) {
 
 				// If current size is zero, then create a new base page.
 				if (currentPageSize == 0) {
@@ -114,7 +114,7 @@ public class TRSObject {
 				}
 	
 				// add resource into TRS base
-				currentBase.getMembers().add(abstractResource.getAbout());
+				currentBase.getMembers().add(uri);
 				currentPageSize++;
 	
 				// Have we reached the page boundary?
@@ -167,20 +167,26 @@ public class TRSObject {
 	 * @param resource
 	 *            - URI of the resource that has undergone the change identified
 	 *            by trsEvent
+	 * @param changeURN
+	 *            - URN (uniform resource name) uniquely identifying a change
+	 *            event. The reference application makes calls to
+	 *            TRSUtil.getCurrentTimeStampURN() to generate a URN based on
+	 *            the current time. In a real implementation a true URN that can
+	 *            persist across server restarts should likely be used.
 	 */
-	public void insertEventTypeToChangeLog(String trsEvent, URI resource) {
+	public void insertEventTypeToChangeLog(String trsEvent, URI resource, URI changeURN) {
 		ChangeEvent event = null;
 		// increment the event number to maintain event order
 		int eventNumber = (last_change_event != null) ? last_change_event.getOrder() + 1 : 0;
 	
 		if (trsEvent.equals(TRSConstants.TRS_TYPE_CREATION)) {
-			event = new Creation(getCurrentTimeStampURN(), resource,
+			event = new Creation(changeURN, resource,
 					eventNumber);
 		} else if (trsEvent.equals(TRSConstants.TRS_TYPE_MODIFICATION)) {
-			event = new Modification(getCurrentTimeStampURN(), resource,
+			event = new Modification(changeURN, resource,
 					eventNumber);
 		} else if (trsEvent.equals(TRSConstants.TRS_TYPE_DELETION)) {
-			event = new Deletion(getCurrentTimeStampURN(), resource,
+			event = new Deletion(changeURN, resource,
 					eventNumber);
 		}
 	
@@ -350,7 +356,7 @@ public class TRSObject {
 				int size = baseValues.size();
 				Base currentBase = null;
 				for (Base base : baseValues) {
-					if (index == (baseValues.size() - 1)) {
+					if (index == (size - 1)) {
 						// get the last base page
 						currentBase = base;
 					}
@@ -379,23 +385,5 @@ public class TRSObject {
 				}
 			}
 		}
-	}
-
-	// the following two methods help generate a unique urn for a change event
-	private static URI getCurrentTimeStampURN() {
-		URI timestampURI = null;
-		try {
-			timestampURI = new URI("urn:urn-3:cm1.example.com:" + getCurrentTimeStamp());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return timestampURI;
-	}
-
-	private static String getCurrentTimeStamp() {
-		Date currDate = new Date();
-		SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SS");
-		String currDateStr = dateFormatGmt.format(currDate);
-		return currDateStr;
 	}
 }
