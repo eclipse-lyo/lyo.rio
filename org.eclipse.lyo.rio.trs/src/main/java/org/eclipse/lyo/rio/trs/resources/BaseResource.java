@@ -91,7 +91,7 @@ public class BaseResource {
 	@Path("{page}")
 	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Base getBasePage(@PathParam("page")Long page) throws URISyntaxException{
-	    TRSUtil.updateTRSResourceURI(PersistenceResourceUtil.instance, uriInfo.getBaseUri());
+		init();
 	    
 	    // from uri find out which Inner container to access...
 	    URI requestURI = uriInfo.getRequestUri();
@@ -105,4 +105,9 @@ public class BaseResource {
 		
 		return base;
 	}
+	
+	private void init() {
+		// Initialize the base before adding / deleting any resource.  
+		TRSUtil.initialize(PersistenceResourceUtil.instance, uriInfo.getBaseUri());
+	}	
 }
