@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
@@ -89,7 +90,7 @@ public class ChangeRequestResource
 						
 			ChangeRequest changeRequest = Persistence.persistChangeRequest(baseURI, cr);
 	
-			TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());
+			TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());
 	
 			// Send back to the form a small JSON response.
 			httpServletResponse.setContentType("application/json");
@@ -130,7 +131,7 @@ public class ChangeRequestResource
 	            Persistence.updateChangeRequest(changeRequestId, changeRequest);
 	
 	        	// TRS - Insert the modification event to the change log	            
-	            TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_MODIFICATION, changeRequest.getAbout());
+	            TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_MODIFICATION, changeRequest.getAbout(), getCurrentTimeStampURN());
 	
 				 String eTag = getETagFromChangeRequest(changeRequest);
 	    		httpServletResponse.setContentType("application/json");
@@ -331,7 +332,7 @@ public class ChangeRequestResource
         if (changeRequest != null)
         {
         	// TRS - Insert the deletion event to the change log
-        	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_DELETION, changeRequest.getAbout());
+        	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_DELETION, changeRequest.getAbout(), getCurrentTimeStampURN());
         	
             return Response.ok().build();
             
@@ -359,39 +360,39 @@ public class ChangeRequestResource
     	ChangeRequest changeRequest = null;
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Unable to execute Apache Tomcat due to missing Java runtime environment (JRE).",
                                                  "Apache Tomcat requires JRE", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());
 
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Operating system password required to be alphanumeric with at least eight characters.",
                                                  "Password complexity rules", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Misspelling in error message in XYZZY product.",
                                                  "Error message mispelling", "Client"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
         
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Unable to execute Apache Tomcat due to missing Java runtime environment (JRE).",
                 "Integer et elementum est. Maecenas bibendum fermentum pharetra.", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sed pharetra lectus..",
 		                "Password complexity rules", "Client"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 		
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Vestibulum volutpat, est vehicula tincidunt tincidunt, tortor ipsum consequat ante, sit amet ultricies elit dui ac massa. Nulla facilisi..",
 		                "Fusce dapibus imperdiet porta.", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 		
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Nunc aliquet scelerisque leo, eu molestie enim fermentum nec. Nulla lectus dui, dictum non sodales quis, dictum sed ante. Proin quam nulla, euismod ac facilisis eu, rhoncus vel quam. Donec ac ligula ante. Nulla egestas quam sit amet neque placerat quis iaculis risus tincidunt. Mauris a sapien nulla.",
 		        "Suspendisse lobortis nisi nisl, et imperdiet nisl.", "Client"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 		
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Ut felis risus, blandit eu tristique sed, vulputate non ligula. Donec interdum mi sed odio bibendum eget placerat mi tempus. Pellentesque id erat mauris.",
 		        "Duis placerat scelerisque purus sed tincidunt.", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());
 		
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Etiam lacinia cursus risus at iaculis. Nunc metus nisi, lobortis vitae consequat nec, hendrerit nec augue.",
 		        "Donec sit amet felis purus.", "Client"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
         
         return "Success!";
     }
@@ -422,4 +423,21 @@ public class ChangeRequestResource
     	
     }
     
+    // the following two methods help generate a unique urn for a change event
+ 	private static URI getCurrentTimeStampURN() {
+ 		URI timestampURI = null;
+ 		try {
+ 			timestampURI = new URI("urn:urn-3:cm1.example.com:" + getCurrentTimeStamp());
+ 		} catch (URISyntaxException e) {
+ 			e.printStackTrace();
+ 		}
+ 		return timestampURI;
+ 	}
+
+ 	private static String getCurrentTimeStamp() {
+ 		Date currDate = new Date();
+ 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SS");
+ 		String currDateStr = dateFormatGmt.format(currDate);
+ 		return currDateStr;
+ 	}  
 }
