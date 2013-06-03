@@ -45,11 +45,12 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
  * The Base of a Tracked Resource Set is an RDF container where each member references
  * a Resource that was in the Resource Set at the time the Base was computed. HTTP GET on
  * a Base URI returns an RDF container with the following structure: 
- * 
+ * <pre>
 	# Resource: http://cm1.example.com/baseResources
-	@prefix trs: <http://jazz.net/ns/trs#> .
-	@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+	{@literal @prefix trs: <http://jazz.net/ns/trs#> .}
+	{@literal @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .}
 	
+	{@code
 	<http://cm1.example.com/baseResources> 
 	trs:cutoffEvent 
 	    <urn:urn-3:cm1.example.com:2010-10-27T17:39:31.000Z:101> ;
@@ -59,10 +60,12 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
 	  ...
 	  rdfs:member <http://cm1.example.com/bugs/199> ;
 	  rdfs:member <http://cm1.example.com/bugs/200> .
-
+    }
+   </pre>
  *
  */
 
+@SuppressWarnings("serial")
 public class BaseGeneric extends HttpServlet {
 
 	public BaseGeneric() {

@@ -27,19 +27,17 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Observable;
 import java.util.Set;
 import java.util.TreeMap;
 
 import javax.ws.rs.WebApplicationException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
-import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
-import org.eclipse.lyo.oslc4j.provider.jena.JenaModelHelper;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
+import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
+import org.eclipse.lyo.oslc4j.provider.jena.JenaModelHelper;
 
-import com.hp.hpl.jena.graph.impl.FileGraph.NotifyOnClose;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileUtils;

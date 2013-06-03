@@ -40,6 +40,7 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
  * page. This is a servlet based generic implementation.
  *  
  */
+@SuppressWarnings("serial")
 public class ChangeLogGeneric extends HttpServlet {
 
 	public ChangeLogGeneric() {

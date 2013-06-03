@@ -17,7 +17,6 @@
 package org.eclipse.lyo.rio.trs.util;
 
 import java.net.URI;
-import java.util.TreeMap;
 
 import org.eclipse.lyo.core.trs.ChangeEvent;
 
@@ -34,8 +33,6 @@ import org.eclipse.lyo.core.trs.ChangeEvent;
  * resources or several pages of change logs). 
  */
 public class TRSUtil {
-	private final  TreeMap<String, TRSObject> trs_object_map = new TreeMap<String, TRSObject>();
-	
 	/**
 	 * insertEventTypeToChangeLog - Insert an event corresponding to the
 	 * trsEvent for the resource located at

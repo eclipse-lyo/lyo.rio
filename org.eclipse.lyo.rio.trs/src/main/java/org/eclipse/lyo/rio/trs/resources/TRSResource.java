@@ -19,7 +19,6 @@ package org.eclipse.lyo.rio.trs.resources;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -38,8 +37,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.wink.common.annotations.Workspace;
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.trs.ChangeEvent;
-import org.eclipse.lyo.core.trs.ChangeLog;
-import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.core.trs.TrackedResourceSet;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
@@ -56,9 +53,11 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
  * (note: for exposition, the example snippets show the RDF information content using Turtle; 
  * the actual representation of these resources "on the wire" may vary): 
  
+ <pre>
 	# Resource: http://cm1.example.com/trackedResourceSet
-	@prefix trs: <http://jazz.net/ns/trs#> .
+	{@literal @prefix trs: <http://jazz.net/ns/trs#> .}
 	
+	{@code
 	<http://cm1.example.com/trackedResourceSet>
 	  a trs:TrackedResourceSet ;
 	  trs:base <http://cm1.example.com/baseResources> ;
@@ -66,7 +65,8 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
 	    a trs:ChangeLog ; 
 	    trs:changes ( ... ) .
 	  ] .
-
+	}
+</pre>
  *  
  */
 @Path("/trs")

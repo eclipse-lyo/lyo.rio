@@ -18,11 +18,8 @@ package org.eclipse.lyo.rio.trs.cm;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
 import org.eclipse.lyo.rio.trs.util.IResourceUtil;
 
 public final class PersistenceResourceUtil
@@ -34,9 +31,9 @@ public final class PersistenceResourceUtil
 	public List<URI> getAllResourceURIs() {
 		List<URI> uris = new ArrayList<URI>();
 		
-		Collection<ChangeRequest> changeRequests = Arrays.asList(Persistence.getAllChangeRequests());
+		ChangeRequest[] allChangeRequests = Persistence.getAllChangeRequests();
 		
-		for (ChangeRequest currentRequest : changeRequests) {
+		for (ChangeRequest currentRequest : allChangeRequests) {
 			uris.add(currentRequest.getAbout());
 		}
 		

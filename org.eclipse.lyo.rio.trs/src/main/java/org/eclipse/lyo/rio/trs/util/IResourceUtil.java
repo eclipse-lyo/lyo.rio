@@ -19,8 +19,6 @@ package org.eclipse.lyo.rio.trs.util;
 import java.net.URI;
 import java.util.List;
 
-import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
-
 public interface IResourceUtil {
 	public List<URI> getAllResourceURIs();
 }

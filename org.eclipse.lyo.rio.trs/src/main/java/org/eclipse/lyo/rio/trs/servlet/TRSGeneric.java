@@ -43,9 +43,11 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
  * (note: for exposition, the example snippets show the RDF information content using Turtle; 
  * the actual representation of these resources "on the wire" may vary): 
  
+ <pre>
 	# Resource: http://cm1.example.com/trackedResourceSet
-	@prefix trs: <http://jazz.net/ns/trs#> .
+	{@literal @prefix trs: <http://jazz.net/ns/trs#> .}
 	
+	{@code
 	<http://cm1.example.com/trackedResourceSet>
 	  a trs:TrackedResourceSet ;
 	  trs:base <http://cm1.example.com/baseResources> ;
@@ -53,10 +55,13 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
 	    a trs:ChangeLog ; 
 	    trs:changes ( ... ) .
 	  ] .
+	 }
+</pre>
 
  *  
  */
 // The servlet class to handle request for /restx/trs/*. Implementation TRS through Servlet.
+@SuppressWarnings("serial")
 public class TRSGeneric extends HttpServlet {
 
     public TRSGeneric() {

@@ -67,7 +67,6 @@ public final class ChangeRequest
     private final Set<Link>     tracksRequirements          = new HashSet<Link>();
     private final Set<URI>      rdfTypes                    = new TreeSet<URI>();
 
-    private URI      accessControl;
     private Boolean  approved;
     private Boolean  closed;
     private Date     closeDate;
@@ -607,11 +606,6 @@ public final class ChangeRequest
         return verified;
     }
     
-    public void setAccessControl(URI accessControl) 
-    {
-		this.accessControl = accessControl;
-	}
-
     public void setAffectedByDefects(final Link[] affectedByDefects)
     {
         this.affectedByDefects.clear();
