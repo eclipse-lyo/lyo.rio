@@ -12,6 +12,7 @@
  * Contributors:
  * 
  *    Mukherjee Biswarup - Initial implementation
+ *    David Terry - TRS 2.0 compliant implementation
  *******************************************************************************/
 package org.eclipse.lyo.rio.trs.servlet;
 
@@ -32,6 +33,7 @@ import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
 import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.ResponseUtil;
 import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
@@ -47,7 +49,9 @@ public class ChangeLogGeneric extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/rdf+xml");
+		String responseType = ResponseUtil.parseAcceptType(request);
+		response.setContentType(responseType);
+		
 		AbstractChangeLog changeLog = null;
 		Object[]  oArray = new Object[1];		
 		
@@ -75,16 +79,18 @@ public class ChangeLogGeneric extends HttpServlet {
 			{
 				changeLog = trsObject.getCurrentChangeLog();
 			}
+		
+			OSLC4JContext context = OSLC4JContext.newInstance();
+			OSLC4JMarshaller marshaller = context.createMarshaller();
+
+			marshaller.setMediaType(MediaType.valueOf(responseType));
+			ResponseUtil.fixRelativeUris(responseType, requestBase.toString(), changeLog);
+
+			ServletOutputStream outputStream = response.getOutputStream();
+			oArray[0] = changeLog;
+			marshaller.marshal(oArray, outputStream);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		
-		OSLC4JContext context = OSLC4JContext.newInstance();
-		OSLC4JMarshaller marshaller = context.createMarshaller();
-		marshaller.setMediaType(MediaType.APPLICATION_XML_TYPE);
-		ServletOutputStream outputStream = response.getOutputStream();
-		oArray[0] = changeLog;
-		marshaller.marshal(oArray, outputStream);
-	}	
-
+	}
 }

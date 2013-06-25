@@ -12,6 +12,7 @@
  * Contributors:
  * 
  *    Ernest Mah - Initial implementation
+ *    David Terry - TRS 2.0 compliant implementation
  *******************************************************************************/
 
 package org.eclipse.lyo.rio.trs.resources;
@@ -32,6 +33,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.wink.common.annotations.Workspace;
 import org.eclipse.lyo.core.trs.Base;
+import org.eclipse.lyo.core.trs.Page;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
@@ -74,8 +76,8 @@ public class BaseResource {
 	 * paged Base resources of the Tracked Resource Set
 	 */
 	@GET
-	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Base getBase() throws URISyntaxException{
+	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Page getBase() throws URISyntaxException{
 	    
         URI requestURI = uriInfo.getRequestUri();
         boolean endsWithSlash = requestURI.getPath().endsWith("/");
@@ -89,10 +91,10 @@ public class BaseResource {
 	 */	
 	@GET
 	@Path("{page}")
-	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Base getBasePage(@PathParam("page")Long page) throws URISyntaxException{
+	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Page getBasePage(@PathParam("page")Long page) throws URISyntaxException{
 		init();
-	    
+		
 	    // from uri find out which Inner container to access...
 	    URI requestURI = uriInfo.getRequestUri();
 	    
@@ -103,7 +105,21 @@ public class BaseResource {
 		if (base == null)
 			throw new WebApplicationException(Status.NOT_FOUND);
 		
-		return base;
+		Page nextPage = base.getNextPage();
+		 
+		 if (nextPage == null)
+				throw new WebApplicationException(Status.NOT_FOUND);
+			 
+		// Return the nextPage Page object, which describes the next base page in terms,
+		// of the current base page we are manipulating.  We do not directly 
+		// return the base object due to a limitation in OSLC4J.  Currently 
+		// OSLC4J requires that triples in the RDF graph with different subjects
+		// reference one another.  According to the 2.0 spec, the Page object
+		// already references the Base object so we will get the appropriate
+		// output if we return Page.  If we force a reference from Base to Page
+		// instead then we get a ldp:nextPage entry which does not conform to the
+		// TRS 2.0 specification.
+		return nextPage;
 	}
 	
 	private void init() {
