@@ -12,6 +12,7 @@
  * Contributors:
  * 
  *    Mukherjee Biswarup - Initial implementation
+ *    David Terry - TRS 2.0 compliant implementation
  *******************************************************************************/
 
 package org.eclipse.lyo.rio.trs.servlet;
@@ -32,9 +33,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.lyo.core.trs.Base;
+import org.eclipse.lyo.core.trs.Page;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
+import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.ResponseUtil;
 import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
@@ -72,7 +76,9 @@ public class BaseGeneric extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/rdf+xml");
+		String responseType = ResponseUtil.parseAcceptType(request);
+
+		response.setContentType(responseType);
 		String path = null;
 	
 		path = request.getPathInfo();
@@ -104,12 +110,33 @@ public class BaseGeneric extends HttpServlet {
 					if (base == null)
 						throw new WebApplicationException(Status.NOT_FOUND);
 					
-					List<Base> results = new ArrayList<Base>();
-					results.add(base);
+					Page nextPage = base.getNextPage();
+					 
+					 if (nextPage == null)
+							throw new WebApplicationException(Status.NOT_FOUND);
+					 
+					// Return the nextPage Page object, which describes the next base page in terms,
+					// of the current base page we are manipulating.  We do not directly 
+					// return the base object due to a limitation in OSLC4J.  Currently 
+					// OSLC4J requires that triples in the RDF graph with different subjects
+					// reference one another.  According to the 2.0 spec, the Page object
+					// already references the Base object so we will get the appropriate
+					// output if we return Page.  If we force a reference from Base to Page
+					// instead then we get a ldp:nextPage entry which does not conform to the
+					// TRS 2.0 specification.
+					
+					List<Page> results = new ArrayList<Page>();
+					results.add(nextPage);
 					// return results;
 					OSLC4JContext context = OSLC4JContext.newInstance();
 					OSLC4JMarshaller marshaller = context.createMarshaller();
-					marshaller.setMediaType(MediaType.APPLICATION_XML_TYPE);
+					
+					if (responseType.equals(OslcMediaType.TEXT_TURTLE)) {
+						marshaller.setMediaType(OslcMediaType.TEXT_TURTLE_TYPE);
+					} else if (responseType.equals(OslcMediaType.APPLICATION_RDF_XML)) {
+						marshaller.setMediaType(MediaType.APPLICATION_XML_TYPE);	
+					}
+					
 					ServletOutputStream outputStream = response.getOutputStream();
 					oArray = results.toArray();
 					marshaller.marshal(oArray, outputStream);	
