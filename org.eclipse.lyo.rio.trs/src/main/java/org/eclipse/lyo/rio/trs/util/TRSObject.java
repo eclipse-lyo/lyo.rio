@@ -12,6 +12,7 @@
  * Contributors:
  * 
  *    Ernest Mah - Initial implementation
+ *    David Terry - TRS 2.0 compliant implementation
  *******************************************************************************/
 
 package org.eclipse.lyo.rio.trs.util;
@@ -31,6 +32,7 @@ import org.eclipse.lyo.core.trs.Creation;
 import org.eclipse.lyo.core.trs.Deletion;
 import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.trs.Modification;
+import org.eclipse.lyo.core.trs.Page;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
 
@@ -93,7 +95,7 @@ public class TRSObject {
 	
 			// if there are no known resources, then create an empty base object
 			if (uris.size() == 0) {
-				currentBase = createNewBase();
+				currentBase = createNewBase(currentPageNumber);
 				getTrsBaseMapInner().put(currentPageNumber, currentBase);
 				return;
 			}
@@ -105,9 +107,17 @@ public class TRSObject {
 				if (currentPageSize == 0) {
 					// Point the current Base to the previous Base page by URI before creating
 					// the new one
-					if (currentBase != null)
-						currentBase.setNextPage(getBaseResourceURI(currentPageNumber));
-					currentBase = createNewBase();
+					if (currentBase != null) {
+						// At this point the currentPageNumber tracks the next 
+						// page in the sequence since we are preparing to create
+						// a new base page.  Do some trickery so we can properly
+						// set the next page object.
+						URI previousPage = getBaseResourceURI(currentPageNumber - 1);
+						URI nextPage = getBaseResourceURI(currentPageNumber);
+						currentBase.setNextPage(getNextBasePage(currentBase, previousPage, nextPage));
+					}
+						
+					currentBase = createNewBase(currentPageNumber);
 					getTrsBaseMapInner().put(currentPageNumber, currentBase);
 				}
 	
@@ -220,7 +230,7 @@ public class TRSObject {
 			}
 	
 			// add resource into current changelog
-			trs_curr_changelog.getChanges().add(0, event);
+			trs_curr_changelog.getChange().add(0, event);
 			trs_curr_changelog_size++;
 			last_change_event = event;
 	
@@ -250,7 +260,7 @@ public class TRSObject {
 			// 1. Iterate change log entries if inCutOffEvent is found
 			for (long page = trs_curr_changelog_page; page >= 0; page--) {
 				ChangeLog aChangeLog = getTrsChangelogMapInner().get((long) page);
-				List<ChangeEvent> aListofevents = aChangeLog.getChanges();
+				List<ChangeEvent> aListofevents = aChangeLog.getChange();
 				for (ChangeEvent e : aListofevents) {
 					if (last_cut_off_event != null) {
 						if (e.equals(last_cut_off_event)) {
@@ -294,7 +304,7 @@ public class TRSObject {
 	
 		for (int page = 0; page <= trs_curr_changelog_page; page++) {
 			ChangeLog aChangeLog = getTrsChangelogMapInner().get((long) page);
-			List<ChangeEvent> aListofevents = aChangeLog.getChanges();
+			List<ChangeEvent> aListofevents = aChangeLog.getChange();
 			for (ChangeEvent e : aListofevents) {
 				if (uriAbout.equals(e.getAbout().toString())) {
 					result = e;
@@ -306,12 +316,12 @@ public class TRSObject {
 		return result;
 	}
 
-	private Base createNewBase() {
+	private Base createNewBase(long currentPageNumber) {
 		Base newBase = new Base();
 		newBase.setAbout(getBaseResourceURI(null));
 		try {
 			newBase.setCutoffEvent(new URI(TRSConstants.RDF_NIL));
-			newBase.setNextPage(new URI(TRSConstants.RDF_NIL));
+			newBase.setNextPage(getNextBasePage(newBase, getBaseResourceURI(currentPageNumber), new URI(TRSConstants.RDF_NIL)));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -326,6 +336,30 @@ public class TRSObject {
 		return trs_changelog_map;
 	}
 
+	/**
+	 * Prepare the LDP object and make it so it points to the current base page
+	 * as well as the next base page.
+	 * 
+	 * @param currentBase
+	 *            Reference to the main base endpoint (the page belongs to this
+	 *            base resource)
+	 * @param currentPage
+	 *            URI of the current base page being manipulated
+	 * @param nextPage
+	 *            URI to the next page in the sequence
+	 */
+	private Page getNextBasePage(Base currentBase, URI currentPage, URI nextPage) {
+		Page ldpNextPage = new Page();
+
+		ldpNextPage.setAbout(currentPage);
+
+		ldpNextPage.setNextPage(nextPage);
+		
+		ldpNextPage.setPageOf(currentBase);
+		
+		return ldpNextPage;
+	}
+	
 	private URI getBaseResourceURI(Long pageNumber) {
 		if (pageNumber == null)
 			return trs_uri.resolve("./" + TRSConstants.TRS_TERM_BASE + "/");

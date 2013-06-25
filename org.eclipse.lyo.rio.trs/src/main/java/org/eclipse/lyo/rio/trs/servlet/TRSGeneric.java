@@ -12,6 +12,7 @@
  * Contributors:
  * 
  *    Mukherjee Biswarup - Initial implementation
+ *    David Terry - TRS 2.0 compliant implementation
  *******************************************************************************/
 
 package org.eclipse.lyo.rio.trs.servlet;
@@ -32,7 +33,9 @@ import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.core.trs.TrackedResourceSet;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
+import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.ResponseUtil;
 import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 /**
@@ -69,8 +72,8 @@ public class TRSGeneric extends HttpServlet {
     }
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		response.setContentType("application/rdf+xml");
+		String responseType = ResponseUtil.parseAcceptType(request);
+		response.setContentType(responseType);
 
 		Object[]  oArray = new Object[1];
 		TrackedResourceSet set = new TrackedResourceSet();
@@ -93,16 +96,24 @@ public class TRSGeneric extends HttpServlet {
 			URI base = requestBase.resolve("trs/"+TRSConstants.TRS_TERM_BASE+"/");
 			set.setBase(base);
 			set.setChangeLog(changeLog);
+		
+			OSLC4JContext context = OSLC4JContext.newInstance();
+			OSLC4JMarshaller marshaller = context.createMarshaller();
+			
+			if (responseType.equals(OslcMediaType.TEXT_TURTLE)) {
+				marshaller.setMediaType(OslcMediaType.TEXT_TURTLE_TYPE);
+			} else if (responseType.equals(OslcMediaType.APPLICATION_RDF_XML)) {
+				marshaller.setMediaType(MediaType.APPLICATION_XML_TYPE);	
+			}
+			
+			ResponseUtil.fixRelativeUris(responseType, requestBase.toString(), changeLog);
+
+			ServletOutputStream outputStream = response.getOutputStream();
+			oArray[0] = set;
+			marshaller.marshal(oArray, outputStream);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		OSLC4JContext context = OSLC4JContext.newInstance();
-		OSLC4JMarshaller marshaller = context.createMarshaller();
-		marshaller.setMediaType(MediaType.APPLICATION_XML_TYPE);
-		ServletOutputStream outputStream = response.getOutputStream();
-		oArray[0] = set;
-		marshaller.marshal(oArray, outputStream);		
 	}
 }
