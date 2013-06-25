@@ -12,14 +12,17 @@
  * Contributors:
  * 
  *    Ernest Mah - Initial implementation
+ *    David Terry - TRS 2.0 compliant implementation
  *******************************************************************************/
 
 package org.eclipse.lyo.rio.trs.resources;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -42,6 +45,7 @@ import org.eclipse.lyo.core.trs.TrackedResourceSet;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
+import org.eclipse.lyo.rio.trs.util.ResponseUtil;
 import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
@@ -77,14 +81,16 @@ public class TRSResource {
 	@Context
 	protected UriInfo uriInfo;
 	@Context private HttpServletResponse httpServletResponse;
+	@Context private HttpServletRequest httpServletRequest;
 	
 	/**
 	 * getTrackedResourceSet() returns the Tracked Resource Set with the most recent
 	 * page of the Change Log or EmptyChangeLog if no change logs pages exist
+	 * @throws IOException 
 	 */
 	@GET
-	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public TrackedResourceSet getTrackedResourceSet() throws URISyntaxException{
+	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public TrackedResourceSet getTrackedResourceSet() throws URISyntaxException, IOException{
 		init();
 		
 		URI requestURI = uriInfo.getRequestUri();
@@ -101,6 +107,12 @@ public class TRSResource {
 		URI base = requestBase.resolve("trs/"+TRSConstants.TRS_TERM_BASE+"/");
 		
 		set.setBase(base);
+		
+		// Determine the response type and alter the about URIs as appropriate
+		// (turtle prefers relative URIs while RDF/XML requires absolute URIs)
+		String responseType = ResponseUtil.parseAcceptType(httpServletRequest);
+		ResponseUtil.fixRelativeUris(responseType, requestURI.toString(), changeLog);
+			
 		set.setChangeLog(changeLog);
 		
 		return set;
@@ -108,11 +120,12 @@ public class TRSResource {
 
 	/**
 	 * getChangeLog() returns the current changelog...
+	 * @throws IOException 
 	 */
 	@GET
 	@Path("changelog")
-	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public AbstractChangeLog getChangeLog() throws URISyntaxException{
+	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public AbstractChangeLog getChangeLog() throws URISyntaxException, IOException{
 		init();		
 
 		URI requestURI = uriInfo.getRequestUri();
@@ -121,17 +134,23 @@ public class TRSResource {
 		
 		AbstractChangeLog changeLog = trsObject.getCurrentChangeLog();
 		
+		// Determine the response type and alter the about URIs as appropriate
+		// (turtle prefers relative URIs while RDF/XML requires absolute URIs)
+		String responseType = ResponseUtil.parseAcceptType(httpServletRequest);
+		ResponseUtil.fixRelativeUris(responseType, requestURI.toString(), changeLog);
+				
 		return changeLog;
 	}
 	
 	/**
 	 * getChangeLogPage() returns the Change Log at the given page number
+	 * @throws IOException 
 	 * 
 	 */	
 	@GET
 	@Path("changelog/{page}")
-	@Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.TEXT_TURTLE, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public AbstractChangeLog getChangeLogPage(@PathParam("page") final Long page) throws URISyntaxException{
+	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public AbstractChangeLog getChangeLogPage(@PathParam("page") final Long page) throws URISyntaxException, IOException{
 		init();
 		
 		URI requestURI = uriInfo.getRequestUri();
@@ -142,6 +161,11 @@ public class TRSResource {
 		if (changeLog == null)
 			throw new WebApplicationException(Status.NOT_FOUND);
 			
+		// Determine the response type and alter the about URIs as appropriate
+		// (turtle prefers relative URIs while RDF/XML requires absolute URIs)
+		String responseType = ResponseUtil.parseAcceptType(httpServletRequest);			
+		ResponseUtil.fixRelativeUris(responseType, requestURI.toString(), changeLog);
+				
 		return changeLog;
 	}
 	
