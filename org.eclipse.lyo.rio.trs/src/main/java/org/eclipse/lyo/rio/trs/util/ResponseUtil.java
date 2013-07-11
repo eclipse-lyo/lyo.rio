@@ -16,17 +16,11 @@
 package org.eclipse.lyo.rio.trs.util;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import org.eclipse.lyo.core.trs.AbstractChangeLog;
-import org.eclipse.lyo.core.trs.ChangeEvent;
-import org.eclipse.lyo.core.trs.ChangeLog;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 
 /**
@@ -34,35 +28,6 @@ import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
  * of TRS toolkit resources for the servlet based implementation.
  */
 public class ResponseUtil {
-	
-	/**
-	 * This method examines the incoming response type and alters the relative
-	 * about URIs stored on the events of the change log. For turtle output the
-	 * relative URIs are left alone or restored if necessary.  For RDF/XML the
-	 * requestBase is added to the relative URI to get the appropriate absolute
-	 * URI (since RDF/XML does not allow relative about URIs).
-	 * 
-	 * @param responseType
-	 * @param requestBase
-	 * @param changeLog
-	 * @throws URISyntaxException
-	 */
-	public static void fixRelativeUris(String responseType, String requestBase, AbstractChangeLog changeLog) throws URISyntaxException {
-		// If this is a populated change log it has relative uris we need to fix
-		// or the RDF/XML will be illegal
-		if (changeLog instanceof ChangeLog) {
-			List<ChangeEvent> events = ((ChangeLog) changeLog).getChange();
-
-			for (ChangeEvent event : events) {
-				if (!(responseType.equals(OslcMediaType.TEXT_TURTLE))) {
-					event.setAbout(new URI(requestBase + "#" + Integer.toString(event.getOrder())));
-				} else {
-					event.setAbout(new URI("#" + Integer.toString(event.getOrder())));
-				}
-			}
-		}
-	}
-		
 	/**
 	 * Return a string representing the requested accept type. Right now we 
 	 * support text/turle and application/rdf+xml with text/turtle

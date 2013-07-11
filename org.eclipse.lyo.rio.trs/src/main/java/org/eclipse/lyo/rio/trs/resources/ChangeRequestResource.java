@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
@@ -69,7 +70,7 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
 public class ChangeRequestResource
 {
 	@Context ServletContext servletContext;
-	static long currentNumber = -1;
+	private static String URN_PREFIX = "urn:urn-3:cm1.example.com:";
 	
 	// Handle the HTML request from browser.
 	@POST
@@ -91,7 +92,7 @@ public class ChangeRequestResource
 						
 			ChangeRequest changeRequest = Persistence.persistChangeRequest(baseURI, cr);
 	
-			TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());
+			TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());
 	
 			// Send back to the form a small JSON response.
 			httpServletResponse.setContentType("application/json");
@@ -132,7 +133,7 @@ public class ChangeRequestResource
 	            Persistence.updateChangeRequest(changeRequestId, changeRequest);
 	
 	        	// TRS - Insert the modification event to the change log	            
-	            TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_MODIFICATION, changeRequest.getAbout(), createRelativeURN());
+	            TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_MODIFICATION, changeRequest.getAbout(), getCurrentTimeStampURN());
 	
 				 String eTag = getETagFromChangeRequest(changeRequest);
 	    		httpServletResponse.setContentType("application/json");
@@ -333,7 +334,7 @@ public class ChangeRequestResource
         if (changeRequest != null)
         {
         	// TRS - Insert the deletion event to the change log
-        	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_DELETION, changeRequest.getAbout(), createRelativeURN());
+        	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_DELETION, changeRequest.getAbout(), getCurrentTimeStampURN());
         	
             return Response.ok().build();
             
@@ -361,39 +362,39 @@ public class ChangeRequestResource
     	ChangeRequest changeRequest = null;
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Unable to execute Apache Tomcat due to missing Java runtime environment (JRE).",
                                                  "Apache Tomcat requires JRE", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());
 
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Operating system password required to be alphanumeric with at least eight characters.",
                                                  "Password complexity rules", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Misspelling in error message in XYZZY product.",
                                                  "Error message mispelling", "Client"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
         
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Unable to execute Apache Tomcat due to missing Java runtime environment (JRE).",
                 "Integer et elementum est. Maecenas bibendum fermentum pharetra.", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sed pharetra lectus..",
 		                "Password complexity rules", "Client"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 		
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Vestibulum volutpat, est vehicula tincidunt tincidunt, tortor ipsum consequat ante, sit amet ultricies elit dui ac massa. Nulla facilisi..",
 		                "Fusce dapibus imperdiet porta.", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 		
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Nunc aliquet scelerisque leo, eu molestie enim fermentum nec. Nulla lectus dui, dictum non sodales quis, dictum sed ante. Proin quam nulla, euismod ac facilisis eu, rhoncus vel quam. Donec ac ligula ante. Nulla egestas quam sit amet neque placerat quis iaculis risus tincidunt. Mauris a sapien nulla.",
 		        "Suspendisse lobortis nisi nisl, et imperdiet nisl.", "Client"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
 		
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Ut felis risus, blandit eu tristique sed, vulputate non ligula. Donec interdum mi sed odio bibendum eget placerat mi tempus. Pellentesque id erat mauris.",
 		        "Duis placerat scelerisque purus sed tincidunt.", "Server"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());
 		
     	changeRequest = Persistence.persistChangeRequest(baseURI,  Persistence.createChangeRequest("Etiam lacinia cursus risus at iaculis. Nunc metus nisi, lobortis vitae consequat nec, hendrerit nec augue.",
 		        "Donec sit amet felis purus.", "Client"));
-    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), createRelativeURN());    	
+    	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
         
         return "Success!";
     }
@@ -420,24 +421,36 @@ public class ChangeRequestResource
 			
 		} catch (Exception e) {
 			throw new WebApplicationException(e);
-		}
-    	
+		}    	
     }
-    
-    // This method generates a simple unique URN for a change event based on
-    // an in-memory counter. This URN identifies a particular change event while
-    // the server is running. In a production system it is often useful to persist 
-    // change logs so that the same change event URN can be used on a restart of 
-    // the application. This allows consumers of the the feed to know which 
-    // changes events have already been viewed.
- 	private static URI createRelativeURN() {
- 		// Incrementally track change events since the start of the system.
- 		currentNumber++;
+
+	/**
+	 * This method generates a simple unique URN for a change event based on
+	 * the current system time. The URN allows consumers of the the feed
+	 * to know which changes events have already been viewed.
+	 * 
+	 * @return
+	 */
+ 	private static URI getCurrentTimeStampURN() {
+ 		URI timestampURI = null;
  		try {
-			return new URI("#" + currentNumber);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			return null;
-		}
+ 			timestampURI = new URI(URN_PREFIX + getCurrentTimeStamp());
+ 		} catch (URISyntaxException e) {
+ 			e.printStackTrace();
+ 		}
+ 		return timestampURI;
+ 	}
+
+ 	/**
+ 	 * Generates a string in the format of yyyy-MM-ddHH:mm:ss.SS which can be
+ 	 * used as part of a unique URN for change events.
+ 	 * 
+ 	 * @return
+ 	 */
+ 	private static String getCurrentTimeStamp() {
+ 		Date currDate = new Date();
+ 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SS");
+ 		String currDateStr = dateFormatGmt.format(currDate);
+ 		return currDateStr;
  	}
 }

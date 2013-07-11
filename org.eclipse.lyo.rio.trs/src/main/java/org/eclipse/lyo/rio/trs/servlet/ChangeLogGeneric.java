@@ -89,8 +89,6 @@ public class ChangeLogGeneric extends HttpServlet {
 			} else if (responseType.equals(OslcMediaType.APPLICATION_RDF_XML)) {
 				marshaller.setMediaType(MediaType.APPLICATION_XML_TYPE);	
 			}
-			
-			ResponseUtil.fixRelativeUris(responseType, requestBase.toString(), changeLog);
 
 			ServletOutputStream outputStream = response.getOutputStream();
 			oArray[0] = changeLog;

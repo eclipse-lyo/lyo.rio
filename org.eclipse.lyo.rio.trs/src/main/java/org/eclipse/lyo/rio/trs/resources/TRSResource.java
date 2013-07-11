@@ -45,7 +45,6 @@ import org.eclipse.lyo.core.trs.TrackedResourceSet;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.rio.trs.cm.PersistenceResourceUtil;
-import org.eclipse.lyo.rio.trs.util.ResponseUtil;
 import org.eclipse.lyo.rio.trs.util.TRSObject;
 import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
@@ -107,11 +106,6 @@ public class TRSResource {
 		URI base = requestBase.resolve("trs/"+TRSConstants.TRS_TERM_BASE+"/");
 		
 		set.setBase(base);
-		
-		// Determine the response type and alter the about URIs as appropriate
-		// (turtle prefers relative URIs while RDF/XML requires absolute URIs)
-		String responseType = ResponseUtil.parseAcceptType(httpServletRequest);
-		ResponseUtil.fixRelativeUris(responseType, requestURI.toString(), changeLog);
 			
 		set.setChangeLog(changeLog);
 		
@@ -133,11 +127,6 @@ public class TRSResource {
 		TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
 		
 		AbstractChangeLog changeLog = trsObject.getCurrentChangeLog();
-		
-		// Determine the response type and alter the about URIs as appropriate
-		// (turtle prefers relative URIs while RDF/XML requires absolute URIs)
-		String responseType = ResponseUtil.parseAcceptType(httpServletRequest);
-		ResponseUtil.fixRelativeUris(responseType, requestURI.toString(), changeLog);
 				
 		return changeLog;
 	}
@@ -160,11 +149,6 @@ public class TRSResource {
 		
 		if (changeLog == null)
 			throw new WebApplicationException(Status.NOT_FOUND);
-			
-		// Determine the response type and alter the about URIs as appropriate
-		// (turtle prefers relative URIs while RDF/XML requires absolute URIs)
-		String responseType = ResponseUtil.parseAcceptType(httpServletRequest);			
-		ResponseUtil.fixRelativeUris(responseType, requestURI.toString(), changeLog);
 				
 		return changeLog;
 	}
