@@ -1,0 +1,20 @@
+<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oslc="http://open-services.net/ns/core#"
+	xmlns:oslc_cm="http://open-services.net/ns/cm#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<rdf:Description rdf:about="">
+<oslc_cm:fixed>false</oslc_cm:fixed>
+<oslc_cm:verified>true</oslc_cm:verified>
+<oslc_cm:closed>false</oslc_cm:closed>
+<dcterms:description rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral">test defect testing</dcterms:description>
+<oslc_cm:approved>false</oslc_cm:approved>
+<oslc_cm:severity>Unclassified</oslc_cm:severity>
+<dcterms:modified>2013-01-22T11:51:19.631+05:30</dcterms:modified>
+<oslc_cm:reviewed>false</oslc_cm:reviewed>
+<dcterms:type>Defect</dcterms:type>
+<oslc_cm:status>Submitted</oslc_cm:status>
+<oslc:shortTitle rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral">test defect test</oslc:shortTitle>
+<rdf:type rdf:resource="http://open-services.net/ns/cm#ChangeRequest"/>
+<dcterms:created>2013-01-21T14:11:41.556+05:30</dcterms:created>
+<dcterms:title rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral">test defect test</dcterms:title>
+<oslc_cm:inprogress>false</oslc_cm:inprogress>
+</rdf:Description>
+</rdf:RDF>
