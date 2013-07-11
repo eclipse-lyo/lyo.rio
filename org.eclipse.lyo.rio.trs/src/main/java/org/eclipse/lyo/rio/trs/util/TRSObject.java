@@ -17,12 +17,21 @@
 
 package org.eclipse.lyo.rio.trs.util;
 
+import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.NavigableSet;
 import java.util.TreeMap;
+
+import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.trs.Base;
@@ -34,6 +43,7 @@ import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.trs.Modification;
 import org.eclipse.lyo.core.trs.Page;
 import org.eclipse.lyo.core.trs.TRSConstants;
+import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
 import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
 
 /**
@@ -53,6 +63,8 @@ public class TRSObject {
 
 	private final TreeMap<Long, Base> trs_base_map = new TreeMap<Long, Base>();
 	private final TreeMap<Long, ChangeLog> trs_changelog_map = new TreeMap<Long, ChangeLog>();
+	private final List<ChangeEvent> change_events = new ArrayList<ChangeEvent>();
+	
 	private URI trs_uri = null;
 	private int trs_curr_changelog_size = 0;
 	private Long trs_curr_changelog_page = -1L;
@@ -63,15 +75,26 @@ public class TRSObject {
 	public boolean trs_base_initialized = false;
 	private IResourceUtil resourceUtil;
 	private int PAGE_SIZE = 3;
+	private long MILLISECONDS_IN_DAY = 86400000;
+	private static String URN_PREFIX = "urn:urn-3:cm1.example.com:";
+	
+	String changeEventsFilename = null;
 
 	/**
-	 * @param resourceUtil - IResourceUtil object capable of return an array of all the resources known to the
-	 * 				server to prime the Base resources.
-	 * @param trs_uri - uri root for where the trs endpoints begin.  This is used for setting the urls for references
-	 *				to other resources in the TRS feed.
+	 * @param resourceUtil
+	 *            IResourceUtil object capable of return an array of all the
+	 *            resources known to the server to prime the Base resources.
+	 * @param trs_uri
+	 *            uri root for where the trs endpoints begin. This is used for
+	 *            setting the urls for references to other resources in the TRS
+	 *            feed.
+	 * @param changeEventsFilename
+	 *            An absolute path to a file on disk containing the persisted
+	 *            change log.
 	 */
-	public TRSObject(IResourceUtil resourceUtil, URI trs_uri) {
+	public TRSObject(IResourceUtil resourceUtil, URI trs_uri, String changeEventsFilename) {
 		super();
+		this.changeEventsFilename = changeEventsFilename;
 		this.resourceUtil = resourceUtil;
 		this.trs_uri = trs_uri;
 		initialize();
@@ -131,6 +154,91 @@ public class TRSObject {
 					currentPageNumber++;
 				}
 			}
+		}
+		loadChangeEvents();
+	}
+	
+	/**
+	 * Loads change events from the config.properties' ChangeLogFile
+	 * file into the change log when the TRSObject is initialized.
+	 * It should be noted that this method will prune the change log if it is
+	 * greater than x days old (configurable via the PruneTimeInDays 
+	 * config.properties parameter).
+	 */
+	private void loadChangeEvents() {
+		Object[] changeEvents;
+		try {
+			Class<?> [] objectTypes = {Creation.class, Modification.class, Deletion.class};
+			changeEvents = FileUtil.fileload(this.changeEventsFilename, Arrays.asList(objectTypes));
+			
+			TreeMap <Integer, ChangeEvent> sortedTree = new TreeMap <Integer, ChangeEvent>();
+				
+			if (changeEvents != null) {
+				boolean pruned = false;
+				
+				// Loop over all change events we found on disk and put them in
+				// the treemap sorted by order. Prune events greater than 
+				// PruneTimeInDays (found in config.properties).
+				for (int i = 0; i < changeEvents.length; i++) {
+					ChangeEvent changeEvent = (ChangeEvent) changeEvents[i];
+					
+					if (isPrunningNecessary(changeEvent.getAbout())) {
+						pruned = true;
+						continue;
+					}
+					
+					sortedTree.put(changeEvent.getOrder(), changeEvent);
+				}
+				
+				NavigableSet<Integer> keys = sortedTree.navigableKeySet();
+				
+				// Insert the sorted in-memory change events into the log
+				for (int key : keys) {
+					ChangeEvent changeEvent = sortedTree.get(key);
+					insertEventToPagedChangeLog(changeEvent, changeEvent.getChanged());
+				}	
+				
+				change_events.addAll(sortedTree.values());
+				
+				// If pruning took place persist the new list of change events
+				// to disk so we don't have to prune them again.
+				if (pruned) {
+					FileUtil.save(change_events.toArray(), this.changeEventsFilename);
+				}
+			}			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OslcCoreApplicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -198,8 +306,10 @@ public class TRSObject {
 					eventNumber);
 		}
 	
+		change_events.add(event);
+		FileUtil.save(change_events.toArray(), this.changeEventsFilename);
+		
 		insertEventToPagedChangeLog(event, resource);
-	
 	}
 
 	/**
@@ -417,5 +527,36 @@ public class TRSObject {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Compares the time portion of the change event's URN value with the current
+	 * time.  If the time is older than PruneTimeInDays (see setting in 
+	 * config.properties) then the event is not included in the current change log.
+	 * 
+	 * @param urn
+	 * @return
+	 * @throws ParseException
+	 */
+	private boolean isPrunningNecessary(URI urn) throws ParseException {
+		// Get the time of the event in milliseconds
+		String urnWithTime = urn.toString();
+		String eventTime = urnWithTime.split(URN_PREFIX)[1];
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SS");
+		Date eventDate = formatter.parse(eventTime);
+		long eventMilliseconds = eventDate.getTime();
+		
+		// Calculate the pruneTime
+		String numDays = ConfigUtil.getPropertiesInstance().getProperty("PruneTimeInDays");
+		long pruneTime = System.currentTimeMillis() - (Integer.parseInt(numDays) * MILLISECONDS_IN_DAY);
+		
+		// If an event is older than the prune time (less time since the epoch
+		// has elapsed) indicate we need to prune this event.
+		if (pruneTime >= eventMilliseconds) {
+			return true;
+		}
+		
+		return false;
 	}
 }
