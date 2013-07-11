@@ -101,7 +101,7 @@ public class TRSUtil {
 				else{
 					trs_Uri = resource.resolve("/" + sContext + TRS_URI_PATH2);
 				}
-			    innerHelpr[i] =  new TRSObject(resourceUtil, trs_Uri);
+			    innerHelpr[i] =  new TRSObject(resourceUtil, trs_Uri, ConfigUtil.getPropertiesInstance().getProperty("ChangeLogFile"));
 			}					
 		}
 	}
