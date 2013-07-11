@@ -47,6 +47,4 @@ public interface Constants
     public static String PATH_CHANGE_REQUEST = "changeRequest";
 
     public static String USAGE_LIST = CHANGE_MANAGEMENT_NAMESPACE + "list";
-    
-    public static String PATH_FLAT_FILE = "C:/temp/changeRequests.xml";
 }

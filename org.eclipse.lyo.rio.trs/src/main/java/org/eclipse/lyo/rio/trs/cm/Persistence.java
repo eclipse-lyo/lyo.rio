@@ -37,6 +37,7 @@ import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
 import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaModelHelper;
+import org.eclipse.lyo.rio.trs.util.ConfigUtil;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -157,9 +158,9 @@ public class Persistence {
 
 	public static void initialize() {
 		try {
-			CHANGE_REQUESTS_LOADED = true;
+			fileload(ConfigUtil.getPropertiesInstance().getProperty("ChangeRequestsFile"));
 			
-			fileload(Constants.PATH_FLAT_FILE);
+			CHANGE_REQUESTS_LOADED = true;
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -261,7 +262,7 @@ public class Persistence {
 					Long.valueOf(changeRequest.getIdentifier()), changeRequest);
 			
 			// save out to file here				
-			save(Constants.PATH_FLAT_FILE);
+			save(ConfigUtil.getPropertiesInstance().getProperty("ChangeRequestsFile"));
 			
 			// Notify any listeners of creation event
 			notifyListeners(changeRequest, "create");
@@ -280,7 +281,7 @@ public class Persistence {
 				CHANGE_REQUESTS_MAP.put(longIdentifier, changeRequest);
 
 				// save out to file here				
-				save(Constants.PATH_FLAT_FILE);
+				save(ConfigUtil.getPropertiesInstance().getProperty("ChangeRequestsFile"));
 				
 				// Notify any listeners of the update event
 				notifyListeners(changeRequest, "update");
@@ -299,7 +300,7 @@ public class Persistence {
 			// this means we successfully removed something with the given identifier
 			if (result != null) {
 				// save out to file here				
-				save(Constants.PATH_FLAT_FILE);
+				save(ConfigUtil.getPropertiesInstance().getProperty("ChangeRequestsFile"));
 				
 				// Notify any listeners of the deletion event
 				notifyListeners(result, "delete");
