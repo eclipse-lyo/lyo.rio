@@ -164,6 +164,7 @@ public class TRSObject {
 	 * It should be noted that this method will prune the change log if it is
 	 * greater than x days old (configurable via the PruneTimeInDays 
 	 * config.properties parameter).
+	 * @param base 
 	 */
 	private void loadChangeEvents() {
 		Object[] changeEvents;
@@ -177,15 +178,9 @@ public class TRSObject {
 				boolean pruned = false;
 				
 				// Loop over all change events we found on disk and put them in
-				// the treemap sorted by order. Prune events greater than 
-				// PruneTimeInDays (found in config.properties).
+				// the treemap sorted by order.
 				for (int i = 0; i < changeEvents.length; i++) {
 					ChangeEvent changeEvent = (ChangeEvent) changeEvents[i];
-					
-					if (isPrunningNecessary(changeEvent.getAbout())) {
-						pruned = true;
-						continue;
-					}
 					
 					sortedTree.put(changeEvent.getOrder(), changeEvent);
 				}
@@ -195,10 +190,34 @@ public class TRSObject {
 				// Insert the sorted in-memory change events into the log
 				for (int key : keys) {
 					ChangeEvent changeEvent = sortedTree.get(key);
+					
+					// Prune events greater than
+					// PruneTimeInDays (found in config.properties). Never 
+					// prune the final event since that means the change log 
+					// will be empty and the cutoff event will be nil. which by
+					// the spec means the change log must have ALL events since
+					// the beginning of time.
+					if (isPrunningNecessary(changeEvent.getAbout()) 
+							&& (key != sortedTree.lastKey())) {
+						pruned = true;
+						continue;
+					}
+					
+					change_events.add(changeEvent);
 					insertEventToPagedChangeLog(changeEvent, changeEvent.getChanged());
 				}	
 				
-				change_events.addAll(sortedTree.values());
+				// At init time, when this method is called, the base resource
+				// contains a record of all resources. According to the spec:
+				// The first page of a Base MUST include a trs:cutoffEvent 
+				// property, whose value is the URI of the most recent Change 
+				// Event in the corresponding Change Log that is already 
+				// reflected in the Base. So set the cutoff to the URI of the 
+				// last event in the sorted tree
+				synchronized (trs_base_map) {
+					for (Base base : trs_base_map.values())
+					base.setCutoffEvent(sortedTree.lastEntry().getValue().getAbout());
+				}
 				
 				// If pruning took place persist the new list of change events
 				// to disk so we don't have to prune them again.
