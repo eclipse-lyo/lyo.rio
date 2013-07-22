@@ -43,7 +43,7 @@ public interface ITRSVocabulary {
 	public static final String CREATION_LOCALNAME = "Creation"; //$NON-NLS-1$
 	public static final String MODIFICATION_LOCALNAME = "Modification"; //$NON-NLS-1$
 	public static final String DELETION_LOCALNAME = "Deletion"; //$NON-NLS-1$
-	public static final String AGGREGATE_CONTAINER_LOCALNAME = "AggregateContainer"; //$NON-NLS-1$
+	public static final String CONTAINER_LOCALNAME = "Container"; //$NON-NLS-1$
 	public static final String PAGE_LOCALNAME = "Page"; //$NON-NLS-1$
 	public static final String PAGE_OF_LOCALNAME = "pageOf"; //$NON-NLS-1$
 
@@ -139,10 +139,10 @@ public interface ITRSVocabulary {
 	public static final String LDP_NS = "http://www.w3.org/ns/ldp#"; //$NON-NLS-1$
 	
 	/**
-	 * The AggregateContainer resource type used by the base resource 
+	 * The Container resource type used by the base resource 
 	 */
 	public static final Resource CONTAINER_RESOURCE = ResourceFactory.createResource(LDP_NS
-			+ AGGREGATE_CONTAINER_LOCALNAME);
+			+ CONTAINER_LOCALNAME);
 	
 	/**
 	 * The Page resource type used by the base resource to reference the next
