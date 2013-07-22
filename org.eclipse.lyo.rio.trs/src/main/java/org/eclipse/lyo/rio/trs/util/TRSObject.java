@@ -17,8 +17,6 @@
 
 package org.eclipse.lyo.rio.trs.util;
 
-import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -31,8 +29,6 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.trs.Base;
 import org.eclipse.lyo.core.trs.ChangeEvent;
@@ -43,7 +39,6 @@ import org.eclipse.lyo.core.trs.EmptyChangeLog;
 import org.eclipse.lyo.core.trs.Modification;
 import org.eclipse.lyo.core.trs.Page;
 import org.eclipse.lyo.core.trs.TRSConstants;
-import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
 import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
 
 /**
@@ -156,6 +151,15 @@ public class TRSObject {
 			}
 		}
 		loadChangeEvents();
+		
+		// At this time the base resource contains a record of all resources. 
+		// According to the spec:
+		// The first page of a Base MUST include a trs:cutoffEvent 
+		// property, whose value is the URI of the most recent Change 
+		// Event in the corresponding Change Log that is already 
+		// reflected in the Base. So set the cutoff to the URI of the 
+		// last event.
+		setCutOffEventInner(last_change_event);
 	}
 	
 	/**
@@ -204,18 +208,6 @@ public class TRSObject {
 					
 					change_events.add(changeEvent);
 					insertEventToPagedChangeLog(changeEvent, changeEvent.getChanged());
-				}	
-				
-				// At init time, when this method is called, the base resource
-				// contains a record of all resources. According to the spec:
-				// The first page of a Base MUST include a trs:cutoffEvent 
-				// property, whose value is the URI of the most recent Change 
-				// Event in the corresponding Change Log that is already 
-				// reflected in the Base. So set the cutoff to the URI of the 
-				// last event in the sorted tree
-				synchronized (trs_base_map) {
-					for (Base base : trs_base_map.values())
-					base.setCutoffEvent(sortedTree.lastEntry().getValue().getAbout());
 				}
 				
 				// If pruning took place persist the new list of change events
