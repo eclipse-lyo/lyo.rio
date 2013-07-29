@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2013 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -96,7 +96,8 @@ public class ChangeRequestResource
         usages = {OslcConstants.OSLC_USAGE_DEFAULT}
     )
     @GET
-    @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
+    @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML,
+    		   OslcMediaType.APPLICATION_JSON, OslcMediaType.TEXT_TURTLE})
     public ChangeRequest[] getChangeRequests(@QueryParam("oslc.where") final String where)
     {
 
@@ -117,7 +118,8 @@ public class ChangeRequestResource
 
     @GET
     @Path("{changeRequestId}")
-    @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
+    @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML,
+    	       OslcMediaType.APPLICATION_JSON, OslcMediaType.TEXT_TURTLE})
     public ChangeRequest getChangeRequest(@Context                      final HttpServletResponse httpServletResponse,
                                           @PathParam("changeRequestId") final String              changeRequestId)
     {
@@ -200,8 +202,10 @@ public class ChangeRequestResource
          usages = {OslcConstants.OSLC_USAGE_DEFAULT}
     )
     @POST
-    @Consumes({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
-    @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
+    @Consumes({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML,
+    	       OslcMediaType.APPLICATION_JSON, OslcMediaType.TEXT_TURTLE})
+    @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML,
+    	       OslcMediaType.APPLICATION_JSON, OslcMediaType.TEXT_TURTLE})
     public Response addChangeRequest(@Context final HttpServletRequest  httpServletRequest,
     		                         @Context final HttpServletResponse httpServletResponse,
                                               final ChangeRequest       changeRequest)
@@ -233,7 +237,8 @@ public class ChangeRequestResource
     }
 
     @PUT
-    @Consumes({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
+    @Consumes({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML,
+    	       OslcMediaType.APPLICATION_JSON, OslcMediaType.TEXT_TURTLE})
     @Path("{changeRequestId}")
     public Response updateChangeRequest(@Context                      final HttpServletResponse httpServletResponse,
                                         @HeaderParam("If-Match")      final String              eTagHeader,
