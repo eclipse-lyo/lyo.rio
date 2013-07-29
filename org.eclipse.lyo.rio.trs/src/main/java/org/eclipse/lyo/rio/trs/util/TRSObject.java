@@ -159,7 +159,9 @@ public class TRSObject {
 		// Event in the corresponding Change Log that is already 
 		// reflected in the Base. So set the cutoff to the URI of the 
 		// last event.
-		setCutOffEventInner(last_change_event);
+		if (last_change_event != null) {
+			setCutOffEventInner(last_change_event);
+		}
 	}
 	
 	/**
@@ -276,6 +278,19 @@ public class TRSObject {
 		ChangeEvent event = null;
 		// increment the event number to maintain event order
 		int eventNumber = (last_change_event != null) ? last_change_event.getOrder() + 1 : 0;
+		
+		// Append the eventNumber to the end of the changeURN to ensure it is
+		// unique. In this case of the reference application the timestamp 
+		// contained in the URN might not be unique on fast servers.
+		// NOTE: if you change the way this URN is constructed you should also
+		// change the way it is parsed in the this.isPrunningNecessary() method.
+		try {
+			changeURN = new URI(changeURN.toString() + ":" + eventNumber);
+		} catch (URISyntaxException e) {
+			// Unable to create a URN with the order appended.  Log the error
+			// and continue on using the old style URN
+			e.printStackTrace();
+		}
 	
 		if (trsEvent.equals(TRSConstants.TRS_TYPE_CREATION)) {
 			event = new Creation(changeURN, resource,
@@ -525,10 +540,19 @@ public class TRSObject {
 	 */
 	private boolean isPrunningNecessary(URI urn) throws ParseException {
 		// Get the time of the event in milliseconds
-		String urnWithTime = urn.toString();
-		String eventTime = urnWithTime.split(URN_PREFIX)[1];
+		String eventTime = urn.toString();
+		
+		try {
+			// This should be URN_PREFIX + timestamp + : + order number.  Based
+			// on the number of : in this string we want the 4th element of the 
+			// array which counting from 0 is 3.
+			eventTime = eventTime.split(":")[3];
+		} catch (NullPointerException e) {
+			// Unexpected URN format do not prune this event
+			return false;
+		}
 
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SS");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddHHmmss.SS");
 		Date eventDate = formatter.parse(eventTime);
 		long eventMilliseconds = eventDate.getTime();
 		
