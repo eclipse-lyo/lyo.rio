@@ -449,7 +449,7 @@ public class ChangeRequestResource
  	 */
  	private static String getCurrentTimeStamp() {
  		Date currDate = new Date();
- 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SS");
+ 		SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-ddHHmmss.SS");
  		String currDateStr = dateFormatGmt.format(currDate);
  		return currDateStr;
  	}
