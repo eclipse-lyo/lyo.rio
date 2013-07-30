@@ -7,12 +7,25 @@
 	<artifactId>org.eclipse.lyo.rio.trs.tests</artifactId>
 	<description>A set of junit tests to validate that various aspects of the reference application's change log are functioning properly.</description>
 
+	<repositories>
+        <repository>
+            <id>oauth</id>
+            <url>http://oauth.googlecode.com/svn/code/maven</url>
+        </repository>
+    </repositories>
+
 	<dependencies>
 	<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8.1</version>
 		</dependency>
+		 <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth-consumer</artifactId>
+            <version>20090617</version>
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>

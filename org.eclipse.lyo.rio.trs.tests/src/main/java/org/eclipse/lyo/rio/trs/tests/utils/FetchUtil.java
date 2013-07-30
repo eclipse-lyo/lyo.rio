@@ -19,8 +19,19 @@ package org.eclipse.lyo.rio.trs.tests.utils;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Properties;
 
+import javax.ws.rs.HttpMethod;
+
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthServiceProvider;
+
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.protocol.HttpContext;
 import org.eclipse.lyo.core.trs.HttpConstants;
@@ -78,7 +89,38 @@ public class FetchUtil {
 			// http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.4
 			get.addHeader(HttpConstants.CACHE_CONTROL, "max-age=0"); //$NON-NLS-1$
 			
-			model = httpClient.execute(get, new RDFModelResponseHandler(uri), httpContext);
+			try {
+				model = httpClient.execute(get, new RDFModelResponseHandler(uri), httpContext);
+			} catch (HttpResponseException e1) {
+				if (e1.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
+					// If authentication is required attempt OAuth authentication.
+					// This uses two legged OAuth which requires a functional
+					// user be already configured on the resource server.
+					Properties prop = TestCore.getConfigPropertiesInstance();
+					String consumerKey = prop.getProperty("consumerKey");
+					String consumerSecret = prop.getProperty("consumerSecret");
+					String authorizationTokenURL = prop.getProperty("OAuthURL");
+					String oAuthRealm = prop.getProperty("OAuthRealm");
+					
+					// Using the information from the config.properties file
+					// construct the authentication header to use in our GET request
+					OAuthServiceProvider provider = new OAuthServiceProvider(null, authorizationTokenURL, null);
+					OAuthConsumer consumer = new OAuthConsumer("",consumerKey,consumerSecret,provider);
+					OAuthAccessor accessor = new OAuthAccessor(consumer);
+					accessor.accessToken = "";
+
+					try {
+						OAuthMessage message = accessor.newRequestMessage(HttpMethod.GET, prop.getProperty("configTrsEndpoint"), null);
+						String authHeader = message.getAuthorizationHeader(oAuthRealm);
+						get.setHeader("Authorization",authHeader);
+						get.setHeader("OSLC-Core-Version", "2.0");
+						
+						model = httpClient.execute(get, new RDFModelResponseHandler(uri), httpContext);
+					} catch (OAuthException e) {
+						TestCore.terminateTest(Messages.getServerString("fetch.util.authentication.failure"), e);
+					}
+				} 
+			}
 		} catch (Exception e) {
 			String uriLocation = Messages.getServerString("fetch.util.uri.unidentifiable"); //$NON-NLS-1$
 			

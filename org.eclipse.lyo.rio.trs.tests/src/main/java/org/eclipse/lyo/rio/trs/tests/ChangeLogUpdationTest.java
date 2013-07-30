@@ -31,6 +31,7 @@ import org.apache.http.protocol.DefaultedHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 import org.eclipse.lyo.core.trs.HttpConstants;
+import org.eclipse.lyo.rio.trs.tests.utils.EasySSLClient;
 import org.eclipse.lyo.rio.trs.tests.utils.FetchException;
 import org.eclipse.lyo.rio.trs.tests.utils.ITRSVocabulary;
 import org.eclipse.lyo.rio.trs.tests.utils.InvalidTRSException;
@@ -77,7 +78,7 @@ public class ChangeLogUpdationTest extends TestCore {
 			String trsEndpoint = prop.getProperty("configTrsEndpoint");
 			String acceptType = prop.getProperty("acceptType");
 			
-			httpClient = new DefaultHttpClient();
+			httpClient = new EasySSLClient().getClient();
 			httpContext = 
 					new DefaultedHttpContext(new BasicHttpContext(), new SyncBasicHttpContext(null));
 			
@@ -97,14 +98,14 @@ public class ChangeLogUpdationTest extends TestCore {
 			
 		} catch (FileNotFoundException e) {
 			terminateTest(Messages.getServerString("tests.general.config.properties.missing"), e);
-		} catch (InterruptedException e) {
-			terminateTest(null, e);
 		} catch (IOException e) {
 			terminateTest(Messages.getServerString("tests.general.config.properties.unreadable"), e);
 		} catch (FetchException e) {
 			terminateTest(Messages.getServerString("tests.general.trs.fetch.error"), e);
 		} catch (SendException e) {
 			terminateTest(Messages.getServerString("tests.general.trs.send.error"), e);
+		} catch (Exception e) {
+			terminateTest(null, e);
 		}
 	}
 
