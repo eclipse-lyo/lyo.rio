@@ -154,3 +154,28 @@ function deleteResource(resUrl, currentUrl){
 		}
 	}	
 }
+
+function getTurtle(url) {
+	var resourceUrl = new String(url);
+	var mainUrl = resourceUrl.split('result.html')[0];
+	resourceUrl = resourceUrl.split('=')[1];
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET", resourceUrl, true);
+	xmlhttp.setRequestHeader("Accept", "text/turtle");
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState==4 && (xmlhttp.status==200)) {
+			// Add the turtle as a new child node under the result div tag on
+			// our html page. The div tag is encapsulated in a <pre> tag so the
+			// turtle should display nicely to the user.
+			var n = document.getElementById("result");
+			n.innerHTML = '';
+			n.appendChild(document.createTextNode(xmlhttp.responseText));
+			
+			// Display the URI of the resource for the user (which differs from this result page)
+			document.getElementById("resourceuri").innerHTML = "URI of retrieved resource: " + mainUrl + resourceUrl;
+			
+			document.getElementById("mainurl").innerHTML = '<a href="' + mainUrl + '">Back to main TRS Reference Application URL</a>';
+		}
+	}; 
+	xmlhttp.send(null);
+}

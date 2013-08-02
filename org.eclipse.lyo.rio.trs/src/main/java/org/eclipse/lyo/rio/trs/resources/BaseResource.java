@@ -81,8 +81,14 @@ public class BaseResource {
 	    
         URI requestURI = uriInfo.getRequestUri();
         boolean endsWithSlash = requestURI.getPath().endsWith("/");
+        String redirectUrl = (endsWithSlash ? "" : "base/") + "1";
         
-        throw new WebApplicationException(Response.temporaryRedirect(requestURI.resolve((endsWithSlash ? "" : "base/") + "1")).build());
+        // Reapply any query params before redirecting
+        if (requestURI.getQuery() != null) {
+        	redirectUrl = redirectUrl + "?" + requestURI.getQuery();
+        }
+        
+        throw new WebApplicationException(Response.temporaryRedirect(requestURI.resolve(redirectUrl)).build());
 	}
 	
 	/**
