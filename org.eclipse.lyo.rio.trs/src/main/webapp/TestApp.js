@@ -154,3 +154,19 @@ function deleteResource(resUrl, currentUrl){
 		}
 	}	
 }
+
+function getTurtle(url) {
+	var resourceUrl = new String(url);
+	resourceUrl = resourceUrl.split('=')[1];
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET", resourceUrl, true);
+	xmlhttp.setRequestHeader("Accept", "text/turtle");
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState==4 && (xmlhttp.status==200)) {
+			var fixedString = xmlhttp.responseText.replace(/</g, '&lt;');
+			fixedString = fixedString.replace(/>/g, '&gt;');
+			document.getElementById("result").innerHTML = fixedString;
+		}
+	}; 
+	xmlhttp.send(null);
+}
