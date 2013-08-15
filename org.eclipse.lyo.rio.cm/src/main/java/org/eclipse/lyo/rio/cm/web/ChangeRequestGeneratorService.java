@@ -46,9 +46,9 @@ public class ChangeRequestGeneratorService extends RioBaseService {
 		RioStore store = this.getStore();
 		
 		try{
+			RandomTextGenerator gen = new RandomTextGenerator();
 			for(int i=0;i<count;i++) {
 				int titleLen = rnd.nextInt(3) + 2;
-				RandomTextGenerator gen = new RandomTextGenerator();
 				String title = gen.generateText(titleLen);
 				int descriptionLen = rnd.nextInt(50) + 50;
 				String description = gen.generateText(descriptionLen);

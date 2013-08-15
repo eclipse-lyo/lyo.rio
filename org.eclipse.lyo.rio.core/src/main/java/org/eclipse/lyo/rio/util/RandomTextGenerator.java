@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation.
+ * Copyright (c) 2011, 2013 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -27,33 +27,30 @@ import java.util.StringTokenizer;
 
 public class RandomTextGenerator {
 	
-	private Map<String,List<String>> index = new HashMap<String,List<String>>();
+	private Map<String, List<String>> drawers = new HashMap<String,List<String>>();
+	private ArrayList<String> keys;
 	static private Random rnd = new Random(System.nanoTime());
 
 	public RandomTextGenerator() throws IOException{
-		index();
+		fillDrawers();
 	}
 	
 	public String generateText(int words){
 		StringBuilder sb = new StringBuilder();
-		ArrayList<String> wordList = new ArrayList<String>();
-		wordList.addAll(index.keySet());
-		int start = rnd.nextInt(index.size());
-		String word = wordList.get(start);
+		String word = keys.get(rnd.nextInt(keys.size()));
 		sb.append(word + ' ');
-		int count = 0;
-		while( count < words ) {
-			List<String> afters = index.get(word);
-			int next = rnd.nextInt(afters.size());
-			word = afters.get(next);
-			sb.append(word + ' ');
-			count++;
+		List<String> afters = drawers.get(word);
+		if (afters != null && afters.size() > 0) {
+			for(int count = 0; count < words; count++) {
+				int next = rnd.nextInt(afters.size());
+				word = afters.get(next);
+				sb.append(word + ' ');
+			}
 		}
-		
 		return sb.toString().trim();
 	}
 	
-	private void index() throws IOException{
+	private void fillDrawers() throws IOException{
 		InputStream is = this.getClass().getResourceAsStream("filler.txt"); //$NON-NLS-1$
 		StringBuilder sb = new StringBuilder();
 		BufferedReader reader = new BufferedReader( new InputStreamReader(is, "UTF-8")); //$NON-NLS-1$
@@ -67,19 +64,18 @@ public class RandomTextGenerator {
 		}
 		String str = sb.toString();
 		StringTokenizer st = new StringTokenizer(str," \n\t\r"); //$NON-NLS-1$
-		String prevToken = null;
+		String prevToken = st.nextToken();
 		while( st.hasMoreTokens() ) {
 			String token = st.nextToken();
-			if( prevToken != null ) {
-				List<String> list = index.get(prevToken);
-				if( list == null ) {
-					list = new ArrayList<String>();
-					index.put(prevToken, list);
-				}
-				list.add(token);
+			List<String> list = drawers.get(prevToken);
+			if( list == null ) {
+				list = new ArrayList<String>();
+				drawers.put(prevToken, list);
 			}
+			list.add(token);
 			prevToken = token;
 		}
+		keys = new ArrayList<String>(drawers.keySet());
 	}
 
 	
