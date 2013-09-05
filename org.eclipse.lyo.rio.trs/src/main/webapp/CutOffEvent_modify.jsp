@@ -44,7 +44,7 @@
 			
 			</table>
 		</form>
-		<div id="hint">Provide URL(rdf:about) of the Change Event from <a href="/org.eclipse.lyo.rio.trs/rest/trs/">Change Log</a> to be set as new Cutoff event. </div>	
+		<div id="hint">Provide URL(rdf:about) of the Change Event from <a href='<%= (String) request.getContextPath() + "/rest/trs/"%>'>Change Log</a> to be set as new Cutoff event. </div>	
 	<div style="clear: both;">
 	<p></p>
 	</div>
