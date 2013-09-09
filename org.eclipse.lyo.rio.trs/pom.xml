@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.lyo.rio</groupId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>2.0.0</version>
 	<name>TRS Reference Application</name>
 	<artifactId>org.eclipse.lyo.rio.trs</artifactId>
 	<description>Reference Application demonstrating a Tracked Resource Set integration utilizing the TRS toolkit.</description>
@@ -17,7 +17,7 @@
 		<dependency>
 		  <groupId>org.eclipse.lyo.oslc4j.core</groupId>
 		  <artifactId>oslc4j-utils</artifactId>
-		  <version>2.0.0-SNAPSHOT</version>
+		  <version>2.0.0</version>
 		</dependency>
 	  	<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
@@ -28,7 +28,7 @@
 		<dependency>
 		  <groupId>org.eclipse.lyo</groupId>
 		  <artifactId>oslc-trs</artifactId>
-		  <version>2.0.0-SNAPSHOT</version>
+		  <version>2.0.0</version>
 		</dependency>
 	</dependencies>
 
