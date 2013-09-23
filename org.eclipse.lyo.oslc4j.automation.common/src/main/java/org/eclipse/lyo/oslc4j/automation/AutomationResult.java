@@ -11,13 +11,14 @@
  *
  * Contributors:
  *
- *     Paul McMahan <pmcmahan@us.ibm.com>        - initial implementation
+ *     Paul McMahan <pmcmahan@us.ibm.com>   - initial implementation
+ *     Samuel Padgett <spadgett@us.ibm.com> - fix ClassCastException adding contributions to result
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -27,7 +28,6 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcName;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcNamespace;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcOccurs;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcPropertyDefinition;
-import org.eclipse.lyo.oslc4j.core.annotation.OslcRange;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcReadOnly;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcResourceShape;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcTitle;
@@ -48,7 +48,7 @@ extends AutomationResource
 	private final Set<String>   subjects                    = new TreeSet<String>();
     private final Set<URI>      states                      = new TreeSet<URI>();
     private final Set<URI>      verdicts                    = new TreeSet<URI>();
-    private final Set<Object>   contributions               = new TreeSet<Object>();
+    private final Set<Object>   contributions               = new HashSet<Object>();
     private final Set<ParameterInstance> inputParameters    = new TreeSet<ParameterInstance>();
     private final Set<ParameterInstance> outputParameters   = new TreeSet<ParameterInstance>();
     
