@@ -17,7 +17,6 @@ package org.eclipse.lyo.oslc4j.automation;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -27,7 +26,6 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcName;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcNamespace;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcOccurs;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcPropertyDefinition;
-import org.eclipse.lyo.oslc4j.core.annotation.OslcRange;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcReadOnly;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcResourceShape;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcTitle;
@@ -42,7 +40,7 @@ import org.eclipse.lyo.oslc4j.core.model.ValueType;
 /**
  * @see http://open-services.net/wiki/automation/OSLC-Automation-Specification-Version-2.0/#Resource_AutomationRequest
  */
-public final class AutomationRequest
+public class AutomationRequest
 extends AutomationResource
 {
 	private final Set<String>   subjects                    = new TreeSet<String>();
