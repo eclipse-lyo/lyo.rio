@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -32,6 +33,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.log4j.Logger;
 import org.eclipse.lyo.core.trs.Base;
 import org.eclipse.lyo.core.trs.Page;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
@@ -71,11 +73,15 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
 
 @SuppressWarnings("serial")
 public class BaseGeneric extends HttpServlet {
+	private static final Logger logger = Logger.getLogger(BaseGeneric.class);
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("Messages");
 
 	public BaseGeneric() {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		logger.debug("Entering doGet method in BaseGeneric class");
+		
 		String responseType = ResponseUtil.parseAcceptType(request);
 
 		response.setContentType(responseType);
@@ -141,7 +147,7 @@ public class BaseGeneric extends HttpServlet {
 					oArray = results.toArray();
 					marshaller.marshal(oArray, outputStream);	
 				} catch (URISyntaxException e) {
-					e.printStackTrace();
+					logger.error(bundle.getString("UNABLE_TO_CONSTRUCT_URI"), e);
 				}
 	
 			}
@@ -151,5 +157,6 @@ public class BaseGeneric extends HttpServlet {
 			// redirects it to first page.
 			response.sendRedirect(request.getRequestURL().toString() + "/1");
 		}
+		logger.debug("Exiting doGet method in BaseGeneric class");
 	}
 }

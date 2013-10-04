@@ -24,15 +24,17 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.ws.rs.WebApplicationException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
 import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
@@ -50,6 +52,8 @@ public class Persistence {
 	public static int PAGE_SIZE = 3;
 	
 	private static Set<ChangeRequestListener> listeners = new HashSet<ChangeRequestListener>();
+	private static final Logger logger = Logger.getLogger(Persistence.class);
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("Messages");
 	
 	private Persistence() {
 		super();
@@ -61,7 +65,8 @@ public class Persistence {
 			InstantiationException, InvocationTargetException,
 			OslcCoreApplicationException, URISyntaxException,
 			SecurityException, NoSuchMethodException {
-
+		logger.debug("Entering fileload method in Persistence.java class. Param1: " + fileName);
+		
 		final File file = new File(fileName);
 
 		if ((file.exists()) && (file.isFile()) && (file.canRead())) {
@@ -96,28 +101,29 @@ public class Persistence {
 					}
 				}
 			}
-
+			logger.debug("Exiting fileload method in Persistence.java class. Return: true");
 			return true;
 		}
 		else {
 			//ChangeRequestResource
 		}
 
+		logger.debug("Exiting fileload method in Persistence.java class. Return: false");
 		return false;
 	}
 
 	private static void save(final String fileName) {
+		logger.debug("Entering save method in Persistence.java class. Param1: " + fileName);
 		
 		final ChangeRequest[] changeRequests = getAllChangeRequests();
 		OSLC4JContext context = OSLC4JContext.newInstance();
 		OSLC4JMarshaller marshaller = context.createMarshaller();
 		try {
 			marshaller.marshal(changeRequests, new FileOutputStream(fileName));
-		} catch (WebApplicationException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(MessageFormat.format(bundle.getString("SAVE_FAILED"), fileName), e);
 		}
+		logger.debug("Exiting fileload method in Persistence.java class.");
 	}
 
 	public static long getNextIdentifier() {
@@ -138,6 +144,8 @@ public class Persistence {
 	
 	public static ChangeRequest[] getChangeRequests(final int page) {
 		synchronized (CHANGE_REQUESTS_MAP) {
+			logger.debug("Entering getChangeRequests method in Persistence class. Param1: " + page);			
+			
 			int startIndex = page * PAGE_SIZE;
 			int total = getTotalChangeRequests();
 			int numResults = PAGE_SIZE;
@@ -152,41 +160,30 @@ public class Persistence {
 				ret = new ChangeRequest[numResults];
 				System.arraycopy(requests, startIndex, ret, 0, numResults);
 			}
+			
+			logger.debug("Exiting getChangeRequests method in Persistence class");
 			return ret;
 		}
 	}
 
 	public static void initialize() {
+		logger.debug("Entering initialize method in Persistence class");
+		
 		try {
 			fileload(ConfigUtil.getPropertiesInstance().getProperty("ChangeRequestsFile"));
 			
 			CHANGE_REQUESTS_LOADED = true;
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (DatatypeConfigurationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (OslcCoreApplicationException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(bundle.getString("INITIALIZATION_FAILURE"));
 		}
+		
+		logger.debug("Exiting initialize method in Persistence class");
 	}
 	
 	public static ChangeRequest[] getAllChangeRequests() {
 		synchronized (CHANGE_REQUESTS_MAP) {
+			logger.debug("Entering getAllChangeRequests method in Persistence class.");
+			
 			ChangeRequest[] ret = null;
 			
 			if(CHANGE_REQUESTS_MAP.size() == 0 && !CHANGE_REQUESTS_LOADED){
@@ -202,15 +199,20 @@ public class Persistence {
 				ret = new ChangeRequest[CHANGE_REQUESTS_MAP.size()];
 				System.arraycopy(requests, 0, ret, 0, CHANGE_REQUESTS_MAP.size());
 			}
+			
+			logger.debug("Exiting getAllChangeRequests method in Persistence class.");
 			return ret;
 		}
 	}
 	
 	public static ChangeRequest getChangeRequest(final String identifier) {
 		synchronized (CHANGE_REQUESTS_MAP) {
+			logger.debug("Entering getChangeRequest method in Persistence class.  Param1: " + identifier);
+			
 			if (!CHANGE_REQUESTS_LOADED)
 				initialize();
 			
+			logger.debug("Exiting getChangeRequest method in Persistence class.");
 			return CHANGE_REQUESTS_MAP.get(Long.valueOf(identifier));
 		}
 	}
@@ -218,6 +220,8 @@ public class Persistence {
 	public static ChangeRequest createChangeRequest(final String description,
 			final String title, final String filedAgainst)
 			throws URISyntaxException {
+		logger.debug("Entering createChangeRequest method in Persistence class. Param1: " + description + " Param2: " + title + " Param3: " + filedAgainst);
+		
 		final ChangeRequest changeRequest = new ChangeRequest();
 
 		changeRequest.setApproved(Boolean.FALSE);
@@ -233,11 +237,14 @@ public class Persistence {
 		changeRequest.setTitle(title);
 		changeRequest.setVerified(Boolean.FALSE);
 
+		logger.debug("Exiting createChangeRequest method in Persistence class.");
 		return changeRequest;
 	}
 
 	public static ChangeRequest persistChangeRequest(final URI basePath,
 			final ChangeRequest changeRequest) throws URISyntaxException {
+		logger.debug("Entering persistChangeRequest method in Persistence class. Param1: " + basePath.toString());
+		
 		final long identifier = Persistence.getNextIdentifier();
 
 		final URI about = basePath.resolve("./changeRequests/" + identifier);
@@ -253,11 +260,14 @@ public class Persistence {
 
 		Persistence.addChangeRequest(changeRequest);
 		
+		logger.debug("Exiting persistChangeRequests method in Persistence class.");
 		return changeRequest;
 	}
 	
 	private static void addChangeRequest(final ChangeRequest changeRequest) {
 		synchronized (CHANGE_REQUESTS_MAP) {
+			logger.debug("Entering addChangeRequest method in Persistence class.");
+			
 			CHANGE_REQUESTS_MAP.put(
 					Long.valueOf(changeRequest.getIdentifier()), changeRequest);
 			
@@ -266,11 +276,15 @@ public class Persistence {
 			
 			// Notify any listeners of creation event
 			notifyListeners(changeRequest, "create");
+			
+			logger.debug("Exiting addChangeRequest method in Persistence class.");
 		}
 	}
 
 	public static ChangeRequest updateChangeRequest(final String identifier,
 			final ChangeRequest changeRequest) {
+		logger.debug("Entering updateChangeRequest method in Persistence class. Param1: " + identifier);
+		
 		final Long longIdentifier = Long.valueOf(identifier);
 
 		synchronized (CHANGE_REQUESTS_MAP) {
@@ -286,15 +300,19 @@ public class Persistence {
 				// Notify any listeners of the update event
 				notifyListeners(changeRequest, "update");
 				
+				logger.debug("Exiting updateChangeRequest method in Persistence class.");
 				return changeRequest;
 			}
 		}
 
+		logger.debug("Exiting updateChangeRequest method in Persistence class. Return is null");
 		return null;
 	}
 
 	public static ChangeRequest deleteChangeRequest(final String identifier) {
 		synchronized (CHANGE_REQUESTS_MAP) {
+			logger.debug("Entering deleteChangeRequest method in Persistence class. Param1: " + identifier);
+			
 			ChangeRequest result = CHANGE_REQUESTS_MAP.remove(Long.valueOf(identifier));
 
 			// this means we successfully removed something with the given identifier
@@ -306,6 +324,7 @@ public class Persistence {
 				notifyListeners(result, "delete");
 			}
 			
+			logger.debug("Exiting deleteChangeRequest method in Persistence class.");
 			return result; 
 		}
 	}
@@ -319,10 +338,14 @@ public class Persistence {
 	}
 
 	private static void notifyListeners(ChangeRequest changeRequest, String type) {
+		logger.debug("Entering notifyListeners method in Persistence class. Param2: " + type);
+		
 		Iterator<ChangeRequestListener> iter = listeners.iterator();
 
 		while (iter.hasNext()) {
 			iter.next().changeRequestAltered(changeRequest, type);
 		}
+		
+		logger.debug("Exiting notifyListener method in Persistence class.");
 	}
 }
