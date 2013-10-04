@@ -20,6 +20,7 @@ package org.eclipse.lyo.rio.trs.servlet;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.core.trs.TrackedResourceSet;
@@ -66,12 +68,16 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
 // The servlet class to handle request for /restx/trs/*. Implementation TRS through Servlet.
 @SuppressWarnings("serial")
 public class TRSGeneric extends HttpServlet {
+	private static final Logger logger = Logger.getLogger(TRSGeneric.class);
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("Messages");
 
     public TRSGeneric() {
         super();
     }
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		logger.debug("Entering doGet method in TRSGeneric class");
+		
 		String responseType = ResponseUtil.parseAcceptType(request);
 		response.setContentType(responseType);
 
@@ -83,8 +89,7 @@ public class TRSGeneric extends HttpServlet {
 			requestURI = new URI(request.getRequestURL().toString());
 			set.setAbout(requestURI);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn(bundle.getString("UNABLE_TO_CONSTRUCT_URI"), e);
 		}
 		
 		// Now set the uri for obtaining the Base of the Tracked Resource Set
@@ -110,8 +115,9 @@ public class TRSGeneric extends HttpServlet {
 			oArray[0] = set;
 			marshaller.marshal(oArray, outputStream);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn(bundle.getString("UNABLE_TO_CONSTRUCT_URI"), e);
 		}
+		
+		logger.debug("Exiting doGet method in TRSGeneric class");
 	}
 }

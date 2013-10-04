@@ -19,6 +19,7 @@ package org.eclipse.lyo.rio.trs.servlet;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -29,6 +30,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.log4j.Logger;
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JContext;
 import org.eclipse.lyo.core.utils.marshallers.OSLC4JMarshaller;
@@ -45,11 +47,15 @@ import org.eclipse.lyo.rio.trs.util.TRSUtil;
  */
 @SuppressWarnings("serial")
 public class ChangeLogGeneric extends HttpServlet {
+	private static final Logger logger = Logger.getLogger(ChangeLogGeneric.class);
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("Messages");
 
 	public ChangeLogGeneric() {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		logger.debug("Entering doGet method in ChangeLogGeneric class"); 
+		
 		String responseType = ResponseUtil.parseAcceptType(request);
 		response.setContentType(responseType);
 		
@@ -73,8 +79,10 @@ public class ChangeLogGeneric extends HttpServlet {
 				}			
 				
 				changeLog = trsObject.getChangeLogPage(page);
-				if (changeLog == null)
+				if (changeLog == null) {
+					logger.error(bundle.getString("NO_CHANGE_LOG"));
 					throw new WebApplicationException(Status.NOT_FOUND);
+				}
 			}
 			else
 			{
@@ -94,7 +102,9 @@ public class ChangeLogGeneric extends HttpServlet {
 			oArray[0] = changeLog;
 			marshaller.marshal(oArray, outputStream);
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
+			logger.error(bundle.getString("UNABLE_TO_CONSTRUCT_URI"), e);
 		}
+		
+		logger.debug("Exiting doGet method in ChangeLogGeneric class");
 	}
 }
