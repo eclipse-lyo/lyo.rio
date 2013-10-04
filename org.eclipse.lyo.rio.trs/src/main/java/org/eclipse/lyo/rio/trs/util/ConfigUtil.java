@@ -18,9 +18,15 @@ package org.eclipse.lyo.rio.trs.util;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.ResourceBundle;
+
+import org.apache.log4j.Logger;
 
 public class ConfigUtil {
 	private static final String CONFIG_PROPERTIES = "config.properties";
+	
+	private static final Logger logger = Logger.getLogger(ConfigUtil.class);
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("Messages");
 	
 	private static Properties prop = null;
 		
@@ -31,18 +37,20 @@ public class ConfigUtil {
 	 */
 	public static Properties getPropertiesInstance() 
 	{
+		logger.debug("Entering getPropertiesInstance method in ConfigUtil class");
+		
 		if (prop == null) {
 			prop = new Properties();
 		
 			try {
 				prop.load(ConfigUtil.class.getClassLoader().getResourceAsStream(CONFIG_PROPERTIES));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(bundle.getString("UNABLE_TO_LOAD_CONFIG"), e);
 				throw new IllegalStateException();
 			}
 		}
 
+		logger.debug("Exiting getPropertiesInstance method in ConfigUtil class");
 		return prop;
 	}
 }

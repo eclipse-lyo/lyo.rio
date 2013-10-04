@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.log4j.Logger;
 import org.apache.wink.common.annotations.Workspace;
 import org.eclipse.lyo.core.trs.Base;
 import org.eclipse.lyo.core.trs.Page;
@@ -71,6 +72,8 @@ public class BaseResource {
 	@Context
 	protected UriInfo uriInfo;
 	
+	private static final Logger logger = Logger.getLogger(BaseResource.class);
+	
 	/**
 	 * getBase() on the root URI performs a redirect to page 1 in this implementation to represent
 	 * paged Base resources of the Tracked Resource Set
@@ -78,6 +81,7 @@ public class BaseResource {
 	@GET
 	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Page getBase() throws URISyntaxException{
+		logger.debug("Entering getBase method in BaseResource class");
 	    
         URI requestURI = uriInfo.getRequestUri();
         boolean endsWithSlash = requestURI.getPath().endsWith("/");
@@ -88,6 +92,7 @@ public class BaseResource {
         	redirectUrl = redirectUrl + "?" + requestURI.getQuery();
         }
         
+        logger.debug("Exiting getBase method in BaseResource class.  Redirecting to: " + redirectUrl);
         throw new WebApplicationException(Response.temporaryRedirect(requestURI.resolve(redirectUrl)).build());
 	}
 	
@@ -99,6 +104,8 @@ public class BaseResource {
 	@Path("{page}")
 	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Page getBasePage(@PathParam("page")Long page) throws URISyntaxException{
+		logger.debug("Entering getBasePage method in BaseResource class. Param1: " + page);
+		
 		init();
 		
 	    // from uri find out which Inner container to access...
@@ -125,6 +132,7 @@ public class BaseResource {
 		// output if we return Page.  If we force a reference from Base to Page
 		// instead then we get a ldp:nextPage entry which does not conform to the
 		// TRS 2.0 specification.
+		logger.debug("Exiting getBasePage method in BaseResource class");
 		return nextPage;
 	}
 	
