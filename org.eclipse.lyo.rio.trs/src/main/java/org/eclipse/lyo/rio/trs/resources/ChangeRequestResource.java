@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -48,6 +50,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.log4j.Logger;
 import org.apache.wink.common.annotations.Workspace;
 import org.eclipse.lyo.core.trs.TRSConstants;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
@@ -72,6 +75,9 @@ public class ChangeRequestResource
 	@Context ServletContext servletContext;
 	private static String URN_PREFIX = "urn:urn-3:cm1.example.com:";
 	
+	private static final Logger logger = Logger.getLogger(ChangeRequestResource.class);
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("Messages");
+	
 	// Handle the HTML request from browser.
 	@POST
 	@Path("creator") 
@@ -80,6 +86,7 @@ public class ChangeRequestResource
 			  @FormParam ("description")  String description, 
 			  @FormParam ("filedAgainst") String filedAgainst)
 	{
+		logger.debug("Entering createHtmlChangeRequest method in ChangeRequestResource class. Param1: " + title + " Param2: " + description + " Param3: " + filedAgainst);
 		
 		try {
 			URI baseURI = uriInfo.getBaseUri();
@@ -105,10 +112,10 @@ public class ChangeRequestResource
 			out.close();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(bundle.getObject("FAILED_TO_CREATE_CR"), e);
 			throw new WebApplicationException(e);
 		}
-	
+		logger.debug("Exiting createHtmlChangeRequest method in ChangeRequestResource class");
 	}
 
 	@PUT
@@ -118,6 +125,7 @@ public class ChangeRequestResource
 	                                @PathParam("changeRequestId") final String              changeRequestId,
 			                                                      final ChangeRequest       changeRequest)
 	{
+		logger.error("Entering updateChangeRequest method in ChangeRequestResource class. Param1: " + eTagHeader + " Param2: " + changeRequestId);
 	    final ChangeRequest originalChangeRequest = Persistence.getChangeRequest(changeRequestId);
 	
 	    if (originalChangeRequest != null)
@@ -148,7 +156,7 @@ public class ChangeRequestResource
 		    				"\"ID\" : \"" + changeRequest.getIdentifier() + "\"}");
 		    		out.close();
 					} catch (IOException e) {
-					e.printStackTrace();
+					logger.debug("Change request was updated but failed to update UI with status information.", e);
 				}	
 	        }
 	        else
@@ -160,6 +168,7 @@ public class ChangeRequestResource
 	    {
 	    	throw new WebApplicationException(Status.NOT_FOUND);
 	    }
+	    logger.debug("Exiting updateChangeRequest method in ChangeRequestResource class");
 	}
 
 
@@ -207,7 +216,8 @@ public class ChangeRequestResource
     @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
     public ResponseInfoArray<ChangeRequest> getChangeRequests(@QueryParam("oslc.where") final String where, @QueryParam("pageNo")final int pageNo, @Context HttpServletRequest request)
     {
-
+       logger.debug("Entering getChangeRequests method in ChangeRequestResource class. Param1: " + where + " Param2: " + pageNo);
+    	
        int totalResults = Persistence.getTotalChangeRequests();
        final ChangeRequest[] changeRequests = Persistence.getChangeRequests(pageNo);
        URI nextPage = null;
@@ -217,6 +227,7 @@ public class ChangeRequestResource
 	       nextPage = UriBuilder.fromUri(requestURI).replaceQueryParam("pageNo", pageNo+1).build(new Object[0]);
         }
        
+       logger.debug("Exiting getChangeRequest method in ChangeRequestResource class");
         return new ResponseInfoArray<ChangeRequest>(changeRequests,
                                                     null,
                                                     totalResults,
@@ -227,6 +238,7 @@ public class ChangeRequestResource
   	@Produces({ MediaType.TEXT_HTML })
   	public void getHtmlCollection(@QueryParam("pageNo")final int pageNo) throws ServletException, IOException
   	{
+    	logger.debug("Entering getHtmlCollection method in ChangeRequestResource class. Param1: " + pageNo);
       	try
       	{
   	        int totalResults = Persistence.getTotalChangeRequests();
@@ -247,9 +259,11 @@ public class ChangeRequestResource
   	        httpServletRequest.setAttribute("results", results);
   	        
   	        
+  	        logger.debug("Exiting getHtmlCollection method in ChangeRequestResource class");
   	        RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/changerequest_collection_html.jsp");
   	    	rd.forward(httpServletRequest, httpServletResponse);
       	}catch (Exception e) {
+      		logger.error(MessageFormat.format(bundle.getString("NO_SUCH_RESOURCE"), pageNo), e);
       		throw new WebApplicationException(Status.NOT_FOUND);	
       	}
   	}
@@ -259,6 +273,8 @@ public class ChangeRequestResource
     @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
     public Response getChangeRequest(@PathParam("changeRequestId") final String  changeRequestId)
     {
+    	logger.debug("Entering getChangeRequest method in ChangeRequestResource class. Param1: " + changeRequestId);
+    	
         final ChangeRequest changeRequest = Persistence.getChangeRequest(changeRequestId);
 
         if (changeRequest != null)
@@ -268,9 +284,11 @@ public class ChangeRequestResource
             String eTag = getETagFromChangeRequest(changeRequest);
             Response response = Response.ok(changeRequest).header("ETag", eTag).build();
 
+            logger.debug("Exiting getChangeRequeswt method in ChangeRequestResource class.");
             return response;
         }
 
+        logger.error(MessageFormat.format(bundle.getString("NO_SUCH_RESOURCE"), changeRequestId));
         throw new WebApplicationException(Status.NOT_FOUND);
     }
     
@@ -287,6 +305,7 @@ public class ChangeRequestResource
 	    		rd.forward(httpServletRequest, httpServletResponse);   	        
     		} 
        	catch (Exception e) {
+       			logger.error(MessageFormat.format(bundle.getString("MODIFICATION_FAILURE"), changeRequestId), e);
     			throw new WebApplicationException(e);
     		}
     }
@@ -305,6 +324,8 @@ public class ChangeRequestResource
     public Response addChangeRequest(ChangeRequest changeRequest)
            throws URISyntaxException
     {
+    	logger.debug("Entering addChangeRequest method in ChangeRequestResource class");
+    	
     	URI basePath = uriInfo.getBaseUri();
 
         
@@ -317,7 +338,8 @@ public class ChangeRequestResource
 
         changeRequest = Persistence.persistChangeRequest(basePath, changeRequest);
         String eTag = getETagFromChangeRequest(changeRequest);
-
+        
+        logger.debug("Exiting addChangeRequest method in ChangeRequestResource class");
         return Response.created(changeRequest.getAbout()).entity(changeRequest).header("ETag", eTag).build();
     }
 
@@ -325,6 +347,8 @@ public class ChangeRequestResource
     @Path("{changeRequestId}")
     public Response deleteChangeRequest(@PathParam("changeRequestId") final String changeRequestId)
     {
+    	logger.debug("Entering deleteChangeRequest method in ChangeRequestResource class. Param1: " + changeRequestId);
+    	
 		URI baseURI = uriInfo.getBaseUri();
 		// Initialize the base before adding / deleting any resource.  
 		TRSUtil.initialize(PersistenceResourceUtil.instance, baseURI);
@@ -336,10 +360,12 @@ public class ChangeRequestResource
         	// TRS - Insert the deletion event to the change log
         	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_DELETION, changeRequest.getAbout(), getCurrentTimeStampURN());
         	
+        	logger.debug("Exiting deleteChangeRequest method in ChangeRequestResource class");
             return Response.ok().build();
             
         }
-
+        
+        logger.error(MessageFormat.format(bundle.getString("DELETION_FAILURE"), changeRequestId));
         throw new WebApplicationException(Status.NOT_FOUND);
     }
 
@@ -354,6 +380,8 @@ public class ChangeRequestResource
     public String populate()
            throws URISyntaxException
     {
+    	logger.debug("Entering populate method in ChangeRequestResource class");
+    	
     	URI baseURI = uriInfo.getBaseUri();
     	
     	// Initialize the base before adding / deleting any resource.  
@@ -396,6 +424,7 @@ public class ChangeRequestResource
 		        "Donec sit amet felis purus.", "Client"));
     	TRSUtil.insertEventTypeToChangeLog(TRSConstants.TRS_TYPE_CREATION, changeRequest.getAbout(), getCurrentTimeStampURN());    	
         
+    	logger.debug("Exiting populate method in ChangeRequestResource class");
         return "Success!";
     }
     
@@ -420,6 +449,7 @@ public class ChangeRequestResource
     		rd.forward(httpServletRequest, httpServletResponse);
 			
 		} catch (Exception e) {
+			logger.error(bundle.getString("FAILED_TO_CREATE_CR"));
 			throw new WebApplicationException(e);
 		}    	
     }
@@ -436,7 +466,7 @@ public class ChangeRequestResource
  		try {
  			timestampURI = new URI(URN_PREFIX + getCurrentTimeStamp());
  		} catch (URISyntaxException e) {
- 			e.printStackTrace();
+ 			logger.debug("Unable to construct URN for the new change event.");
  		}
  		return timestampURI;
  	}

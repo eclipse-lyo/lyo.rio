@@ -11,7 +11,6 @@
 	<artifactId>org.eclipse.lyo.rio.trs</artifactId>
 	<description>Reference Application demonstrating a Tracked Resource Set integration utilizing the TRS toolkit.</description>
 	<packaging>war</packaging>
-
 	
 	<dependencies>
 		<dependency>

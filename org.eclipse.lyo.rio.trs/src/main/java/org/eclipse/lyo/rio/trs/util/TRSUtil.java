@@ -18,6 +18,8 @@ package org.eclipse.lyo.rio.trs.util;
 
 import java.net.URI;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.lyo.core.trs.ChangeEvent;
 
 /**
@@ -63,11 +65,17 @@ public class TRSUtil {
 	}
 	
 	private static boolean IsGenericImplDesired(URI inURI){
+		logger.debug("Entering IsGenericImplDesired method in TRSUtil class. Param1: " + inURI);
+		
 		String sUri = inURI.getPath();
-		if (sUri.contains(TRS_GENERIC_MARKER))
+		if (sUri.contains(TRS_GENERIC_MARKER)) {
+			logger.debug("Exiting IsGenericImplDesired method in TRSUtil class. Return is true");
 			return true;
-		else
-			return false;		
+		}
+		else {
+			logger.debug("Exiting IsGenericImplDesired method in TRSUtil class. Return is false");
+			return false;
+		}
 	}
 	
 	public static TRSObject getTrsObject(IResourceUtil resourceUtil, URI inURI) {
@@ -83,6 +91,13 @@ public class TRSUtil {
 	
 	public static void updateTRSResourceURI(IResourceUtil resourceUtil, URI resource) {
 		if (!TRS_URI_INITIALIZED) {	
+			// By default the log4j.properties file will be placed in the application's
+			// WEB-INF/classes folder.  Most application servers will automatically
+			// detect this file and initialize the logging.  If that does not occur
+			// you may register the logging directly with the following call:
+			//PropertyConfigurator.configure(TRSUtil.class.getClassLoader().getResource("log4j.properties"));			
+			
+			logger.debug("Entering updateTRSResourceURI method in TRSUtil class. Param1: " + resource.toString());
 			String sPath = resource.getPath();
 			String sContext = null;
 			
@@ -102,7 +117,9 @@ public class TRSUtil {
 					trs_Uri = resource.resolve("/" + sContext + TRS_URI_PATH2);
 				}
 			    innerHelpr[i] =  new TRSObject(resourceUtil, trs_Uri, ConfigUtil.getPropertiesInstance().getProperty("ChangeEventsFile"));
-			}					
+			}	
+			
+			logger.debug("Exiting updateTRSResource method in TRSUtil class.");
 		}
 	}
 
@@ -123,4 +140,5 @@ public class TRSUtil {
 	// inner container helper obj representing JAXRS and generic implementation.
 	private static TRSObject[] innerHelpr = new TRSObject[2]; 
 	public static boolean TRS_URI_INITIALIZED = false;
+	private static final Logger logger = Logger.getLogger(TRSUtil.class);
 }
