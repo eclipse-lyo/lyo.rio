@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.log4j.Logger;
 import org.apache.wink.common.annotations.Workspace;
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.trs.ChangeEvent;
@@ -82,6 +85,9 @@ public class TRSResource {
 	@Context private HttpServletResponse httpServletResponse;
 	@Context private HttpServletRequest httpServletRequest;
 	
+	private static final Logger logger = Logger.getLogger(TRSResource.class);
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("Messages");
+	
 	/**
 	 * getTrackedResourceSet() returns the Tracked Resource Set with the most recent
 	 * page of the Change Log or EmptyChangeLog if no change logs pages exist
@@ -90,6 +96,8 @@ public class TRSResource {
 	@GET
 	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public TrackedResourceSet getTrackedResourceSet() throws URISyntaxException, IOException{
+		logger.debug("Entering getTrackedResourceSet method in TRSResource class");
+		
 		init();
 		
 		URI requestURI = uriInfo.getRequestUri();
@@ -109,6 +117,7 @@ public class TRSResource {
 			
 		set.setChangeLog(changeLog);
 		
+		logger.debug("Exiting getChangeLog method in TRSResource class");
 		return set;
 	}
 
@@ -120,6 +129,8 @@ public class TRSResource {
 	@Path("changelog")
 	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public AbstractChangeLog getChangeLog() throws URISyntaxException, IOException{
+		logger.debug("Entering getChangeLog method in TRSResource class");
+		
 		init();		
 
 		URI requestURI = uriInfo.getRequestUri();
@@ -127,7 +138,8 @@ public class TRSResource {
 		TRSObject trsObject = TRSUtil.getTrsObject(PersistenceResourceUtil.instance, requestURI);
 		
 		AbstractChangeLog changeLog = trsObject.getCurrentChangeLog();
-				
+		
+		logger.debug("Exiting getChangeLog method in TRSResource class");		
 		return changeLog;
 	}
 	
@@ -140,6 +152,8 @@ public class TRSResource {
 	@Path("changelog/{page}")
 	@Produces({ OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_RDF_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public AbstractChangeLog getChangeLogPage(@PathParam("page") final Long page) throws URISyntaxException, IOException{
+		logger.debug("Entering getChangeLogPage method in TRSResource class. Param1: " + page);
+		
 		init();
 		
 		URI requestURI = uriInfo.getRequestUri();
@@ -150,6 +164,7 @@ public class TRSResource {
 		if (changeLog == null)
 			throw new WebApplicationException(Status.NOT_FOUND);
 				
+		logger.debug("Exiting getChangeLogPage method in TRSResource class");
 		return changeLog;
 	}
 	
@@ -159,6 +174,7 @@ public class TRSResource {
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
 	public void modifyCutOffEventhtml (  @FormParam ("event")  String event )
 	{
+		logger.debug("Entering modifyCutOffEventhtml in TRSResource class. Param1: " + event);
 		
 		try {
 			ChangeEvent  ce = TRSUtil.getChangeEvent((event));
@@ -173,12 +189,12 @@ public class TRSResource {
 			PrintWriter out = httpServletResponse.getWriter();
 			out.print("{\"event\": \"" + event + "\"}");
 			out.close();
-			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(MessageFormat.format(bundle.getString("MODIFY_CUTOFF_FAILURE"), event), e);
 			throw new WebApplicationException(e);
 		}
 	
+		logger.debug("Exiting modifyCutOffEventhtml method in TRSResource class");
 	}
 	
 	private void init() {
