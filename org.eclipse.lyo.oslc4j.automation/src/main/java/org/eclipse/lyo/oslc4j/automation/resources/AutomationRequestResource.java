@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2013 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,13 +12,13 @@
  * Contributors:
  *
  *      Michael Fiedler         - initial API and implementation
+ *      Samuel Padgett          - remove deprecated call to Property.getDefaultValue()
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation.resources;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -47,17 +47,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.namespace.QName;
 
 import org.apache.wink.client.ClientResponse;
+import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.AutomationContribution;
 import org.eclipse.lyo.oslc4j.automation.AutomationPlan;
 import org.eclipse.lyo.oslc4j.automation.AutomationRequest;
 import org.eclipse.lyo.oslc4j.automation.AutomationResource;
 import org.eclipse.lyo.oslc4j.automation.AutomationResult;
-import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.ParameterInstance;
 import org.eclipse.lyo.oslc4j.automation.Persistence;
 import org.eclipse.lyo.oslc4j.automation.servlet.ServiceProviderSingleton;
@@ -193,10 +193,10 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
     		AutomationPlan selectedPlan = Persistence.getAutoResource(autoPlan, AutomationPlan.class);
     		if (selectedPlan != null)
     		{
-    			Map<String,String> params = new HashMap<String,String>();
+    			Map<String,Object> params = new HashMap<String,Object>();
     			for (Property paramDefinition : selectedPlan.getParameterDefinitions())
     			{
-    				String defaultValue = paramDefinition.getDefaultValue();
+    				Object defaultValue = paramDefinition.getDefaultValueObject();
     				if (defaultValue == null)
     					defaultValue="";
     				params.put(paramDefinition.getName(), defaultValue);
