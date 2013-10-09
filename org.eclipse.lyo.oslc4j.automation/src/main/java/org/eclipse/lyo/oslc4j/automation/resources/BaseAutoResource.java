@@ -34,12 +34,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
-import org.eclipse.lyo.oslc4j.automation.AutomationPlan;
-import org.eclipse.lyo.oslc4j.automation.Persistence;
 import org.eclipse.lyo.oslc4j.automation.AutomationResource;
+import org.eclipse.lyo.oslc4j.automation.Persistence;
 import org.eclipse.lyo.oslc4j.automation.servlet.ServiceProviderSingleton;
 import org.eclipse.lyo.oslc4j.core.model.Compact;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
