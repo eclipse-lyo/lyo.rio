@@ -27,8 +27,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.ResourceBundle;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
 import org.eclipse.lyo.core.trs.AbstractChangeLog;
 import org.eclipse.lyo.core.trs.Base;
 import org.eclipse.lyo.core.trs.ChangeEvent;
@@ -59,6 +61,9 @@ public class TRSObject {
 	private final TreeMap<Long, Base> trs_base_map = new TreeMap<Long, Base>();
 	private final TreeMap<Long, ChangeLog> trs_changelog_map = new TreeMap<Long, ChangeLog>();
 	private final List<ChangeEvent> change_events = new ArrayList<ChangeEvent>();
+	
+	private static final Logger logger = Logger.getLogger(TRSObject.class);
+	private static final ResourceBundle bundle = ResourceBundle.getBundle("Messages");
 	
 	private URI trs_uri = null;
 	private int trs_curr_changelog_size = 0;
@@ -103,6 +108,8 @@ public class TRSObject {
 	 */
 	private void initialize() {
 		synchronized (trs_base_map) {
+			logger.debug("Entering initialize method in TRSObject class");
+			
 			trs_base_initialized = true;
 			List<URI> uris = resourceUtil.getAllResourceURIs();
 	
@@ -162,6 +169,7 @@ public class TRSObject {
 		if (last_change_event != null) {
 			setCutOffEventInner(last_change_event);
 		}
+		logger.debug("Exiting initialize method in TRSObject class");
 	}
 	
 	/**
@@ -173,6 +181,8 @@ public class TRSObject {
 	 */
 	private void loadChangeEvents() {
 		synchronized (change_events) {
+			logger.debug("Entering loadChangeEvents method in TRSObject class");
+			
 			Object[] changeEvents;
 			try {
 				Class<?> [] objectTypes = {Creation.class, Modification.class, Deletion.class};
@@ -220,9 +230,9 @@ public class TRSObject {
 					}
 				}			
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(bundle.getString("CHANGE_EVENT_LOAD_FAILURE"), e);
 			}
+			logger.debug("Exiting loadChangeEvents method in TRSObject class");
 		}
 	}
 
@@ -275,6 +285,8 @@ public class TRSObject {
 	 *            persist across server restarts should likely be used.
 	 */
 	public void insertEventTypeToChangeLog(String trsEvent, URI resource, URI changeURN) {
+		logger.debug("Entering insertEventTypeToChangeLog method in TRSObject class. Param1: " + trsEvent + " Param2: " + resource.toString() + " Param3: " + changeURN.toString());
+		
 		ChangeEvent event = null;
 		// increment the event number to maintain event order
 		int eventNumber = (last_change_event != null) ? last_change_event.getOrder() + 1 : 0;
@@ -289,7 +301,7 @@ public class TRSObject {
 		} catch (URISyntaxException e) {
 			// Unable to create a URN with the order appended.  Log the error
 			// and continue on using the old style URN
-			e.printStackTrace();
+			logger.warn(bundle.getString("URN_GENERATION_FAILULRE"), e);
 		}
 	
 		if (trsEvent.equals(TRSConstants.TRS_TYPE_CREATION)) {
@@ -307,6 +319,8 @@ public class TRSObject {
 		FileUtil.save(change_events.toArray(), this.changeEventsFilename);
 		
 		insertEventToPagedChangeLog(event, resource);
+		
+		logger.debug("Exiting insertEventTypeToChangeLog method in TRSObject class");
 	}
 
 	/**
@@ -316,6 +330,9 @@ public class TRSObject {
 	 */
 	private void insertEventToPagedChangeLog(ChangeEvent event, URI resource) {
 		synchronized (trs_changelog_map) {
+			
+			logger.debug("Entering insertEventToPagedChangeLog method in TRSObject class. Param1: " + event + " Param2: " + resource.toString());
+			
 			// Create a change log entry if the current size is zero
 			if (trs_curr_changelog_size == 0) {
 				trs_curr_changelog_page++;
@@ -347,6 +364,7 @@ public class TRSObject {
 				trs_curr_changelog_size = 0;
 			}
 		}
+		logger.debug("Exiting insertEventToPagedChangeLog method in TRSObject class");
 	}
 
 	/**
@@ -364,6 +382,8 @@ public class TRSObject {
 
 	public void modifyCutoffEventInner(ChangeEvent inCutOffEvent) {
 		synchronized (trs_changelog_map) {
+			logger.debug("Entering modifyCutoffEventInner method in TRSObject class");
+			
 			List<ChangeEvent> ListofEvents2Compact = new ArrayList<ChangeEvent>();
 			boolean bNewCutOffFound = false;
 	
@@ -402,6 +422,8 @@ public class TRSObject {
 			}
 			// 2. Set the cutOffEvent
 			setCutOffEventInner(inCutOffEvent);
+			
+			logger.debug("Exiting modifyCutoffEventInner method in TRSObject class");
 		}
 	}
 
@@ -410,6 +432,8 @@ public class TRSObject {
 	 * @return null if the change event with the given uri can not be found or the change event with the given uri
 	 */
 	public ChangeEvent getChangeEventInner(String uriAbout) {
+		logger.debug("Entering getChangeEventInner method in TRSObject. Param1: " + uriAbout);
+		
 		ChangeEvent result = null;
 	
 		for (int page = 0; page <= trs_curr_changelog_page; page++) {
@@ -423,6 +447,7 @@ public class TRSObject {
 			}
 		}
 	
+		logger.debug("Exiting getChangeEventInner method in TRSObject class");
 		return result;
 	}
 
@@ -433,7 +458,7 @@ public class TRSObject {
 			newBase.setCutoffEvent(new URI(TRSConstants.RDF_NIL));
 			newBase.setNextPage(getNextBasePage(newBase, getBaseResourceURI(currentPageNumber), new URI(TRSConstants.RDF_NIL)));
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
+			logger.error(bundle.getString("BASE_INITIALIZATION_FAILURE"), e);
 		}
 		return newBase;
 	}
@@ -490,6 +515,8 @@ public class TRSObject {
 	 */
 	private void modifyBase(ChangeEvent changeEvent) {
 		synchronized (trs_base_map) {
+			logger.debug("Entering modifyBase method in TRSObject class");
+			
 			Collection<Base> baseValues = getTrsBaseMapInner().values();
 			// if Creation then add resource to base(last page).
 			if (changeEvent.getClass().equals(Creation.class)) {
@@ -526,6 +553,7 @@ public class TRSObject {
 					}
 				}
 			}
+			logger.debug("Exiting modifyBase method in TRSObject");
 		}
 	}
 	
@@ -539,6 +567,8 @@ public class TRSObject {
 	 * @throws ParseException
 	 */
 	private boolean isPrunningNecessary(URI urn) throws ParseException {
+		logger.debug("Entering isPrunningNecessary method in TRSObject. Param1: " + urn.toString());
+		
 		// Get the time of the event in milliseconds
 		String eventTime = urn.toString();
 		
@@ -549,6 +579,7 @@ public class TRSObject {
 			eventTime = eventTime.split(":")[3];
 		} catch (NullPointerException e) {
 			// Unexpected URN format do not prune this event
+			logger.warn(bundle.getString("UNEXPECTED_URN_FORMAT"), e);
 			return false;
 		}
 
@@ -563,9 +594,10 @@ public class TRSObject {
 		// If an event is older than the prune time (less time since the epoch
 		// has elapsed) indicate we need to prune this event.
 		if (pruneTime >= eventMilliseconds) {
+			logger.debug("Exiting isPrunningNecessary method in TRSObject class. Return is true");
 			return true;
 		}
-		
+		logger.debug("Exiting isPrunningNecessary method in TRSObject class. Return is false");
 		return false;
 	}
 }
