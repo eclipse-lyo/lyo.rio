@@ -97,7 +97,7 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
         (
              title = "Automation Request Selection Dialog",
              label = "Automation Request Selection Dialog",
-             uri = "selector",
+             uri = "autoRequests/selector",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {AutomationConstants.TYPE_AUTOMATION_REQUEST},

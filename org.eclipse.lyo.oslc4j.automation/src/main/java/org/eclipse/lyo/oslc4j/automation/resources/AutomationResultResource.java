@@ -65,7 +65,7 @@ public class AutomationResultResource extends BaseAutoResource<AutomationResult>
         (
              title = "Automation Result Selection Dialog",
              label = "Automation Result Selection Dialog",
-             uri = "selector",
+             uri = "autoResults/selector",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = { AutomationConstants.TYPE_AUTOMATION_RESULT},

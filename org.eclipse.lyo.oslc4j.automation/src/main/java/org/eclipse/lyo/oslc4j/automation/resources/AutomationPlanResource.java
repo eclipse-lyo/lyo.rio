@@ -65,7 +65,7 @@ public class AutomationPlanResource extends BaseAutoResource<AutomationPlan> {
         (
              title = "Automation Plan Selection Dialog",
              label = "Automation Plan Selection Dialog",
-             uri = "selector",
+             uri = "autoPlans/selector",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {AutomationConstants.TYPE_AUTOMATION_PLAN},
