@@ -1,143 +1,167 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.eclipse.lyo.oslc4j.rio</groupId>
-  <artifactId>oslc4j-auto-sample</artifactId>
-  <version>2.1.0-SNAPSHOT</version>
-  <packaging>war</packaging>
-  <dependencies>
-  	<dependency>
-  		<groupId>javax.servlet</groupId>
-  		<artifactId>javax.servlet-api</artifactId>
-  		<version>3.0.1</version>
-  		<scope>provided</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.eclipse.lyo.oslc4j.core</groupId>
-  		<artifactId>oslc4j-core</artifactId>
-  		<version>2.1.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.eclipse.lyo.oslc4j.core</groupId>
-  		<artifactId>oslc4j-wink</artifactId>
-  		<version>2.1.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.eclipse.lyo.oslc4j.core</groupId>
-  		<artifactId>oslc4j-json4j-provider</artifactId>
-  		<version>2.1.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.eclipse.lyo.oslc4j.core</groupId>
-  		<artifactId>oslc4j-jena-provider</artifactId>
-  		<version>2.1.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.eclipse.lyo.oslc4j.rio</groupId>
-  		<artifactId>oslc4j-auto-common</artifactId>
-  		<version>2.1.0-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
-  <build>
-  
-  	<resources>
-		<resource>
-			<directory>src/main/resources</directory>
-			<filtering>true</filtering>
-		</resource>
-	</resources>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.eclipse.lyo.oslc4j.rio</groupId>
+    <artifactId>oslc4j-auto-sample</artifactId>
+    <version>2.1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <repositories>
+        <repository>
+            <id>lyo-releases</id>
+            <url>https://repo.eclipse.org/content/repositories/lyo-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>lyo-snapshots</id>
+            <url>https://repo.eclipse.org/content/repositories/lyo-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.lyo.oslc4j.core</groupId>
+            <artifactId>oslc4j-core</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.lyo.oslc4j.core</groupId>
+            <artifactId>oslc4j-wink</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.lyo.oslc4j.core</groupId>
+            <artifactId>oslc4j-json4j-provider</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.lyo.oslc4j.core</groupId>
+            <artifactId>oslc4j-jena-provider</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.lyo.oslc4j.rio</groupId>
+            <artifactId>oslc4j-auto-common</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    <build>
 
-	<testResources>
-		<testResource>
-			<directory>src/test/resources</directory>
-			<filtering>true</filtering>
-		</testResource>
-	</testResources>
-    
-  	<plugins>
-  		<plugin>
-  			<groupId>org.apache.maven.plugins</groupId>
-  			<artifactId>maven-compiler-plugin</artifactId>
-  			<version>2.3.2</version>
-  			<configuration>
-  			    <source>1.6</source>
-  			    <target>1.6</target>
-  			</configuration>
-  		</plugin>
-  		<plugin>
-  			<groupId>org.apache.maven.plugins</groupId>
-  			<artifactId>maven-war-plugin</artifactId>
-  			<version>2.1.1</version>
-  			<configuration>
-  			    <warSourceDirectory>src/main/webapp</warSourceDirectory>
-    			<webXml>src/main/webapp/WEB-INF/web.xml</webXml> 
-    			<webResources>
-            		<resource>
-              			<directory>src/main/resources</directory>
-              			<include>log4j.properties</include>
-              			<targetPath>WEB-INF/classes</targetPath>
-            		</resource>
-          		</webResources>     
-  			</configuration>
-  			
-  		</plugin>
-  		<plugin>
-  			<groupId>org.apache.maven.plugins</groupId>
-  			<artifactId>maven-eclipse-plugin</artifactId>
-  			<configuration>
-  				<wtpversion>2.0</wtpversion>
-  			</configuration>
-  			<version>2.8</version>
-  		</plugin>
-  		<!-- ********************************************** -->
-		<!-- Jetty 7 plugin See also: http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
-		<plugin>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty-maven-plugin</artifactId>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <include>log4j.properties</include>
+                            <targetPath>WEB-INF/classes</targetPath>
+                        </resource>
+                    </webResources>
+                </configuration>
+
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <configuration>
+                    <wtpversion>2.0</wtpversion>
+                </configuration>
+                <version>2.8</version>
+            </plugin>
+            <!-- ********************************************** -->
+            <!-- Jetty 7 plugin See also: http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
 
 
-			<configuration>
-			    <webAppConfig>
-			      <contextPath>/OSLC4JAutomation</contextPath>
-			    </webAppConfig>
-			    
-			    <!-- Also start OSLC4JRegistry webApp -->
-			    <contextHandlers>
-					<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-						<war>${basedir}/../../org.eclipse.lyo.core/org.eclipse.lyo.oslc4j.registry/target/oslc4j-registry-2.1.0-SNAPSHOT.war</war>
-						<contextPath>/OSLC4JRegistry</contextPath>
-					</contextHandler>
-				</contextHandlers>
-				
-				<!-- Jetty config adds logging -->
-				<jettyConfig>${project.build.directory}/test-classes/jetty.xml</jettyConfig>
+                <configuration>
+                    <webAppConfig>
+                        <contextPath>/OSLC4JAutomation</contextPath>
+                    </webAppConfig>
 
-				<!-- enable hot deploy -->
-				<reload>automatic</reload>
-				<scanIntervalSeconds>5</scanIntervalSeconds>
-				
+                    <!-- Also start OSLC4JRegistry webApp -->
+                    <contextHandlers>
+                        <contextHandler
+                            implementation="org.eclipse.jetty.webapp.WebAppContext">
+                            <war>${basedir}/../../org.eclipse.lyo.core/org.eclipse.lyo.oslc4j.registry/target/oslc4j-registry-2.1.0-SNAPSHOT.war</war>
+                            <contextPath>/OSLC4JRegistry</contextPath>
+                        </contextHandler>
+                    </contextHandlers>
 
-					
-    			<systemProperties>
+                    <!-- Jetty config adds logging -->
+                    <jettyConfig>${project.build.directory}/test-classes/jetty.xml</jettyConfig>
 
-					<systemProperty>
-						<name>config.dir</name>
-						<value>${basedir}/src/test/resources</value>
-					</systemProperty>
+                    <!-- enable hot deploy -->
+                    <reload>automatic</reload>
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
 
-					<systemProperty>
-						<name>jetty.logs</name>
-						<value>${basedir}/target</value>
-					</systemProperty>
-					<systemProperty>
-						<name>jetty.port</name>
-						<value>8080</value>
-					</systemProperty>
 
-				</systemProperties>
-					
-			</configuration>
 
-		</plugin>
-  	</plugins>
-  </build>
+                    <systemProperties>
+
+                        <systemProperty>
+                            <name>config.dir</name>
+                            <value>${basedir}/src/test/resources</value>
+                        </systemProperty>
+
+                        <systemProperty>
+                            <name>jetty.logs</name>
+                            <value>${basedir}/target</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>jetty.port</name>
+                            <value>8080</value>
+                        </systemProperty>
+
+                    </systemProperties>
+
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
 </project>
