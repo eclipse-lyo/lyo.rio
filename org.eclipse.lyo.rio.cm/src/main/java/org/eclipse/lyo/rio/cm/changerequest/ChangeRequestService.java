@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation.
+ * Copyright (c) 2011, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -145,7 +145,7 @@ public class ChangeRequestService extends RioBaseService {
 					response.setContentLength(content.getBytes().length);
 					response.getWriter().write(content);
 				} else {
-					throw new RioServiceException(IConstants.SC_UNSUPPORTED_MEDIA_TYPE, Messages.getString("ChangeRequest.UnableToAccept") + accept ); //$NON-NLS-1$
+					throw new RioServiceException(IConstants.SC_NOT_ACCEPTABLE, Messages.getString("Resource.UnableToAccept") + accept ); //$NON-NLS-1$
 				}
 
 			} else {
