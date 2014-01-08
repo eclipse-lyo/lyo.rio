@@ -302,7 +302,7 @@ public class AutomationRequestResource extends BaseAutoResource<AutomationReques
     (
          title = "Automation Request Creation Dialog",
          label = "Automation Request Creation Dialog",
-         uri = "creator",
+         uri = "autoRequests/creator",
          hintWidth = "1000px",
          hintHeight = "600px",
          resourceTypes = {AutomationConstants.TYPE_AUTOMATION_REQUEST},
