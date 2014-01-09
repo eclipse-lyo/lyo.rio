@@ -96,7 +96,7 @@ public abstract class RioBaseService extends HttpServlet {
 			response.setStatus(ex.getStatus());
 			response.setHeader(IConstants.HDR_OSLC_VERSION, IConstants.OSLC_VERSION);
 			response.setContentType(IConstants.CT_RDF_XML);
-			RioError error = new RioError(IConstants.SC_INTERNAL_ERROR, ex.getMessage() );
+			RioError error = new RioError(ex.getStatus(), ex.getMessage() );
 			response.getWriter().write(error.toString());
 		} catch( Exception ex ) {
 			// return with an OSLC message style
