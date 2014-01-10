@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation.
+ * Copyright (c) 2011, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -53,7 +53,7 @@ public class ServiceResource extends RioResource {
 		prefixDef.setStringProperty(IConstants.OSLC_PREFIXBASE, ICmConstants.OSLC_CM_NAMESPACE);
 		
 		RioResource service = this.createInlinedResource(IConstants.OSLC_SERVICE, IConstants.OSLC_TYPE_SERVICE);
-		service.setStringProperty(IConstants.OSLC_DOMAIN, ICmConstants.OSLC_CM_NAMESPACE);
+		service.setUriProperty(IConstants.OSLC_DOMAIN, ICmConstants.OSLC_CM_NAMESPACE);
 		
 		String resShapeUrl = urlBase + "/shapes?type=ChangeRequest"; 
 
