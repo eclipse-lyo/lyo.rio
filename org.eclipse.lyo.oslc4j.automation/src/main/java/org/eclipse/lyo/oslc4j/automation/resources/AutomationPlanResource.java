@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -129,16 +129,16 @@ public class AutomationPlanResource extends BaseAutoResource<AutomationPlan> {
     }
     
 
-    @OslcDialog
-    (
-         title = "Automation Plan Creation Dialog",
-         label = "Automation Plan Creation Dialog",
-         uri = "creator",
-         hintWidth = "1000px",
-         hintHeight = "600px",
-         resourceTypes = {AutomationConstants.TYPE_AUTOMATION_PLAN},
-         usages = {OslcConstants.OSLC_USAGE_DEFAULT}
-    )
+//    @OslcDialog
+//    (
+//         title = "Automation Plan Creation Dialog",
+//         label = "Automation Plan Creation Dialog",
+//         uri = "creator",
+//         hintWidth = "1000px",
+//         hintHeight = "600px",
+//         resourceTypes = {AutomationConstants.TYPE_AUTOMATION_PLAN},
+//         usages = {OslcConstants.OSLC_USAGE_DEFAULT}
+//    )
     @OslcCreationFactory
     (
          title = "Automation Plan Creation Factory",
