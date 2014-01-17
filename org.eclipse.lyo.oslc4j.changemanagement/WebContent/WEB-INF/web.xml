@@ -16,6 +16,11 @@
  -->
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>org.eclipse.lyo.oslc4j.changemanagement</display-name>
+  
+  <welcome-file-list>
+    <welcome-file>web/index.jsp</welcome-file>
+  </welcome-file-list>
+  
   <context-param>
     <description>Scheme used for URI when registering ServiceProvider.  Can be overridden by System property of the same name.</description>
     <param-name>org.eclipse.lyo.oslc4j.changemanagement.servlet.scheme</param-name>
@@ -42,7 +47,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>JAX-RS Servlet</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>services/*</url-pattern>
   </servlet-mapping>
   <servlet>
     <servlet-name>restSdkAdmin</servlet-name>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -59,6 +59,9 @@ import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 @Path("changeRequests")
 public class ChangeRequestResource
 {
+	
+	private static final String SERVICES_PATH = "/services";
+	
     public ChangeRequestResource()
     {
         super();
@@ -217,7 +220,7 @@ public class ChangeRequestResource
                                   null,
                                   httpServletRequest.getServerName(),
                                   httpServletRequest.getServerPort(),
-                                  httpServletRequest.getContextPath() + "/changeRequests/" + identifier,
+                                  httpServletRequest.getContextPath() + SERVICES_PATH + "/changeRequests/" + identifier,
                                   null,
                                   null);
 
