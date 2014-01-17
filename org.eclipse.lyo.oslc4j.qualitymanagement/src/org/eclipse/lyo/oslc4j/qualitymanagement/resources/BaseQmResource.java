@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -40,6 +40,9 @@ import org.eclipse.lyo.oslc4j.qualitymanagement.servlet.ServiceProviderSingleton
 
 public class BaseQmResource<T extends QmResource>
 {
+	
+	private static final String SERVICES_PATH = "/services";
+	
     private final Class<T> resourceType;
 
     protected BaseQmResource(Class<T> resourceType)
@@ -124,7 +127,7 @@ public class BaseQmResource<T extends QmResource>
                                   null,
                                   httpServletRequest.getServerName(),
                                   httpServletRequest.getServerPort(),
-                                  httpServletRequest.getContextPath() + "/" + getPath() +"/" + identifier,
+                                  httpServletRequest.getContextPath() + SERVICES_PATH + "/" + getPath() +"/" + identifier,
                                   null,
                                   null);
 
