@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -42,6 +42,7 @@ public class ServletListener
     private static final String PROPERTY_PORT   = ServletListener.class.getPackage().getName() + ".port";
     private static final int REGISTRATION_DELAY = 5000; //Delay before contacting OSLC4JRegistry
     private static final Logger logger = Logger.getLogger(ServletListener.class.getName());
+    private static final String SERVICE_PATH = "/services"; //root path for the JAX-RS services
 
     private static final String HOST = getHost();
 
@@ -115,7 +116,7 @@ public class ServletListener
             port = servletContext.getInitParameter(PROPERTY_PORT);
         }
 
-        return scheme + "://" + HOST + ":" + port + servletContext.getContextPath();
+        return scheme + "://" + HOST + ":" + port + servletContext.getContextPath() + SERVICE_PATH;
     }
 
     private static String getHost()
