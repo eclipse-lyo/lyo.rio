@@ -25,6 +25,10 @@
     <artifactId>org.eclipse.lyo.rio.template-webapp</artifactId>
     <packaging>war</packaging>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
 	<dependencies>
         <dependency>
         	<groupId>org.eclipse.lyo.rio</groupId>

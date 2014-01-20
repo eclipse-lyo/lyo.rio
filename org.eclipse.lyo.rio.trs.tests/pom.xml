@@ -7,6 +7,10 @@
     <artifactId>org.eclipse.lyo.rio.trs.tests</artifactId>
     <description>A set of junit tests to validate that various aspects of the reference application's change log are functioning properly.</description>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <repositories>
         <repository>
             <id>oauth</id>
