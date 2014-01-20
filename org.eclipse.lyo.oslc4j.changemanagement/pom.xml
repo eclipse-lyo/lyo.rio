@@ -102,12 +102,10 @@
                 </configuration>
                 <version>2.8</version>
             </plugin>
-            <!-- ********************************************** -->
-            <!-- Jetty 7 plugin See also: http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-
+                <version>8.1.14.v20131031</version>
 
                 <configuration>
                     <webAppConfig>
