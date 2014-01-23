@@ -22,12 +22,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -38,14 +43,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest;
 import org.eclipse.lyo.oslc4j.changemanagement.Constants;
 import org.eclipse.lyo.oslc4j.changemanagement.Persistence;
 import org.eclipse.lyo.oslc4j.changemanagement.Type;
 import org.eclipse.lyo.oslc4j.changemanagement.servlet.ServiceProviderSingleton;
+import org.eclipse.lyo.oslc4j.client.OslcRestClient;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcDialog;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcDialogs;
@@ -54,6 +63,7 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.Compact;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
+import org.eclipse.lyo.oslc4j.provider.jena.JenaProvidersRegistry;
 
 @OslcService(Constants.CHANGE_MANAGEMENT_DOMAIN)
 @Path("changeRequests")
@@ -61,6 +71,7 @@ public class ChangeRequestResource
 {
 	
 	private static final String SERVICES_PATH = "/services";
+	private static final Set<Class<?>> PROVIDERS = JenaProvidersRegistry.getProviders();
 	
     public ChangeRequestResource()
     {
@@ -73,7 +84,7 @@ public class ChangeRequestResource
         (
              title = "Change Request Selection Dialog",
              label = "Change Request Selection Dialog",
-             uri = "",
+             uri = "changeRequests/selector",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {Constants.TYPE_CHANGE_REQUEST},
@@ -83,7 +94,7 @@ public class ChangeRequestResource
         (
              title = "Change Request List Dialog",
              label = "Change Request List Dialog",
-             uri = "UI/changeRequests/list.jsp",
+             uri = "",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {Constants.TYPE_CHANGE_REQUEST},
@@ -196,6 +207,18 @@ public class ChangeRequestResource
         throw new WebApplicationException(Status.NOT_FOUND);
     }
 
+    
+
+    @OslcDialog
+    (
+    		title = "Change Request Creation Dialog",
+    		label = "Change Request Creation Dialog",
+    		uri = "changeRequests/creator",
+    		hintWidth = "1000px",
+    		hintHeight = "600px",
+    		resourceTypes = {Constants.TYPE_CHANGE_REQUEST},
+    		usages = {OslcConstants.OSLC_USAGE_DEFAULT}
+    )
     @OslcCreationFactory
     (
          title = "Change Request Creation Factory",
@@ -299,5 +322,143 @@ public class ChangeRequestResource
     private static String getETagFromChangeRequest(final ChangeRequest changeRequest)
 	{
 		return Long.toString(changeRequest.getModified().getTime());
+	}
+    
+	@Path("selector")
+	@Produces({ MediaType.TEXT_HTML })
+	public void getSelectionDialog(@Context final HttpServletRequest request,
+									@Context final HttpServletResponse response,
+									@Context final UriInfo uriInfo,
+									@QueryParam("searchFor") final String searchFor)
+	{
+		// handle any data in the request
+		request.setAttribute("selectionUri", uriInfo.getAbsolutePath().toString());
+		if (searchFor == null) 
+		{
+			try {
+
+				RequestDispatcher rd = request.getRequestDispatcher("/web/changeresource_selector.jsp");
+				rd.forward(request, response);
+			} catch (Exception e) {
+				throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+			}
+		} else 
+		{
+			List<ChangeRequest> matchingResources = new ArrayList<ChangeRequest>();
+
+			for (ChangeRequest thisResource : Persistence.getChangeRequests()) 
+			{
+				if (thisResource.getClass().equals(ChangeRequest.class)) 
+				{
+					String title = thisResource.getTitle();
+					if (title != null) 
+					{
+						if (title.toUpperCase().contains(searchFor.toUpperCase())) 
+						{
+							matchingResources.add(thisResource);
+						}
+					}
+				}
+			}
+			try {
+				request.setAttribute("results", matchingResources);
+				RequestDispatcher rd = request.getRequestDispatcher("/web/changeresource_filtered_json.jsp");
+				rd.forward(request, response);
+			} catch (Exception e) {
+				throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+			}
+
+		}
+
+	}
+
+	@GET
+	@Path("creator")
+	@Produces({ MediaType.TEXT_HTML })
+	public void getCreationDialog(@Context final HttpServletRequest request,
+									@Context final HttpServletResponse response,
+									@Context final UriInfo uriInfo,
+									@QueryParam("changePlan") final String changePlan) 
+	{
+		request.setAttribute("creatorUri", uriInfo.getAbsolutePath().toString());
+
+		if (changePlan == null) 
+		{
+			Map<String, String> changePlanIDs = new HashMap<String, String>();
+
+			for (ChangeRequest thisResource : Persistence.getChangeRequests()) 
+			{
+				if (thisResource.getClass().equals(ChangeRequest.class)) 
+				{
+					changePlanIDs.put(thisResource.getIdentifier(),	thisResource.getTitle());
+				}
+			}
+			try {
+				request.setAttribute("changePlans", changePlanIDs);
+				RequestDispatcher rd = request.getRequestDispatcher("/web/changerequest_creator.jsp");
+				rd.forward(request, response);
+			} catch (Exception e) {
+
+				throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+			}
+		}
+	}
+
+	@POST
+	@Path("creator")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response createHtmlChangeRequest(@Context final HttpServletRequest httpServletRequest,
+											@Context final HttpServletResponse httpServletResponse,
+											@FormParam("title") String title,
+											@FormParam("description") String description) 
+			throws URISyntaxException 
+	{
+		
+		Response response;
+				
+		if ((title != null) && !title.isEmpty()) 
+		{
+				ChangeRequest newRequest = new ChangeRequest();
+				newRequest.setTitle(title);
+				newRequest.setDescription(description);
+
+				final URI creationFactory = ChangeRequestUtils.getCreation(PROVIDERS,
+																		   ServiceProviderSingleton.getServiceProviderURI(),
+																		   URI.create(Constants.CHANGE_MANAGEMENT_DOMAIN),
+																		   URI.create(Constants.TYPE_CHANGE_REQUEST));
+				OslcRestClient client = new OslcRestClient(PROVIDERS, creationFactory, "application/rdf+xml");
+				System.out.println("factoryMade");
+
+				ChangeRequest createdResource = client.addOslcResource(newRequest);
+				try 
+				{
+					if (createdResource != null) 
+					{
+
+						httpServletResponse.setContentType("application/json");
+						httpServletResponse.setStatus(Status.CREATED.getStatusCode());
+						httpServletResponse.addHeader("Location", createdResource.getAbout().toString());
+
+						response = Response.created(createdResource.getAbout()).entity(createdResource).build();
+
+					} else {
+						final org.eclipse.lyo.oslc4j.core.model.Error error = new org.eclipse.lyo.oslc4j.core.model.Error();
+						error.setStatusCode(Status.INTERNAL_SERVER_ERROR.toString());
+						error.setMessage("Error creating change request");
+						response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
+					}
+
+				} catch (Exception e) 
+				{
+					throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+				}
+		} else {
+			final org.eclipse.lyo.oslc4j.core.model.Error error = new org.eclipse.lyo.oslc4j.core.model.Error();
+			error.setStatusCode(Status.INTERNAL_SERVER_ERROR.toString());
+			error.setMessage("title missing or invalid");
+			response = Response.status(Status.BAD_REQUEST).entity(error).build();
+		}
+		return response;
 	}
 }
