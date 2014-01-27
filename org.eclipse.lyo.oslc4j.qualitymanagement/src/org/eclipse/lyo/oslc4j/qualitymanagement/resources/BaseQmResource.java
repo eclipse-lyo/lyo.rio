@@ -18,18 +18,24 @@ package org.eclipse.lyo.oslc4j.qualitymanagement.resources;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.lyo.oslc4j.core.model.Compact;
@@ -51,7 +57,8 @@ public class BaseQmResource<T extends QmResource>
         this.resourceType = resourceType;
     }
     
-    public T[] getResources(final String where)
+    @SuppressWarnings("unchecked")
+	public T[] getResources(final String where)
     {
 
         final List<T> resources = Persistence.getQmResources(resourceType);
@@ -119,11 +126,22 @@ public class BaseQmResource<T extends QmResource>
     		                    final HttpServletResponse httpServletResponse,
                                 final T                   resource)
            throws URISyntaxException
+    {    	
+    	
+    	URI resourceURI = createResourceInternal(httpServletRequest, httpServletResponse, resource);
+    	setETagHeader(getETagFromResource(resource), httpServletResponse);
+        return Response.created(resourceURI).entity(resource).build();
+    }
+
+    public URI createResourceInternal(final HttpServletRequest  httpServletRequest,
+    		                 final HttpServletResponse httpServletResponse,
+                             final T                   resource)
+           throws URISyntaxException
     {
         final long identifier = Persistence.getNextIdentifier();
 
         
-        final URI about = new URI(httpServletRequest.getScheme(),
+        final URI internalResource = new URI(httpServletRequest.getScheme(),
                                   null,
                                   httpServletRequest.getServerName(),
                                   httpServletRequest.getServerPort(),
@@ -131,7 +149,7 @@ public class BaseQmResource<T extends QmResource>
                                   null,
                                   null);
 
-        resource.setAbout(about);
+        resource.setAbout(internalResource);
         resource.setIdentifier(String.valueOf(identifier));
         resource.setServiceProvider(ServiceProviderSingleton.getServiceProviderURI());
 
@@ -141,9 +159,9 @@ public class BaseQmResource<T extends QmResource>
         resource.setModified(date);
 
         Persistence.addResource(resource);
-        setETagHeader(getETagFromResource(resource), httpServletResponse);
 
-        return Response.created(about).entity(resource).build();
+        return internalResource;
+        
     }
 
     public Response updateResource(final HttpServletResponse httpServletResponse,
@@ -206,4 +224,88 @@ public class BaseQmResource<T extends QmResource>
         return this.getClass().getAnnotation(Path.class).value();
     }
     
+    @GET
+    @Path("selector")
+    @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
+    
+    public void autoResourceSelector(@Context                 final HttpServletRequest httpServletRequest,
+    		                     @Context                 final HttpServletResponse httpServletResponse,
+    		                     @Context                 final UriInfo uriInfo,
+    		                     @QueryParam("searchFor") final String searchFor)
+    {
+    	httpServletRequest.setAttribute("selectionUri",uriInfo.getAbsolutePath().toString());
+    	httpServletRequest.setAttribute("resourceType", this.resourceType.getSimpleName());
+    	if (searchFor == null)
+    	{
+    		try {	
+                RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/qmresource_selector.jsp"); 
+	    		rd.forward(httpServletRequest, httpServletResponse);
+				
+			} catch (Exception e) {
+				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+			}
+    	} else
+    	{
+    		List<QmResource> matchingResources = new ArrayList<QmResource>();
+    		
+    		for (QmResource thisResource:Persistence.getQmResources())
+    		{
+    			if (thisResource.getClass().equals(this.resourceType))
+    			{
+	    			String title = thisResource.getTitle();
+	    			if (title != null)
+	    			{
+	    				if (title.toUpperCase().contains(searchFor.toUpperCase()))
+	    				{
+	    					matchingResources.add(thisResource);
+	    				}
+	    			}
+    			}
+    		}
+    		try {
+    			httpServletRequest.setAttribute("results", matchingResources);
+    			RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/qmresource_filtered_json.jsp"); 
+    			rd.forward(httpServletRequest, httpServletResponse);
+    		} catch (Exception e) {
+				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+			}
+    		
+    	}
+    }
+
+    @GET
+    @Path("creator")
+    @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
+    
+    public void autoRequestCreator(@Context                 final HttpServletRequest httpServletRequest,
+    		                       @Context                 final HttpServletResponse httpServletResponse,
+    		                       @Context                 final UriInfo uriInfo,
+    		                       @QueryParam("testPlan")  final String testPlan)
+    {
+    	httpServletRequest.setAttribute("creatorUri",uriInfo.getAbsolutePath().toString());
+    	httpServletRequest.setAttribute("resourceType", this.resourceType.getSimpleName());
+
+    	if (testPlan == null)
+    	{
+	    	Map<String,String> testPlanIDs = new HashMap<String,String>();
+	    		
+	    	for (QmResource thisResource:Persistence.getQmResources())
+	    	{
+	    		if (thisResource.getClass().equals(QmResource.class))
+	    		{
+	    			testPlanIDs.put(thisResource.getIdentifier(), thisResource.getTitle());
+	    		}
+	    	}
+	    	try {
+				httpServletRequest.setAttribute("testPlans", testPlanIDs);
+				RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/qmrequest_creator.jsp"); 
+				rd.forward(httpServletRequest, httpServletResponse);
+			} catch (Exception e) {
+				System.out.println("err");
+				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+			}
+    	
+    	}
+    }
+
 }
