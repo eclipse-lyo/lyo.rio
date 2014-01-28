@@ -23,17 +23,26 @@
 </head>
 <body>
 <table><tr><td><img src="web/images/oslcLg.png" /></td><td><h2>Home:<br />OSLC4J Reference Implementation <br /> for Automation</h2></td></tr></table>
-<p><b>About Automation</b></p>
-<blockquote>
+<h3><b>About Automation</b></h3>
+<div style = "margin-left: 2em;">
 <p>This is a reference implementation of the <a href="http://open-services.net/wiki/automation/OSLC-Automation-Specification-Version-2.0/">OSLC Automation 2.0 specification</a> using the <a href="http://eclipse.org/lyo">Eclipse Lyo</a> Java SDK.</p>
 <p>The application is distributed under an <a href="http://www.eclipse.org/org/documents/edl-v10.php">Eclipse Distribution License Version 1.0</a> and <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License 1.0</a>.</p>
-</blockquote>
+</div>
 
-<p><b>Common Resources</b></p>
-<blockquote>
+<h3><b>Common Resources</b></h3>
+<div style = "margin-left: 2em;">
 <p><a href="http://wiki.eclipse.org/Lyo/BuildingOSLC4J">Lyo/Building OSLC4J Wiki</a></p>
 <p><a href="/OSLC4JRegistry/catalog/singleton">Catalog</a></p>
 <p><a href="/OSLC4JAutomation/services/autoPlans">List of Automation Plans</a></p>
-</blockquote>
+</div>
+
+<h3><b>Sample Dialogs</b></h3>
+<div style = "margin-left: 2em;">
+<p><a href="/OSLC4JAutomation/services/autoRequests/selector">AutoRequests Selector</a></p>
+<p><a href="/OSLC4JAutomation/services/autoPlans/selector">AutoPlans Selector</a></p>
+<p><a href="/OSLC4JAutomation/services/autoResults/selector">AutoResults Selector</a></p>
+<p><a href="/OSLC4JAutomation/services/autoRequests/creator">AutoResults Creator</a></p>
+</div>
+
 </body>
 </html>
