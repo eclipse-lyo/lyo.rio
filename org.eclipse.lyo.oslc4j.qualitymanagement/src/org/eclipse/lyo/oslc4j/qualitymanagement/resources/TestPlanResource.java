@@ -17,6 +17,8 @@ package org.eclipse.lyo.oslc4j.qualitymanagement.resources;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +38,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
@@ -46,6 +49,8 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.oslc4j.qualitymanagement.Constants;
+import org.eclipse.lyo.oslc4j.qualitymanagement.Persistence;
+import org.eclipse.lyo.oslc4j.qualitymanagement.QmResource;
 import org.eclipse.lyo.oslc4j.qualitymanagement.TestPlan;
 
 @OslcService(Constants.QUALITY_MANAGEMENT_DOMAIN)
@@ -175,6 +180,40 @@ public class TestPlanResource extends BaseQmResource<TestPlan> {
     public Response deleteResource(@PathParam("resourceId") final String identifier)
     {
     	return super.deleteResource(identifier);
+    }
+    
+    @GET
+    @Path("creator")
+    @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
+    
+    public void planRequestCreator(@Context                 final HttpServletRequest httpServletRequest,
+    		                       @Context                 final HttpServletResponse httpServletResponse,
+    		                       @Context                 final UriInfo uriInfo,
+    		                       @QueryParam("testPlan")  final String testPlan)
+    {
+    	httpServletRequest.setAttribute("creatorUri",uriInfo.getAbsolutePath().toString());
+
+    	if (testPlan == null)
+    	{
+	    	Map<String,String> testPlanIDs = new HashMap<String,String>();
+	    		
+	    	for (QmResource thisResource:Persistence.getQmResources())
+	    	{
+	    		if (thisResource.getClass().equals(TestPlan.class))
+	    		{
+	    			testPlanIDs.put(thisResource.getIdentifier(), thisResource.getTitle());
+	    		}
+	    	}
+	    	try {
+				httpServletRequest.setAttribute("testPlans", testPlanIDs);
+				RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/qmplan_creator.jsp"); 
+				rd.forward(httpServletRequest, httpServletResponse);
+			} catch (Exception e) {
+				System.out.println("err");
+				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+			}
+    	
+    	}
     }
     	
 	@POST

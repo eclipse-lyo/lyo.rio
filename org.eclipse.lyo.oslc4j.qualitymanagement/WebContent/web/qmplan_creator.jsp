@@ -21,7 +21,6 @@
 <%@ page import="java.util.Map"%>
 <%
 	String creatorUri = (String) request.getAttribute("creatorUri");
-	String resourceType = (String) request.getAttribute("resourceType");
 %>
 <html>
 <head>
@@ -35,7 +34,7 @@
 <script>
 	$(function() {
 	    $("#submit").click(function() {
-	        create('<%=creatorUri%>');
+	        createPlan('<%=creatorUri%>');
 		});
 		$("#cancel").click(function() {
 			cancel();
@@ -64,15 +63,12 @@ body {
 			style="padding-top: 20px" />
 	</div>
 	<div>
-		<h2 class="ui-widget-header">Test Creation Dialog</h2>
-		<h3>
-			<font face="verdana">Resource Type: <%=resourceType%></font>
-		</h3>
+		<h2 class="ui-widget-header">Test Plan Creation Dialog</h2>
 
 		<form class="ui-widget input" id="Create" method="POST">
 			<table class="ui-widget-content" id="inputTable">
 				<tr>
-					<th><p id="createStart">Input Information:</p></th>
+					<th colspan="2"><p id="createStart">Input Information:</p></th>
 				</tr>
 				<tr>
 					<td><label for="title">Title:</label>
@@ -80,7 +76,7 @@ body {
 				</tr>
 				<tr>
 					<td><label for="description">Description:</label>
-					<td><textarea rows = "3" cols = "30" name="description" id="description"></textarea></td>
+					<td><textarea rows = "2" cols = "30" name="description" id="description"></textarea></td>
 				</tr>
 				<tr>
 					<td></td>

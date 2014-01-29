@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +43,7 @@ import org.eclipse.lyo.oslc4j.core.model.Compact;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.oslc4j.qualitymanagement.Persistence;
 import org.eclipse.lyo.oslc4j.qualitymanagement.QmResource;
+import org.eclipse.lyo.oslc4j.qualitymanagement.TestPlan;
 import org.eclipse.lyo.oslc4j.qualitymanagement.servlet.ServiceProviderSingleton;
 
 public class BaseQmResource<T extends QmResource>
@@ -270,41 +272,6 @@ public class BaseQmResource<T extends QmResource>
 				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
 			}
     		
-    	}
-    }
-
-    @GET
-    @Path("creator")
-    @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
-    
-    public void autoRequestCreator(@Context                 final HttpServletRequest httpServletRequest,
-    		                       @Context                 final HttpServletResponse httpServletResponse,
-    		                       @Context                 final UriInfo uriInfo,
-    		                       @QueryParam("testPlan")  final String testPlan)
-    {
-    	httpServletRequest.setAttribute("creatorUri",uriInfo.getAbsolutePath().toString());
-    	httpServletRequest.setAttribute("resourceType", this.resourceType.getSimpleName());
-
-    	if (testPlan == null)
-    	{
-	    	Map<String,String> testPlanIDs = new HashMap<String,String>();
-	    		
-	    	for (QmResource thisResource:Persistence.getQmResources())
-	    	{
-	    		if (thisResource.getClass().equals(QmResource.class))
-	    		{
-	    			testPlanIDs.put(thisResource.getIdentifier(), thisResource.getTitle());
-	    		}
-	    	}
-	    	try {
-				httpServletRequest.setAttribute("testPlans", testPlanIDs);
-				RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/qmrequest_creator.jsp"); 
-				rd.forward(httpServletRequest, httpServletResponse);
-			} catch (Exception e) {
-				System.out.println("err");
-				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
-			}
-    	
     	}
     }
 
