@@ -29,10 +29,8 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcRange;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcReadOnly;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcResourceShape;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcTitle;
-import org.eclipse.lyo.oslc4j.core.annotation.OslcValueType;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
-import org.eclipse.lyo.oslc4j.core.model.ValueType;
 
 @OslcResourceShape(title = "Quality Management Resource Shape", describes = Constants.TYPE_TEST_SCRIPT)
 @OslcNamespace(Constants.QUALITY_MANAGEMENT_NAMESPACE)
@@ -48,7 +46,6 @@ public final class TestScript
     private final Set<Link>     validatesRequirements       = new HashSet<Link>();
 
     private URI      executionInstructions;
-    private String   description;
 
     public TestScript()
     {
@@ -99,15 +96,6 @@ public final class TestScript
         return creators.toArray(new URI[creators.size()]);
     }
 
-    @OslcDescription("Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content.")
-    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "description")
-    @OslcTitle("Description")
-    @OslcValueType(ValueType.XMLLiteral)
-    public String getDescription()
-    {
-        return description;
-    }
-
     @OslcDescription("Instructions for executing the test script.")
     @OslcPropertyDefinition(Constants.QUALITY_MANAGEMENT_NAMESPACE + "executionInstructions")
     @OslcTitle("Execution Instructions")
@@ -156,11 +144,6 @@ public final class TestScript
         {
             this.creators.addAll(Arrays.asList(creators));
         }
-    }
-
-    public void setDescription(final String description)
-    {
-        this.description = description;
     }
 
     public void setExecutionInstructions(final URI executionInstructions)

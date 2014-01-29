@@ -15,15 +15,15 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.qualitymanagement.resources;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -40,6 +40,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.lyo.oslc4j.core.model.Compact;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
+import org.eclipse.lyo.oslc4j.core.model.Preview;
 import org.eclipse.lyo.oslc4j.qualitymanagement.Persistence;
 import org.eclipse.lyo.oslc4j.qualitymanagement.QmResource;
 import org.eclipse.lyo.oslc4j.qualitymanagement.servlet.ServiceProviderSingleton;
@@ -113,14 +114,44 @@ public class BaseQmResource<T extends QmResource>
                                         httpServletRequest.getContextPath() + "UI/images/resources/" + getPath() + "/icon.png",
                                         null,
                                         null);
-
+            
             compact.setIcon(iconURI);
+            
+            //Create and set attributes for preview resource
+            final Preview largePreview = new Preview();
+            largePreview.setHintHeight("20em");
+            largePreview.setHintWidth("35em");
+            largePreview.setDocument(new URI(compact.getAbout().toString() + "/largePreview"));
+            compact.setLargePreview(largePreview);
             
             return compact;
         }
 
         throw new WebApplicationException(Status.NOT_FOUND);
     }
+    
+	@GET
+	@Path("{resourceId}/largePreview")
+	@Produces({ MediaType.TEXT_HTML })
+	public void getLargePreview(@Context final HttpServletRequest  httpServletRequest,
+            					@Context final HttpServletResponse httpServletResponse,
+            					@PathParam("resourceId") final String resourceId) throws ServletException, IOException, URISyntaxException
+	{	
+		final T qmRequest = Persistence.getQmResource(resourceId, resourceType);
+		
+		if (qmRequest != null)
+	    {			 
+			
+			httpServletRequest.setAttribute("qmRequest", qmRequest); 
+			
+			RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/qmrequest_preview_large.jsp");
+			rd.forward(httpServletRequest, httpServletResponse);
+			 
+	    }
+		
+		throw new WebApplicationException(Status.NOT_FOUND);
+		
+	}
 
     public Response addResource(final HttpServletRequest  httpServletRequest,
     		                    final HttpServletResponse httpServletResponse,
@@ -270,41 +301,6 @@ public class BaseQmResource<T extends QmResource>
 				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
 			}
     		
-    	}
-    }
-
-    @GET
-    @Path("creator")
-    @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
-    
-    public void autoRequestCreator(@Context                 final HttpServletRequest httpServletRequest,
-    		                       @Context                 final HttpServletResponse httpServletResponse,
-    		                       @Context                 final UriInfo uriInfo,
-    		                       @QueryParam("testPlan")  final String testPlan)
-    {
-    	httpServletRequest.setAttribute("creatorUri",uriInfo.getAbsolutePath().toString());
-    	httpServletRequest.setAttribute("resourceType", this.resourceType.getSimpleName());
-
-    	if (testPlan == null)
-    	{
-	    	Map<String,String> testPlanIDs = new HashMap<String,String>();
-	    		
-	    	for (QmResource thisResource:Persistence.getQmResources())
-	    	{
-	    		if (thisResource.getClass().equals(QmResource.class))
-	    		{
-	    			testPlanIDs.put(thisResource.getIdentifier(), thisResource.getTitle());
-	    		}
-	    	}
-	    	try {
-				httpServletRequest.setAttribute("testPlans", testPlanIDs);
-				RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/qmrequest_creator.jsp"); 
-				rd.forward(httpServletRequest, httpServletResponse);
-			} catch (Exception e) {
-				System.out.println("err");
-				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
-			}
-    	
     	}
     }
 

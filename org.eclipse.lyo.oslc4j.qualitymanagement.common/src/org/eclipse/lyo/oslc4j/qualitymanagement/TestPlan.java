@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -29,10 +29,8 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcRange;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcReadOnly;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcResourceShape;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcTitle;
-import org.eclipse.lyo.oslc4j.core.annotation.OslcValueType;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
-import org.eclipse.lyo.oslc4j.core.model.ValueType;
 
 @OslcResourceShape(title = "Quality Management Resource Shape", describes = Constants.TYPE_TEST_PLAN)
 @OslcNamespace(Constants.QUALITY_MANAGEMENT_NAMESPACE)
@@ -48,8 +46,6 @@ public final class TestPlan
     private final Set<String>   subjects                    = new TreeSet<String>();
     private final Set<Link>     usesTestCases               = new HashSet<Link>();
     private final Set<Link>     validatesRequirementCollections = new HashSet<Link>();
-
-    private String   description;
 
 	public TestPlan()
 	{
@@ -108,15 +104,6 @@ public final class TestPlan
     public URI[] getCreators()
     {
         return creators.toArray(new URI[creators.size()]);
-    }
-
-    @OslcDescription("Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content.")
-    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "description")
-    @OslcTitle("Description")
-    @OslcValueType(ValueType.XMLLiteral)
-    public String getDescription()
-    {
-        return description;
     }
 
     @OslcDescription("A related change request.")
@@ -180,11 +167,6 @@ public final class TestPlan
         {
             this.creators.addAll(Arrays.asList(creators));
         }
-    }
-
-    public void setDescription(final String description)
-    {
-        this.description = description;
     }
 
     public void setRelatedChangeRequests(final Link[] relatedChangeRequests)

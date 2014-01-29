@@ -17,6 +17,7 @@ package org.eclipse.lyo.oslc4j.qualitymanagement.resources;
 
 import java.net.URISyntaxException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -29,8 +30,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcDialog;
@@ -60,7 +64,7 @@ public class TestExecutionRecordResource extends BaseQmResource<TestExecutionRec
         (
              title = "Test Execution Record Selection Dialog",
              label = "Test Execution Record Selection Dialog",
-             uri = "",
+             uri = "testExecutionRecords/selector",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {Constants.TYPE_TEST_EXECUTION_RECORD},
@@ -70,7 +74,7 @@ public class TestExecutionRecordResource extends BaseQmResource<TestExecutionRec
         (
              title = "Test Execution Record List Dialog",
              label = "Test Execution Record List Dialog",
-             uri = "UI/testExecutionRecords/list.jsp",
+             uri = "",
              hintWidth = "1000px",
              hintHeight = "600px",
              resourceTypes = {Constants.TYPE_TEST_EXECUTION_RECORD},
@@ -99,6 +103,27 @@ public class TestExecutionRecordResource extends BaseQmResource<TestExecutionRec
                                           @PathParam("resourceId") final String              resourceId)
     {
     	return super.getResource(httpServletResponse, resourceId);
+    }
+    
+    @GET
+    @Path("{resourceId}")
+    @Produces({MediaType.TEXT_HTML})
+    public Response getResource(@Context                 final HttpServletRequest  httpServletRequest,
+    		                    @Context                 final HttpServletResponse httpServletResponse,
+                                @PathParam("resourceId") final String              resourceId)
+    {
+
+    	httpServletRequest.setAttribute("testExecutionRecord",super.getResource(httpServletResponse, resourceId));
+    	
+    	try {	
+    		RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/testexecution_html.jsp"); 
+	    	rd.forward(httpServletRequest, httpServletResponse);
+				
+		} catch (Exception e) {
+			throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+		}
+        
+    	throw new WebApplicationException(Status.NOT_FOUND);
     }
     
     @OslcCreationFactory
