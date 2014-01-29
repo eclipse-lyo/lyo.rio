@@ -16,7 +16,7 @@
 
 --%>
 
-<%@page import="org.eclipse.lyo.oslc4j.qualitymanagement.TestCase"%>
+<%@page import="org.eclipse.lyo.oslc4j.qualitymanagement.TestResult"%>
 <%@page import="org.eclipse.lyo.oslc4j.qualitymanagement.QmResource"%>
 <%@page import="org.eclipse.lyo.oslc4j.core.model.Property"%>
 <%@page import="org.eclipse.lyo.oslc4j.core.model.ServiceProvider"%>
@@ -24,7 +24,7 @@
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-    TestCase testCase = (TestCase) request.getAttribute("testCase");
+    TestResult testResult = (TestResult) request.getAttribute("testResult");
 
 %>
 <html>
@@ -87,28 +87,28 @@
     		<img src="http://open-services.net/css/images/logo-forflip.png" id="logo" alt="O" width="71" height="80" align= "left"/>
     	</div>
     	<div>
-    		<h2 class="ui-widget-header">OSLC4J Quality Management Test Cases</h2>
-    		<h3><c:out value="${testCase.identifier}"/>: <c:out value="${testCase.title}"/></h3>
+    		<h2 class="ui-widget-header">OSLC4J Quality Management Test Result</h2>
+    		<h3><c:out value="${testResult.identifier}"/>: <c:out value="${testResult.title}"/></h3>
     		<table id="resourceTable">
     			<tr>
     				<td>ID</td>
-    				<td><c:out value="${testCase.identifier}"/></td>
+    				<td><c:out value="${testResult.identifier}"/></td>
     			</tr>
     			<tr>
     				<td>Title</td>
-    				<td><c:out value="${testCase.title}"/></td>
+    				<td><c:out value="${testResult.title}"/></td>
     			</tr>
     			<tr>
-    				<td>Description</td>
-    				<td><c:out value="${testCase.description}"/></td>
-    			</tr>
     			<tr>
+    				<td>Status</td>
+    				<td><c:out value="${testResult.status}"/></td>
+ 				</tr>
     				<td>Created</td> 
-    				<td><%=testCase.getCreated().toLocaleString()%></td>
+    				<td><%=testResult.getCreated().toLocaleString()%></td>
     			</tr>
 				<tr>
     				<td>Modified</td> 
-    				<td><%=testCase.getModified().toLocaleString()%></td>
+    				<td><%=testResult.getModified().toLocaleString()%></td>
     			</tr>
     			<tr></tr><tr></tr>
     				

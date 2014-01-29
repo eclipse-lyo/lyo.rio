@@ -63,7 +63,8 @@ function create(baseUrl){
  	var postData=""; 
  	var title = document.getElementById("title").value;
  	var description = document.getElementById("description").value;
- 	
+ 	var planId = document.getElementById("testPlan").value;
+
  	if (title) {
  	   postData += "title=" + encodeURIComponent(title);
  	}
@@ -72,6 +73,40 @@ function create(baseUrl){
  		postData += "&description=" + encodeURIComponent(description);
  	}
  	
+ 	if (testPlan) {
+  	   postData += "&testPlanId=" + encodeURIComponent(planId);
+  	}
+  	 	
+	xmlhttp.open("POST", baseUrl, true);
+	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlhttp.setRequestHeader("Content-length",postData.length);
+	xmlhttp.send(postData);
+}
+
+function createPlan(baseUrl){
+	var form = document.getElementById("Create");
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState==4 && (xmlhttp.status==201)) {
+			txt = xmlhttp.responseText;
+			resp = eval('(' + txt + ')');
+			// Send response to listener
+			sendResponse(resp["dcterms:title"], resp["rdf:about"]);
+		}
+	};
+	
+ 	var postData=""; 
+ 	var title = document.getElementById("title").value;
+ 	var description = document.getElementById("description").value;
+
+ 	if (title) {
+ 	   postData += "title=" + encodeURIComponent(title);
+ 	}
+ 	
+ 	if (description){
+ 		postData += "&description=" + encodeURIComponent(description);
+ 	}
+  	 	
 	xmlhttp.open("POST", baseUrl, true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 	xmlhttp.setRequestHeader("Content-length",postData.length);

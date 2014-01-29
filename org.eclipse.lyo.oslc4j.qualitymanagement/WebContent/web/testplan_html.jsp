@@ -22,6 +22,7 @@
 <%@page import="org.eclipse.lyo.oslc4j.core.model.ServiceProvider"%>
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     TestPlan testPlan = (TestPlan) request.getAttribute("testPlan");
 
@@ -87,27 +88,27 @@
     	</div>
     	<div>
     		<h2 class="ui-widget-header">OSLC4J Quality Management Test Plans</h2>
-    		<h3><%= testPlan.getIdentifier() %>: <%= testPlan.getTitle() %></h3>
+    		<h3><c:out value="${testPlan.identifier}"/>: <c:out value="${testPlan.title}"/></h3>
     		<table id="resourceTable">
     			<tr>
     				<td>ID</td>
-    				<td><%= testPlan.getIdentifier() %></td>
+    				<td><c:out value="${testPlan.identifier}"/></td>
     			</tr>
     			<tr>
     				<td>Title</td>
-    				<td><%= testPlan.getTitle() %></td>
+    				<td><c:out value="${testPlan.title}"/></td>
     			</tr>
     			<tr>
     				<td>Description</td>
-    				<td><%= testPlan.getDescription() %></td>
+    				<td><c:out value="${testPlan.description}"/></td>
     			</tr>
     			<tr>
     				<td>Created</td> 
-    				<td><%= testPlan.getCreated().toLocaleString() %></td>
+    				<td><%=testPlan.getCreated().toLocaleString()%></td>
     			</tr>
 				<tr>
     				<td>Modified</td> 
-    				<td><%= testPlan.getModified().toLocaleString() %></td>
+    				<td><%=testPlan.getModified().toLocaleString()%></td>
     			</tr>
     			<tr></tr><tr></tr>
     				

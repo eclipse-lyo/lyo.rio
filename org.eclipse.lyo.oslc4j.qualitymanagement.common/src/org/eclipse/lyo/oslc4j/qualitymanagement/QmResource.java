@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -48,7 +48,9 @@ public abstract class QmResource
     private Date     modified;
     private URI      serviceProvider;
     private String   title;
-
+    
+    private String   description;
+    
     public QmResource()
      {
          super();
@@ -135,6 +137,15 @@ public abstract class QmResource
         return title;
     }
     
+    @OslcDescription("Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content.")
+    @OslcPropertyDefinition(OslcConstants.DCTERMS_NAMESPACE + "description")
+    @OslcTitle("Description")
+    @OslcValueType(ValueType.XMLLiteral)
+    public String getDescription()
+    {
+        return description;
+    }
+    
     public void setCreated(final Date created)
     {
         this.created = created;
@@ -173,6 +184,11 @@ public abstract class QmResource
     public void setTitle(final String title)
     {
         this.title = title;
+    }
+    
+    public void setDescription(final String description)
+    {
+        this.description = description;
     }
     
 }

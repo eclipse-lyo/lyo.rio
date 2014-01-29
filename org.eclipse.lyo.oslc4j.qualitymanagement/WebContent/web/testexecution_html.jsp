@@ -16,7 +16,7 @@
 
 --%>
 
-<%@page import="org.eclipse.lyo.oslc4j.qualitymanagement.TestCase"%>
+<%@page import="org.eclipse.lyo.oslc4j.qualitymanagement.TestExecutionRecord"%>
 <%@page import="org.eclipse.lyo.oslc4j.qualitymanagement.QmResource"%>
 <%@page import="org.eclipse.lyo.oslc4j.core.model.Property"%>
 <%@page import="org.eclipse.lyo.oslc4j.core.model.ServiceProvider"%>
@@ -24,7 +24,7 @@
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-    TestCase testCase = (TestCase) request.getAttribute("testCase");
+	TestExecutionRecord testExecutionRecord = (TestExecutionRecord) request.getAttribute("testExecutionRecord");
 
 %>
 <html>
@@ -87,28 +87,24 @@
     		<img src="http://open-services.net/css/images/logo-forflip.png" id="logo" alt="O" width="71" height="80" align= "left"/>
     	</div>
     	<div>
-    		<h2 class="ui-widget-header">OSLC4J Quality Management Test Cases</h2>
-    		<h3><c:out value="${testCase.identifier}"/>: <c:out value="${testCase.title}"/></h3>
+    		<h2 class="ui-widget-header">OSLC4J Quality Management Test Execution Record</h2>
+    		<h3><c:out value="${testExecutionRecord.identifier}"/>: <c:out value="${testExecutionRecord.title}"/></h3>
     		<table id="resourceTable">
     			<tr>
     				<td>ID</td>
-    				<td><c:out value="${testCase.identifier}"/></td>
+    				<td><c:out value="${testExecutionRecord.identifier}"/></td>
     			</tr>
     			<tr>
     				<td>Title</td>
-    				<td><c:out value="${testCase.title}"/></td>
-    			</tr>
-    			<tr>
-    				<td>Description</td>
-    				<td><c:out value="${testCase.description}"/></td>
+    				<td><c:out value="${testExecutionRecord.title}"/></td>
     			</tr>
     			<tr>
     				<td>Created</td> 
-    				<td><%=testCase.getCreated().toLocaleString()%></td>
+    				<td><%=testExecutionRecord.getCreated().toLocaleString()%></td>
     			</tr>
 				<tr>
     				<td>Modified</td> 
-    				<td><%=testCase.getModified().toLocaleString()%></td>
+    				<td><%=testExecutionRecord.getModified().toLocaleString()%></td>
     			</tr>
     			<tr></tr><tr></tr>
     				

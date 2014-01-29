@@ -17,6 +17,10 @@ package org.eclipse.lyo.oslc4j.qualitymanagement.resources;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +40,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
@@ -46,7 +51,10 @@ import org.eclipse.lyo.oslc4j.core.annotation.OslcService;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.oslc4j.qualitymanagement.Constants;
+import org.eclipse.lyo.oslc4j.qualitymanagement.Persistence;
+import org.eclipse.lyo.oslc4j.qualitymanagement.QmResource;
 import org.eclipse.lyo.oslc4j.qualitymanagement.TestCase;
+import org.eclipse.lyo.oslc4j.qualitymanagement.TestPlan;
 
 @OslcService(Constants.QUALITY_MANAGEMENT_DOMAIN)
 @Path("testCases")
@@ -110,7 +118,7 @@ public class TestCaseResource extends BaseQmResource<TestCase> {
     @GET
     @Path("{resourceId}")
     @Produces({MediaType.TEXT_HTML})
-    public Response getResource(@Context                 final HttpServletRequest  httpServletRequest,
+    public void getResource(@Context                 final HttpServletRequest  httpServletRequest,
     		                    @Context                 final HttpServletResponse httpServletResponse,
                                 @PathParam("resourceId") final String              resourceId)
     {
@@ -124,8 +132,6 @@ public class TestCaseResource extends BaseQmResource<TestCase> {
 		} catch (Exception e) {
 			throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
 		}
-        
-    	throw new WebApplicationException(Status.NOT_FOUND);
     }
     
     @OslcDialog
@@ -173,6 +179,34 @@ public class TestCaseResource extends BaseQmResource<TestCase> {
     public Response deleteResource(@PathParam("resourceId") final String identifier)
     {
     	return super.deleteResource(identifier);
+    }
+    
+    @GET
+    @Path("creator")
+    @Produces({MediaType.TEXT_HTML, MediaType.WILDCARD})
+    
+    public void caseRequestCreator(@Context                 final HttpServletRequest httpServletRequest,
+    		                       @Context                 final HttpServletResponse httpServletResponse,
+    		                       @Context                 final UriInfo uriInfo,
+    		                       @QueryParam("testPlan")  final String testPlan)
+    {
+    	httpServletRequest.setAttribute("creatorUri",uriInfo.getAbsolutePath().toString());
+
+    	if (testPlan == null)
+    	{
+	    	List<TestPlan> testPlanIDs = new ArrayList<TestPlan>();
+
+	    	testPlanIDs = Persistence.getQmResources(TestPlan.class);
+	    	
+	    	try {
+				httpServletRequest.setAttribute("testPlans", testPlanIDs);
+				RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/qmcase_creator.jsp"); 
+				rd.forward(httpServletRequest, httpServletResponse);
+			} catch (Exception e) {
+				throw new WebApplicationException(e,Status.INTERNAL_SERVER_ERROR);
+			}
+    	
+    	}
     }
     	
 	@POST

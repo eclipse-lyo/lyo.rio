@@ -19,9 +19,9 @@
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Map"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	String creatorUri = (String) request.getAttribute("creatorUri");
-	String resourceType = (String) request.getAttribute("resourceType");
 %>
 <html>
 <head>
@@ -64,15 +64,12 @@ body {
 			style="padding-top: 20px" />
 	</div>
 	<div>
-		<h2 class="ui-widget-header">Test Creation Dialog</h2>
-		<h3>
-			<font face="verdana">Resource Type: <%=resourceType%></font>
-		</h3>
-
+		<h2 class="ui-widget-header">Test Case Creation Dialog</h2>
+		
 		<form class="ui-widget input" id="Create" method="POST">
 			<table class="ui-widget-content" id="inputTable">
 				<tr>
-					<th><p id="createStart">Input Information:</p></th>
+					<th colspan="2"><p id="createStart">Input Information:</p></th>
 				</tr>
 				<tr>
 					<td><label for="title">Title:</label>
@@ -80,8 +77,18 @@ body {
 				</tr>
 				<tr>
 					<td><label for="description">Description:</label>
-					<td><textarea rows = "3" cols = "30" name="description" id="description"></textarea></td>
+					<td><textarea rows = "2" cols = "30" name="description" id="description"></textarea></td>
 				</tr>
+				<th>Test Plan:</th>
+				<td>
+				
+					<select class="ui-widget select" id="plan">
+						<c:forEach items="${testPlans}" var="getPlan"> 
+							<option value="${getPlan.identifier}" id="testPlan"><c:out value="${getPlan.identifier}"/>: <c:out value="${getPlan.title}"/></option>
+						</c:forEach>
+					</select>
+					
+				</td>
 				<tr>
 					<td></td>
 					<td><input class="ui-button" type="button" id=cancel
