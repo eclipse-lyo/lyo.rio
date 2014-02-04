@@ -30,6 +30,10 @@
 <p><a href="http://wiki.eclipse.org/Lyo/BuildingOSLC4J">Lyo/Building OSLC4J Wiki</a></p>
 <p><a href="/OSLC4JRegistry/catalog/singleton">Catalog</a></p>
 <p><a href="/OSLC4JQualityManagement/services/testPlans">List of Test Plans</a></p>
+<p><a href="/OSLC4JQualityManagement/services/testCases">List of Test Cases</a></p>
+<p><a href="/OSLC4JQualityManagement/services/testResults">List of Test Results</a></p>
+<p><a href="/OSLC4JQualityManagement/services/testExecutionRecords">List of Test Execution Records</a></p>
+<p><a href="/OSLC4JQualityManagement/services/testScripts"> List of Test Scripts</a></p>
 </div>
 
 <h3><b>Sample Dialogs</b></h3>
@@ -39,6 +43,8 @@
 <p><a href="/OSLC4JQualityManagement/services/testCases/selector">TestCases Selector</a></p>
 <p><a href="/OSLC4JQualityManagement/services/testCases/creator">TestCases Creator</a></p>
 <p><a href="/OSLC4JQualityManagement/services/testResults/selector">TestResults Selector</a></p>
+<p><a href="/OSLC4JQualityManagement/services/testExecutionRecords/selector">TestExecutionRecord Selector</a></p>
+<p><a href="/OSLC4JQualityManagement/services/testScripts/selector">TestScript Selector</a></p>
 </div>
 
 </body>
