@@ -39,6 +39,8 @@
 <p><a href="/OSLC4JQualityManagement/services/testCases/selector">TestCases Selector</a></p>
 <p><a href="/OSLC4JQualityManagement/services/testCases/creator">TestCases Creator</a></p>
 <p><a href="/OSLC4JQualityManagement/services/testResults/selector">TestResults Selector</a></p>
+<p><a href="/OSLC4JQualityManagement/services/testExecutionRecords/selector">TestExecutionRecord Selector</a></p>
+<p><a href="/OSLC4JQualityManagement/services/testScripts/selector">TestScript Selector</a></p>
 </div>
 
 </body>
