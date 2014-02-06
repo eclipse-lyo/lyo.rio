@@ -17,23 +17,22 @@
 --%>
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8" %>
 <%@ page import="java.net.*,java.util.*" %>
-<%@ page import="org.eclipse.lyo.oslc4j.qualitymanagement.QmResource" %>
+<%@ page import="org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-QmResource qmRequest = (QmResource) request.getAttribute("qmRequest");
+ChangeRequest changeRequest = (ChangeRequest) request.getAttribute("changeRequest");
 %>
 <html>
 <head>
-<title>: <c:out value="${qmRequest.title}"/> (<c:out value="${qmRequest.identifier}"/>)</title>
+<title>Change Request: <c:out value="${changeRequest.title}"/> (<c:out value="${changeRequest.identifier}"/>)</title>
 </head>
 <body>
 Large Compact Preview<hr/>
-Resource Type: <%= qmRequest.getClass().getSimpleName()%><br/>
-URI: <a href="<%= qmRequest.getAbout().toString()%>"><%= qmRequest.getAbout().toString()%></a> <br/>
-Title: <c:out value="${qmRequest.title}"/><br/>
-Description: <c:out value="${qmRequest.description}">No Description Available</c:out><br/>
-Identifier: <c:out value="${qmRequest.identifier}"/><br/>
-Created: <%= qmRequest.getCreated().toLocaleString() %><br/>
-Last Modified: <%= qmRequest.getModified().toLocaleString() %><br/>
+URI: <a href="<%= changeRequest.getAbout() %>"><%= changeRequest.getAbout() %></a> <br/>
+Title: <c:out value="${changeRequest.title}"/><br/>
+Description: <c:out value="${changeRequest.description}">No Description Available</c:out><br/>
+Identifier: <c:out value="${changeRequest.identifier}"/><br/>
+Created: <%= changeRequest.getCreated().toLocaleString() %><br/>
+Last Modified: <%= changeRequest.getModified().toLocaleString() %><br/>
 </body>
 </html>
