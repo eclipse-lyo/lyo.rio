@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -78,11 +78,7 @@ final class Populate
                          autoPlan3);
     	Persistence.addResource(autoRequest);
     	
-    	AutomationResult autoResult = createAutomationResult("Sample Automation Result",
-			     "A sample automation result - does not represent an actual execution",
-			     "autoResults",
-			     autoPlan3,
-			     autoRequest);
+    	AutomationResult autoResult = createAutomationResult("Sample Automation Result", "autoResults", autoPlan3, autoRequest);
     	Persistence.addResource(autoResult);
     	
     	Property[] params2 = {new Property("test_environment", Occurs.ZeroOrOne, new URI(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String),
@@ -113,7 +109,6 @@ final class Populate
     	Persistence.addResource(autoRequest2);
     	
     	AutomationResult autoResult2 = createAutomationResult("Build Account Inquiry Site",
-			     "Result for Continuous Build of Account Inquiry Site",
 			     "autoResults",
 			     autoPlan1,
 			     autoRequest2);
@@ -186,7 +181,6 @@ final class Populate
 	}
 	
 	private AutomationResult createAutomationResult(final String title,
-            final String description,
             final String path,
             final AutomationPlan autoPlan,
             final AutomationRequest autoRequest) throws URISyntaxException
@@ -221,6 +215,5 @@ final class Populate
 		
 		return autoResult;
 	}
-	
     
 }
