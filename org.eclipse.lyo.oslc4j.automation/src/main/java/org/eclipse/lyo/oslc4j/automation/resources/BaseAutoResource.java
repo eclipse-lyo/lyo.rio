@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.automation.resources;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -43,6 +45,7 @@ import org.eclipse.lyo.oslc4j.automation.Persistence;
 import org.eclipse.lyo.oslc4j.automation.servlet.ServiceProviderSingleton;
 import org.eclipse.lyo.oslc4j.core.model.Compact;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
+import org.eclipse.lyo.oslc4j.core.model.Preview;
 
 public class BaseAutoResource<T extends AutomationResource>
 {
@@ -135,11 +138,41 @@ public class BaseAutoResource<T extends AutomationResource>
 
             compact.setIcon(iconURI);
             
+            //Create and set attributes for preview resource
+            final Preview largePreview = new Preview();
+            largePreview.setHintHeight("20em");
+            largePreview.setHintWidth("35em");
+            largePreview.setDocument(new URI(compact.getAbout().toString() + "/largePreview"));
+            compact.setLargePreview(largePreview);
+            
             return compact;
         }
 
         throw new WebApplicationException(Status.NOT_FOUND);
     }
+    
+	@GET
+	@Path("{resourceId}/largePreview")
+	@Produces({ MediaType.TEXT_HTML })
+	public void getLargePreview(@Context final HttpServletRequest  httpServletRequest,
+            					@Context final HttpServletResponse httpServletResponse,
+            					@PathParam("resourceId") final String resourceId) throws ServletException, IOException, URISyntaxException
+	{	
+		final T autoResource = Persistence.getAutoResource(resourceId, resourceType);
+		
+		if (autoResource != null)
+	    {			 
+			
+			httpServletRequest.setAttribute("autoResource", autoResource); 
+			
+			RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/web/autoresource_preview_large.jsp");
+			rd.forward(httpServletRequest, httpServletResponse);
+			 
+	    }
+		
+		throw new WebApplicationException(Status.NOT_FOUND);
+		
+	}
     
     @GET
     @Path("selector")
