@@ -24,16 +24,16 @@ QmResource qmRequest = (QmResource) request.getAttribute("qmRequest");
 %>
 <html>
 <head>
-<title>: <c:out value="${qmRequest.getTitle()}"/> (<c:out value="${qmRequest.getIdentifier()}"/>)</title>
+<title>: <c:out value="${qmRequest.title}"/> (<c:out value="${qmRequest.identifier}"/>)</title>
 </head>
 <body>
 Large Compact Preview<hr/>
-Resource Type: <c:out value="${qmRequest.getClass().getSimpleName()}"/><br/>
-URI: <a href="<c:out value="${qmRequest.getAbout().toString()}"/>"><c:out value="${qmRequest.getAbout().toString()}"/></a> <br/>
-Title: <c:out value="${qmRequest.getTitle()}"/><br/>
-Description: <c:out value="${qmRequest.getDescription()}">No Description Available</c:out><br/>
-Identifier: <c:out value="${qmRequest.getIdentifier()}"/><br/>
-Created: <c:out value="${qmRequest.getCreated().toLocaleString()}"/><br/>
-Last Modified: <c:out value="${qmRequest.getModified().toLocaleString()}"/><br/>
+Resource Type: <%= qmRequest.getClass().getSimpleName()%><br/>
+URI: <a href="<%= qmRequest.getAbout().toString()%>"><%= qmRequest.getAbout().toString()%></a> <br/>
+Title: <c:out value="${qmRequest.title}"/><br/>
+Description: <c:out value="${qmRequest.description}">No Description Available</c:out><br/>
+Identifier: <c:out value="${qmRequest.identifier}"/><br/>
+Created: <%= qmRequest.getCreated().toLocaleString() %><br/>
+Last Modified: <%= qmRequest.getModified().toLocaleString() %><br/>
 </body>
 </html>
