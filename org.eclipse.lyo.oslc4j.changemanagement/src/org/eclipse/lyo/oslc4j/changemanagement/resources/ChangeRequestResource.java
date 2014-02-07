@@ -224,7 +224,7 @@ public class ChangeRequestResource
                     compact.setIcon(iconURI);
                 }
                 
-                //TODO   //Create and set attributes for preview resource
+                //Create and set attributes for preview resource
                 final Preview largePreview = new Preview();
                 largePreview.setHintHeight("20em");
                 largePreview.setHintWidth("45em");
@@ -239,7 +239,6 @@ public class ChangeRequestResource
         throw new WebApplicationException(Status.NOT_FOUND);
     }
 
-    //TODO
 	@GET
 	@Path("{changeRequestId}/largePreview")
 	@Produces({ MediaType.TEXT_HTML })
