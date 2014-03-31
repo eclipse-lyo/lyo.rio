@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation.
+ * Copyright (c) 2012, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,6 +15,7 @@
  *     Alberto Giammaria    - initial API and implementation
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
+ *     Samuel Padgett       - remove final qualifier from class
  *******************************************************************************/
 package org.eclipse.lyo.oslc4j.changemanagement;
 
@@ -45,7 +46,7 @@ import org.eclipse.lyo.oslc4j.core.model.ValueType;
 
 @OslcNamespace(Constants.CHANGE_MANAGEMENT_NAMESPACE)
 @OslcResourceShape(title = "Change Request Resource Shape", describes = Constants.TYPE_CHANGE_REQUEST)
-public final class ChangeRequest
+public class ChangeRequest
        extends AbstractResource
 {
     private final Set<Link>     affectedByDefects           = new HashSet<Link>();
