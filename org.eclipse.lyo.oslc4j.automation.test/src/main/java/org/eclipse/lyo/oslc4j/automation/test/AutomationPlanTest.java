@@ -19,8 +19,8 @@ import java.net.URI;
 
 import org.eclipse.lyo.oslc4j.automation.AutomationConstants;
 import org.eclipse.lyo.oslc4j.automation.AutomationPlan;
+import org.eclipse.lyo.oslc4j.automation.Property;
 import org.eclipse.lyo.oslc4j.core.model.Occurs;
-import org.eclipse.lyo.oslc4j.core.model.Property;
 import org.eclipse.lyo.oslc4j.core.model.ValueType;
 
 public class AutomationPlanTest extends TestAutomation<AutomationPlan> {
@@ -37,7 +37,7 @@ public class AutomationPlanTest extends TestAutomation<AutomationPlan> {
 		newAutoPlan.addCreator(URI.create("http://myserver/mycmapp/users/jane"));
 		newAutoPlan.addSubject("subject1");
 
-		final Property param1 = new Property("myParameter", Occurs.ExactlyOne, URI.create(AutomationConstants.AUTOMATION_NAMESPACE + "parameterDefinition"), ValueType.String);
+		final Property param1 = new Property("myParameter", Occurs.ExactlyOne, ValueType.String);
 		newAutoPlan.addParameterDefinition(param1);
 		
 		newAutoPlan.setInstanceShape(URI.create("http://example.com/shapes/autoplan"));
