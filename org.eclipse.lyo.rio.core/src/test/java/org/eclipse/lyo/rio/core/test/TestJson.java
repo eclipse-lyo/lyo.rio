@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation.
+ * Copyright (c) 2011, 2014 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,10 +11,11 @@
  *
  * Contributors:
  *
- *    Jim Conallen - initial API and implementation
+ *    Jim Conallen   - initial API and implementation
+ *    Samuel Padgett - use org.eclipse.lyo package name
  *******************************************************************************/
 
-package net.openservices.rio.core;
+package org.eclipse.lyo.rio.core.test;
 
 import java.util.Date;
 import javax.xml.datatype.DatatypeConfigurationException;
