@@ -14,7 +14,7 @@
  *    Jim Conallen - initial API and implementation
  *******************************************************************************/
 
-package net.openservices.rio.core;
+package org.eclipse.lyo.rio.core.test;
 
 import java.util.Date;
 import javax.xml.datatype.DatatypeConfigurationException;
