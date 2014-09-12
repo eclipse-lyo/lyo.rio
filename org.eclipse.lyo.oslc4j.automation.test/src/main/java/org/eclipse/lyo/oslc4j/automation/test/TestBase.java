@@ -55,7 +55,7 @@ public abstract class TestBase<T extends AutomationResource>
 
     private final Class<T> resourceType;
     private final Class<T[]> resourceArrayType;
-    
+
     @SuppressWarnings("unchecked")
 	protected TestBase(Class<T> resourceType)
     {
@@ -63,12 +63,12 @@ public abstract class TestBase<T extends AutomationResource>
         this.resourceType = resourceType;
         this.resourceArrayType =  (Class<T[]>) Array.newInstance(resourceType, 0).getClass();
     }
-    
+
     protected abstract T getResource();
-    
+
     protected abstract String getResourceType();
-    
-    
+
+
     private static String getCreation(final String mediaType,
                                       final String type)
     {
@@ -209,7 +209,7 @@ public abstract class TestBase<T extends AutomationResource>
 
         assertTrue(aboutURI.toString().endsWith(identifierString));
         assertTrue(modifiedDate.equals(createdDate) || modifiedDate.after(createdDate));
-        
+
         assertTrue(new HashSet<URI>(Arrays.asList(rdfTypesURIs)).contains(new URI(getResourceType())));
 
         if (recurse)
@@ -391,7 +391,7 @@ public abstract class TestBase<T extends AutomationResource>
                                                                  queryBase,
                                                                  mediaType);
 
-        
+
         final AutomationResource[] autoResources = oslcRestClient.getOslcResources(resourceArrayType);
 
         assertNotNull(autoResources);

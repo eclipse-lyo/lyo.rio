@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%--
- Copyright (c) 2011, 2012 IBM Corporation.
+ Copyright (c) 2011, 2014 IBM Corporation.
 
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
@@ -18,7 +18,7 @@
 
 <%@page import="org.eclipse.lyo.oslc4j.automation.AutomationPlan"%>
 <%@page import="org.eclipse.lyo.oslc4j.automation.AutomationResource"%>
-<%@page import="org.eclipse.lyo.oslc4j.core.model.Property"%>
+<%@page import="org.eclipse.lyo.oslc4j.automation.Property"%>
 <%@page import="org.eclipse.lyo.oslc4j.core.model.ServiceProvider"%>
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
