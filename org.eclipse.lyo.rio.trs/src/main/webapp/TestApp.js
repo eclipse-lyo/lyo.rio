@@ -1,11 +1,11 @@
 /*******************************************************************************
 * Licensed Materials - Use restricted, please refer to the "Samples Gallery" terms and conditions in the IBM International Program License Agreement (IPLA).
-* © Copyright IBM Corporation 2012, 2013. All Rights Reserved. 
+* © Copyright IBM Corporation 2012, 2013. All Rights Reserved.
 * U.S. Government Users Restricted Rights: Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
  *******************************************************************************/
 
 function create(baseUrl){
-		
+
 	var form = document.getElementById("Create");
 	xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -14,39 +14,38 @@ function create(baseUrl){
 			resp = eval('(' + txt + ')');
 			// provide a status message.
 			var oStatus = document.getElementById("status");
-			if (oStatus.hasChildNodes()){    
-				oStatus.removeChild(oStatus.childNodes[0]); 
+			if (oStatus.hasChildNodes()){
+				oStatus.removeChild(oStatus.childNodes[0]);
 			}
 			oStatus.appendChild(document.createTextNode("Change Request " + resp.ID + " : " + resp.title + " has been created successfully." ));
 		}
 	};
- 	var postData=""; 
- 
+ 	var postData="";
+
 	if (form.title) {
-		postData += "&title="+encodeURIComponent(form.title.value);	
+		postData += "&title="+encodeURIComponent(form.title.value);
 	}
 	if (form.description) {
-		postData += "&description="+encodeURIComponent(form.description.value);	
+		postData += "&description="+encodeURIComponent(form.description.value);
 	}
-	
+
 	postData += "&filedAgainst="+encodeURIComponent(form.filedAgainst.value);
-	
+
 	xmlhttp.open("POST", baseUrl, true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	xmlhttp.setRequestHeader("Content-length",postData.length);
-	xmlhttp.send(postData);	
+	xmlhttp.send(postData);
 }
 
 function sendCancelResponse() {
 	var oslcResponse = 'oslc-response:{ "oslc:results": [ ]}';
-	
-	if (window.location.hash == '#oslc-core-windowName-1.0') {       
+
+	if (window.location.hash == '#oslc-core-windowName-1.0') {
   	  // Window Name protocol in use
         respondWithWindowName(oslcResponse);
 	} else if (window.location.hash == '#oslc-core-postMessage-1.0') {
     	// Post Message protocol in use
 		respondWithPostMessage(oslcResponse);
-	} 
+	}
 }
 
 function respondWithPostMessage(/*string*/ response) {
@@ -78,42 +77,41 @@ function loadCR(baseUrl){
 				form.filedAgainst.selectedIndex = 1;
 			}
 		}
-	}; 
+	};
 	xmlhttp.send(null);
 }
 function modify(baseUrl){
 	var form = document.getElementById("Modify");
-	
+
 	if ((o_CR["dcterms:description"] !== form.description.value) || (o_CR["dcterms:title"] !== form.title.value)
 			|| (o_CR["dcterms:accessRights"] !== form.filedAgainst.value))
 	{
 		o_CR["dcterms:description"] = form.description.value;
 		o_CR["dcterms:title"] = form.title.value;
 		o_CR["dcterms:accessRights"] = form.filedAgainst.value;
-		
+
 		var jsonString = JSON.stringify(o_CR);
 		xmlhttp = new XMLHttpRequest();
 		xmlhttp.open("PUT", baseUrl, true);
 		xmlhttp.setRequestHeader("Content-type", "application/json");
-	    xmlhttp.setRequestHeader("Content-length", jsonString.length);
 		xmlhttp.onreadystatechange = function() {
 			if (xmlhttp.readyState==4 && (xmlhttp.status==200)) {
 				txt = xmlhttp.responseText;
 				resp = eval('(' + txt + ')');
 				// provide a status message.
 				var oStatus = document.getElementById("status");
-				if (oStatus.hasChildNodes()){    
-					oStatus.removeChild(oStatus.childNodes[0]); 
+				if (oStatus.hasChildNodes()){
+					oStatus.removeChild(oStatus.childNodes[0]);
 				}
 				oStatus.appendChild(document.createTextNode("Change Request " + resp.ID + " : " + resp.title + " has been modified successfully." ));
 			}
-		}; 
+		};
 		xmlhttp.send(jsonString);
 	}
 }
 
 function ModifyCutOff(baseUrl){
-	
+
 	var form = document.getElementById("ModifyCutOff");
 	xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -122,37 +120,36 @@ function ModifyCutOff(baseUrl){
 			resp = eval('(' + txt + ')');
 			// provide a status message.
 			var oStatus = document.getElementById("status");
-			if (oStatus.hasChildNodes()){    
-				oStatus.removeChild(oStatus.childNodes[0]); 
+			if (oStatus.hasChildNodes()){
+				oStatus.removeChild(oStatus.childNodes[0]);
 			}
 			oStatus.appendChild(document.createTextNode("Cut Off Event set at " + resp.event ));
 		}
 	};
- 	var postData=""; 
- 
+ 	var postData="";
+
 	if (form.event) {
-		postData += "&event="+encodeURIComponent(form.event.value);	
+		postData += "&event="+encodeURIComponent(form.event.value);
 	}
-	
+
 	xmlhttp.open("POST", baseUrl, true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	xmlhttp.setRequestHeader("Content-length",postData.length);
-	xmlhttp.send(postData);	
+	xmlhttp.send(postData);
 }
 
 function deleteResource(resUrl, currentUrl){
 	xmlhttp = new XMLHttpRequest();
-	xmlhttp.open("DELETE", resUrl, true);	
+	xmlhttp.open("DELETE", resUrl, true);
 	xmlhttp.send();
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState==4 && (xmlhttp.status==200)) {
 		    var oNode = document.getElementById(resUrl);
-		    
-		    if (oNode.parentNode) {   
-		    	oNode.parentNode.removeChild(oNode); 
-		    } 			
+
+		    if (oNode.parentNode) {
+		    	oNode.parentNode.removeChild(oNode);
+		    }
 		}
-	}	
+	}
 }
 
 function getTurtle(url) {
@@ -170,12 +167,12 @@ function getTurtle(url) {
 			var n = document.getElementById("result");
 			n.innerHTML = '';
 			n.appendChild(document.createTextNode(xmlhttp.responseText));
-			
+
 			// Display the URI of the resource for the user (which differs from this result page)
 			document.getElementById("resourceuri").innerHTML = "URI of retrieved resource: " + mainUrl + resourceUrl;
-			
+
 			document.getElementById("mainurl").innerHTML = '<a href="' + mainUrl + '">Back to main TRS Reference Application URL</a>';
 		}
-	}; 
+	};
 	xmlhttp.send(null);
 }

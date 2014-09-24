@@ -4,13 +4,13 @@
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  and Eclipse Distribution License v. 1.0 which accompanies this distribution.
- *  
+ *
  *  The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
  *  and the Eclipse Distribution License is available at
  *  http://www.eclipse.org/org/documents/edl-v10.php.
- *  
+ *
  *  Contributors:
- *  
+ *
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
@@ -31,18 +31,18 @@ function search(baseUrl){
 				item.text = resp.results[i].title;
 				item.value = resp.results[i].resource;
 				if (ie > 0) {
-	 				list.add(item); 
+	 				list.add(item);
 				} else {
-	 				list.add(item, null); 
+	 				list.add(item, null);
 				}
 			}
-			
+
 			searchMessage.style.display = 'block';
 			loadingMessage.style.display = 'none';
 		}
 	};
 	terms = document.getElementById("searchterms").value;
-	xmlhttp.open("GET", baseUrl + "?searchFor=" + encodeURIComponent(terms), true);	
+	xmlhttp.open("GET", baseUrl + "?searchFor=" + encodeURIComponent(terms), true);
 	searchMessage.style.display = 'none';
 	loadingMessage.style.display = 'block';
 	xmlhttp.send();
@@ -59,8 +59,8 @@ function create(baseUrl){
 			sendResponse(resp["dcterms:title"], resp["rdf:about"]);
 		}
 	};
-	
- 	var postData=""; 
+
+ 	var postData="";
  	var title = document.getElementById("title").value;
  	var description = document.getElementById("description").value;
  	var planId = document.getElementById("testPlan").value;
@@ -68,18 +68,17 @@ function create(baseUrl){
  	if (title) {
  	   postData += "title=" + encodeURIComponent(title);
  	}
- 	
+
  	if (description){
  		postData += "&description=" + encodeURIComponent(description);
  	}
- 	
+
  	if (testPlan) {
   	   postData += "&testPlanId=" + encodeURIComponent(planId);
   	}
-  	 	
+
 	xmlhttp.open("POST", baseUrl, true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	xmlhttp.setRequestHeader("Content-length",postData.length);
 	xmlhttp.send(postData);
 }
 
@@ -94,22 +93,21 @@ function createPlan(baseUrl){
 			sendResponse(resp["dcterms:title"], resp["rdf:about"]);
 		}
 	};
-	
- 	var postData=""; 
+
+ 	var postData="";
  	var title = document.getElementById("title").value;
  	var description = document.getElementById("description").value;
 
  	if (title) {
  	   postData += "title=" + encodeURIComponent(title);
  	}
- 	
+
  	if (description){
  		postData += "&description=" + encodeURIComponent(description);
  	}
-  	 	
+
 	xmlhttp.open("POST", baseUrl, true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	xmlhttp.setRequestHeader("Content-length",postData.length);
 	xmlhttp.send(postData);
 }
 
@@ -122,29 +120,29 @@ function select(){
 }
 
 function sendResponse(label, url) {
-	var oslcResponse = 'oslc-response:{ "oslc:results": [ ' +  
-		' { "oslc:label" : "' + label + '", "rdf:resource" : "' + url + '"} ' + 
+	var oslcResponse = 'oslc-response:{ "oslc:results": [ ' +
+		' { "oslc:label" : "' + label + '", "rdf:resource" : "' + url + '"} ' +
 	' ] }';
-	
-	if (window.location.hash == '#oslc-core-windowName-1.0') {       
+
+	if (window.location.hash == '#oslc-core-windowName-1.0') {
   	  // Window Name protocol in use
         respondWithWindowName(oslcResponse);
 	} else if (window.location.hash == '#oslc-core-postMessage-1.0') {
     	// Post Message protocol in use
 		respondWithPostMessage(oslcResponse);
-	} 
+	}
 }
 
 function sendCancelResponse() {
 	var oslcResponse = 'oslc-response:{ "oslc:results": [ ]}';
-	
-	if (window.location.hash == '#oslc-core-windowName-1.0') {       
+
+	if (window.location.hash == '#oslc-core-windowName-1.0') {
   	  // Window Name protocol in use
         respondWithWindowName(oslcResponse);
 	} else if (window.location.hash == '#oslc-core-postMessage-1.0') {
     	// Post Message protocol in use
 		respondWithPostMessage(oslcResponse);
-	} 
+	}
 }
 
 
@@ -157,7 +155,7 @@ function respondWithWindowName(/*string*/ response) {
 
    // Step #5: indicate that user has responded
    window.location.href = returnURL;
-   
+
 }
 
 function respondWithPostMessage(/*string*/ response) {

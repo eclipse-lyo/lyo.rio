@@ -4,13 +4,13 @@
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  and Eclipse Distribution License v. 1.0 which accompanies this distribution.
- *  
+ *
  *  The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
  *  and the Eclipse Distribution License is available at
  *  http://www.eclipse.org/org/documents/edl-v10.php.
- *  
+ *
  *  Contributors:
- *  
+ *
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 var numParams = 0;
@@ -32,18 +32,18 @@ function search(baseUrl){
 				item.text = resp.results[i].title;
 				item.value = resp.results[i].resource;
 				if (ie > 0) {
-	 				list.add(item); 
+	 				list.add(item);
 				} else {
-	 				list.add(item, null); 
+	 				list.add(item, null);
 				}
 			}
-			
+
 			searchMessage.style.display = 'block';
 			loadingMessage.style.display = 'none';
 		}
 	};
 	terms = document.getElementById("searchterms").value;
-	xmlhttp.open("GET", baseUrl + "?searchFor=" + encodeURIComponent(terms), true);	
+	xmlhttp.open("GET", baseUrl + "?searchFor=" + encodeURIComponent(terms), true);
 	searchMessage.style.display = 'none';
 	loadingMessage.style.display = 'block';
 	xmlhttp.send();
@@ -53,7 +53,7 @@ function search(baseUrl){
 function requestParams(baseUrl){
 	var ie = window.navigator.userAgent.indexOf("MSIE");
     table = document.getElementById("inputTable");
-    
+
     //Clear any old parameter rows from the table
     if (table.rows.length > 3)
     {
@@ -81,7 +81,7 @@ function requestParams(baseUrl){
 		}
 	};
 	planId = document.getElementById("plan").value;
-	xmlhttp.open("GET", baseUrl + "?autoPlan=" + encodeURIComponent(planId), true);	
+	xmlhttp.open("GET", baseUrl + "?autoPlan=" + encodeURIComponent(planId), true);
 
 	xmlhttp.send();
 }
@@ -97,30 +97,29 @@ function create(baseUrl){
 			sendResponse(resp["dcterms:title"], resp["rdf:about"]);
 		}
 	};
-	
- 	var postData=""; 
+
+ 	var postData="";
  	var planId = document.getElementById("plan").value;
- 	
+
  	if (planId) {
  	   postData += "&planId=" + encodeURIComponent(planId);
  	}
- 	
+
  	if (numParams > 0) {
- 	 	
+
 	 	for (var i=0; i < numParams; i++) {
 	 		var thisParam = document.getElementById('param'+i);
 	 		var thisParamName = thisParam.name;
 	 		var thisParamValue = encodeURIComponent(thisParam.value);
 	 		if (thisParamValue) {
-	 		   postData += "&" + thisParamName + "=" + thisParamValue;	 		   
-	 	    }	 		
+	 		   postData += "&" + thisParamName + "=" + thisParamValue;
+	 	    }
 	 	}
-	 	
+
  	}
- 	
+
 	xmlhttp.open("POST", baseUrl, true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	xmlhttp.setRequestHeader("Content-length",postData.length);
 	xmlhttp.send(postData);
 }
 
@@ -133,29 +132,29 @@ function select(){
 }
 
 function sendResponse(label, url) {
-	var oslcResponse = 'oslc-response:{ "oslc:results": [ ' +  
-		' { "oslc:label" : "' + label + '", "rdf:resource" : "' + url + '"} ' + 
+	var oslcResponse = 'oslc-response:{ "oslc:results": [ ' +
+		' { "oslc:label" : "' + label + '", "rdf:resource" : "' + url + '"} ' +
 	' ] }';
-	
-	if (window.location.hash == '#oslc-core-windowName-1.0') {       
+
+	if (window.location.hash == '#oslc-core-windowName-1.0') {
   	  // Window Name protocol in use
         respondWithWindowName(oslcResponse);
 	} else if (window.location.hash == '#oslc-core-postMessage-1.0') {
     	// Post Message protocol in use
 		respondWithPostMessage(oslcResponse);
-	} 
+	}
 }
 
 function sendCancelResponse() {
 	var oslcResponse = 'oslc-response:{ "oslc:results": [ ]}';
-	
-	if (window.location.hash == '#oslc-core-windowName-1.0') {       
+
+	if (window.location.hash == '#oslc-core-windowName-1.0') {
   	  // Window Name protocol in use
         respondWithWindowName(oslcResponse);
 	} else if (window.location.hash == '#oslc-core-postMessage-1.0') {
     	// Post Message protocol in use
 		respondWithPostMessage(oslcResponse);
-	} 
+	}
 }
 
 
@@ -168,7 +167,7 @@ function respondWithWindowName(/*string*/ response) {
 
    // Step #5: indicate that user has responded
    window.location.href = returnURL;
-   
+
 }
 
 function respondWithPostMessage(/*string*/ response) {
