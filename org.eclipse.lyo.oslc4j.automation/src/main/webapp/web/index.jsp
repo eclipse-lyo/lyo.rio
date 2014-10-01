@@ -11,10 +11,6 @@
     The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
     and the Eclipse Distribution License is available at
     http://www.eclipse.org/org/documents/edl-v10.php.
-   
-    Contributors:
-   
-        
  -->
 <html>
 <head>
@@ -38,10 +34,10 @@
 
 <h3><b>Sample Dialogs</b></h3>
 <div style = "margin-left: 2em;">
-<p><a href="/OSLC4JAutomation/services/autoRequests/selector">AutoRequests Selector</a></p>
-<p><a href="/OSLC4JAutomation/services/autoPlans/selector">AutoPlans Selector</a></p>
-<p><a href="/OSLC4JAutomation/services/autoResults/selector">AutoResults Selector</a></p>
-<p><a href="/OSLC4JAutomation/services/autoRequests/creator">AutoResults Creator</a></p>
+<p><a href="/OSLC4JAutomation/services/autoRequests/selector">AutomationRequest Selector</a></p>
+<p><a href="/OSLC4JAutomation/services/autoRequests/creator">AutomationRequest Creator</a></p>
+<p><a href="/OSLC4JAutomation/services/autoPlans/selector">AutomationPlan Selector</a></p>
+<p><a href="/OSLC4JAutomation/services/autoResults/selector">AutomationResult Selector</a></p>
 </div>
 
 </body>
