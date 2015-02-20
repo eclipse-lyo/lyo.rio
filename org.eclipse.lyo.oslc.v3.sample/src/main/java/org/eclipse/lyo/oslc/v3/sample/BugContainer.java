@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -98,22 +99,24 @@ public class BugContainer {
 	@Path("{id}")
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
 	public Model getBug() {
-		// Get the union of all graphs.
-		Model response = getBugModel(uriInfo.getAbsolutePath());
-		if (response == null) {
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
-
+		Model response = getBugModel();
 		setResourceResponseHeaders();
+
 		return response;
+	}
+
+	@DELETE
+	@Path("{id}")
+	public Response deleteBug() {
+		removeBug();
+		return Response.noContent().build();
 	}
 
 	@OPTIONS
 	@Path("{id}")
 	public void bugOptions() {
 		// Get the union of all graphs.
-		Model response = getBugModel(uriInfo.getAbsolutePath());
-		if (response == null) {
+		if (!dataset.containsNamedModel(uriInfo.getAbsolutePath().toString())) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
@@ -174,12 +177,34 @@ public class BugContainer {
 		}
 	}
 
-	private Model getBugModel(URI uri) {
+	private Model getBugModel() {
 		dataset.begin(ReadWrite.READ);
 		try {
-			return dataset.getNamedModel(uri.toString());
+			verifyBugExists();
+			return dataset.getNamedModel(requestURI());
 		} finally {
 			dataset.end();
 		}
+	}
+
+	private void removeBug() {
+		dataset.begin(ReadWrite.WRITE);
+		try {
+			verifyBugExists();
+			dataset.removeNamedModel(requestURI());
+			dataset.commit();
+		} finally {
+			dataset.end();
+		}
+	}
+
+	private void verifyBugExists() {
+		if (!dataset.containsNamedModel(requestURI())) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+	}
+
+	private String requestURI() {
+		return uriInfo.getAbsolutePath().toString();
 	}
 }
