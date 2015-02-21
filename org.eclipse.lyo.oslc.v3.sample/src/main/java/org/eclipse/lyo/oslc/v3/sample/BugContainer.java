@@ -33,6 +33,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC;
+import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC_CM;
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
@@ -49,7 +52,6 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.LDP;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.OSLC_CM;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
 
 @Path("/bugs")
@@ -76,10 +78,9 @@ public class BugContainer {
 
 	@GET
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
-	public Model getBugs() {
+	public Model getBugContainer() {
 		setContainerResponseHeaders();
 
-		// Get the union of all graphs.
 		Model response = ModelFactory.createDefaultModel();
 		Resource container =
 				response.createResource(uriInfo.getAbsolutePath().toString(),
@@ -93,6 +94,21 @@ public class BugContainer {
 	@OPTIONS
 	public void bugContainerOptions() {
 		setContainerResponseHeaders();
+	}
+
+	@GET
+	@Path("creationDialog")
+	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
+	public Model getCreationDialogDescriptor() {
+		setDialogDescriptorResponseHeaders();
+		Model response = createDialogModel();
+		return response;
+	}
+
+	@OPTIONS
+	@Path("creationDialog")
+	public void creationDialogDescriptorOptions() {
+		setDialogDescriptorResponseHeaders();
 	}
 
 	@GET
@@ -129,7 +145,7 @@ public class BugContainer {
 		// Is the null-relative resource a Defect?
 		if (!m.contains(m.getResource(""),
 		                RDF.type,
-		                m.getResource(OSLC_CM + "Defect"))) {
+		                OSLC_CM.Defect)) {
 			// TODO: constrainedBy link header
 			return Response.status(Status.CONFLICT).build();
 		}
@@ -141,14 +157,25 @@ public class BugContainer {
 
 		return Response.created(location).build();
 	}
-
+	
 	private void setContainerResponseHeaders() {
-		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type,<" + LDP + "Container>;rel=type");
+		// LDP Headers
+		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
+		response.addHeader("Link", "<" + LDP + "Container>;rel=type");
 		response.addHeader("Allow", "GET,HEAD,POST,OPTIONS");
 		response.addHeader("Allow-Post", TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
+
+		// OSLC Creation Dialog
+		URI creationDialog = uriInfo.getAbsolutePathBuilder().path("creationDialog").build();
+		response.addHeader("Link", "<" + creationDialog.toString() + ">;rel=\"" + OSLC.NS + "creationDialog\"");
 	}
 
 	private void setResourceResponseHeaders() {
+		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
+		response.addHeader("Allow", "GET,HEAD,OPTIONS,DELETE");
+	}
+
+	private void setDialogDescriptorResponseHeaders() {
 		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
 		response.addHeader("Allow", "GET,HEAD,OPTIONS");
 	}
@@ -175,6 +202,16 @@ public class BugContainer {
 		} finally {
 			dataset.end();
 		}
+	}
+
+	private Model createDialogModel() {
+		Model m = ModelFactory.createDefaultModel();
+		Resource dialog = m.createResource(uriInfo.getAbsolutePath().toString(), OSLC.Dialog);
+		dialog.addProperty(OSLC.label, "Open Bug");
+		String document = uriInfo.getBaseUriBuilder().path("../newBug.html").build().normalize().toString();
+		dialog.addProperty(OSLC.dialog, m.createResource(document));
+
+		return m;
 	}
 
 	private Model getBugModel() {

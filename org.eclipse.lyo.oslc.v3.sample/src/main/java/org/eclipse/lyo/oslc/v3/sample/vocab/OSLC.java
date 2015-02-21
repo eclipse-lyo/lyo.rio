@@ -13,15 +13,17 @@
  *
  *     Samuel Padgett       - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc.v3.sample;
+package org.eclipse.lyo.oslc.v3.sample.vocab;
 
-import javax.ws.rs.core.MediaType;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 
-public class Constants {
-	// Media types
-	public static final String TEXT_TURTLE = "text/turtle";
-	public static final String APPLICATION_JSON_LD = "application/ld+json";
-	public static final String[] MEDIA_TYPES = { TEXT_TURTLE,
-			APPLICATION_JSON_LD, MediaType.APPLICATION_JSON };
-	public static final String LDP = "http://www.w3.org/ns/ldp#";
+public class OSLC {
+    private static Model model = ModelFactory.createDefaultModel();
+	public static final String NS = "http://open-services.net/ns/core#";
+    public static final Resource Dialog = model.createResource(NS + "Dialog");
+    public static final Property label = model.createProperty(NS + "label");
+    public static final Property dialog = model.createProperty(NS + "dialog");
 }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<!--
+  Copyright (c) 2015 IBM Corporation.
+
+   All rights reserved. This program and the accompanying materials
+   are made available under the terms of the Eclipse Public License v1.0
+   and Eclipse Distribution License v. 1.0 which accompanies this distribution.
+
+   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+   and the Eclipse Distribution License is available at
+   http://www.eclipse.org/org/documents/edl-v10.php.
+
+   Contributors:
+
+      Samuel Padgett - initial API and implementation
+-->
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>New Bug - OSLC 3.0 Reference Implementation</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="shortcut icon" href="oslc-16x16.png">
+      <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+      <script type="text/javascript">
+          function sendMessage(response) {
+              (window.parent || window).postMessage("oslc-response:" + JSON.stringify(response), "*");
+          }
+
+          function submit() {
+              // Post the form as JSON-LD to the bug container.
+              var bug = {
+                  "@id": "",
+                  "@type": "http://open-services.net/ns/cm#Defect",
+                  title: $("#title").val(),
+                  description: $("#description").val(),
+                  "@context": {
+                      "title": "http://purl.org/dc/terms/title",
+                      "description": "http://purl.org/dc/terms/description"
+                  }
+              };
+
+              var request = $.ajax({
+                      url: 'r/bugs',
+                      data: JSON.stringify(bug),
+                      type: 'post',
+                      contentType: 'application/ld+json',
+                      success: function(data, status, xhr) {
+                          var location = xhr.getResponseHeader('Location');
+                          var response = {
+                              "oslc:results": [ {
+                                      "oslc:label": bug.title,
+                                      "rdf:resource": location
+                              } ]
+                          };
+                          sendMessage(response);
+                      }
+              });
+          }
+
+          function cancel() {
+              var response = {
+                  'oslc:results': []
+              };
+              sendMessage(response);
+          }
+
+          $(function() {
+              $("form").submit(function(e) {
+                  e.preventDefault();
+                  submit();
+              });
+              $("#cancel").click(function() {
+                  cancel();
+              });
+          });
+      </script>
+</head>
+
+<body>
+<form>
+<div>
+<input id="title" type="text" class="input" required autofocus placeholder="Enter bug title"></input>
+</div>
+<div>
+<label for="description">Description:</label>
+</div>
+<div>
+<textarea id="description" class="input description"></textarea>
+</div>
+<div>
+<input type="submit" name="OK"></input>
+<button id="cancel">Cancel</button>
+</div>
+</form>
+</body>
+</html>
