@@ -60,7 +60,10 @@ specifications. Yay!</p>
     }
 
     window.addEventListener("message", function(event) {
-        if (event.origin !== "http://localhost:8080") {
+        var sameOrigin =
+            location.protocol + '//' + location.hostname  +
+            (location.port ? ':'  +location.port : '');
+        if (event.origin !== sameOrigin) {
             return;
         }
 
