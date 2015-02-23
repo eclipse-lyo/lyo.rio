@@ -28,6 +28,7 @@ body {
     overflow-x: scroll;
     padding: 1em;
     white-space: pre-wrap;
+    margin: 10px 0;
 }
 
 label {
