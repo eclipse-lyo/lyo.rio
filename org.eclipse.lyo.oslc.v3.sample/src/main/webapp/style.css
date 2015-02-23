@@ -11,6 +11,22 @@ body {
     float: right;
 }
 
+.message {
+    margin-bottom: 15px;
+}
+
+.fixed {
+    background-color: #f9f9f9;
+    border: 1px dashed #2f6fab;
+    color: black;
+    font-family: monospace;
+    font-size: 90%;
+    line-height: 1.1em;
+    overflow-x: scroll;
+    padding: 1em;
+    white-space: pre-wrap;
+}
+
 label {
     min-width: 50px;
     display: inline-block;
@@ -26,4 +42,23 @@ label {
 
 .description {
     height: 250px;
+}
+
+.dialog {
+    box-shadow: 7px 7px 8px #818181;
+    border: solid 1px #cccccc;
+    top: 100px;
+    left: 100px;
+    background: #ffffff;
+    position: absolute;
+    z-index: 1000;
+}
+
+.dialogTitle {
+    background: #F0F0F0;
+    padding: 5px 0 0 5px;
+    font-weight: bold;
+    font-size: 9pt;
+    height: 20px;
+    text-align: left;
 }

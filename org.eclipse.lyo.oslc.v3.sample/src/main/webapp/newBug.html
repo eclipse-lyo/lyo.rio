@@ -23,60 +23,60 @@
   <title>New Bug - OSLC 3.0 Reference Implementation</title>
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="shortcut icon" href="oslc-16x16.png">
-      <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-      <script type="text/javascript">
-          function sendMessage(response) {
-              (window.parent || window).postMessage("oslc-response:" + JSON.stringify(response), "*");
-          }
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript">
+      function sendMessage(response) {
+          (window.parent || window).postMessage("oslc-response:" + JSON.stringify(response), "*");
+      }
 
-          function submit() {
-              // Post the form as JSON-LD to the bug container.
-              var bug = {
-                  "@id": "",
-                  "@type": "http://open-services.net/ns/cm#Defect",
-                  title: $("#title").val(),
-                  description: $("#description").val(),
-                  "@context": {
-                      "title": "http://purl.org/dc/terms/title",
-                      "description": "http://purl.org/dc/terms/description"
+      function submit() {
+          // Post the form as JSON-LD to the bug container.
+          var bug = {
+              "@id": "",
+              "@type": "http://open-services.net/ns/cm#Defect",
+              title: $("#title").val(),
+              description: $("#description").val(),
+              "@context": {
+                  "title": "http://purl.org/dc/terms/title",
+                  "description": "http://purl.org/dc/terms/description"
+              }
+          };
+
+          var request = $.ajax({
+                  url: 'r/bugs',
+                  data: JSON.stringify(bug),
+                  type: 'post',
+                  contentType: 'application/ld+json',
+                  success: function(data, status, xhr) {
+                      var location = xhr.getResponseHeader('Location');
+                      var response = {
+                          "oslc:results": [ {
+                                  "oslc:label": bug.title,
+                                  "rdf:resource": location
+                          } ]
+                      };
+                      sendMessage(response);
                   }
-              };
-
-              var request = $.ajax({
-                      url: 'r/bugs',
-                      data: JSON.stringify(bug),
-                      type: 'post',
-                      contentType: 'application/ld+json',
-                      success: function(data, status, xhr) {
-                          var location = xhr.getResponseHeader('Location');
-                          var response = {
-                              "oslc:results": [ {
-                                      "oslc:label": bug.title,
-                                      "rdf:resource": location
-                              } ]
-                          };
-                          sendMessage(response);
-                      }
-              });
-          }
-
-          function cancel() {
-              var response = {
-                  'oslc:results': []
-              };
-              sendMessage(response);
-          }
-
-          $(function() {
-              $("form").submit(function(e) {
-                  e.preventDefault();
-                  submit();
-              });
-              $("#cancel").click(function() {
-                  cancel();
-              });
           });
-      </script>
+      }
+
+      function cancel() {
+          var response = {
+              'oslc:results': []
+          };
+          sendMessage(response);
+      }
+
+      $(function() {
+          $("form").submit(function(e) {
+              e.preventDefault();
+              submit();
+          });
+          $("#cancel").click(function() {
+              cancel();
+          });
+      });
+  </script>
 </head>
 
 <body>

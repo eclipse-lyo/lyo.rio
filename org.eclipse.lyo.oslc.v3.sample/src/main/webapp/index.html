@@ -23,6 +23,7 @@
   <title>OSLC 3.0 Reference Implementation</title>
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="shortcut icon" href="oslc-16x16.png">
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 </head>
 
 <body>
@@ -34,5 +35,81 @@
 
 specifications. Yay!</p>
 
+
+<p><button id="openBug">Open Bug</button></p>
+
+<div id="message" class="message"></div>
+
+<div id="bugs" class="fixed"></div>
+
+<div class="dialog" style="display: none;">
+    <div class="dialogTitle">Open Bug</div>
+    <div id="dialogContainer"></div>
+</div>
+
+<script>
+    function showDialog() {
+        $('<iframe/>', {
+            src: 'newBug.html'
+        }).css({
+            border: 0,
+            width: '475px',
+            height: '360px'
+        }).appendTo('#dialogContainer');
+        $('.dialog').css('display', '');
+    }
+
+    window.addEventListener("message", function(event) {
+        if (event.origin !== "http://localhost:8080") {
+            return;
+        }
+
+        // Make sure the message starts with oslc-response:
+        var message = event.data;
+        if (message.indexOf("oslc-response:") !== 0) {
+            return;
+        }
+
+        // Handle each result.
+        var response = JSON.parse(message.substr("oslc-response:".length));
+        var results = response["oslc:results"];
+        for (var i = 0; i < results.length; i++) {
+            var label = results[i]["oslc:label"];
+            var uri = results[i]["rdf:resource"];
+            var link = $('<a/>', {
+                href: uri
+            }).text(label || uri);;
+            $('#message').empty().text('New bug: ').append(link);
+        }
+
+        loadBugs();
+
+        // Remove the dialog from the page.
+        $('#dialogContainer').empty();
+        $('.dialog').css('display', 'none');
+    }, false);
+
+    function loadBugs() {
+        var request = $.ajax('r/bugs', {
+            accepts: 'text/turtle',
+            headers: {
+                Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferContainment"'
+            }
+        });
+
+        request.done(function(data) {
+            $('#bugs').text(data);
+        });
+    }
+
+    $(document).ready(function() {
+        $('#openBug').on('click', function(e) {
+            e.preventDefault();
+            showDialog();
+        });
+
+        loadBugs();
+    });
+</script>
 </body>
 </html>
