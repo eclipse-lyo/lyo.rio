@@ -101,7 +101,7 @@ opening sample bugs, click the button below.</p>
         var request = $.ajax('r/bugs', {
             accepts: 'text/turtle',
             headers: {
-                Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferContainment"'
+                Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferContainment http://open-services.net/ns/core#PreferDialog"'
             }
         });
 

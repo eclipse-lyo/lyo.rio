@@ -17,6 +17,8 @@ package org.eclipse.lyo.oslc.v3.sample;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,11 +30,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.http.HeaderElement;
+import org.apache.http.message.BasicHeaderValueParser;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC_CM;
 
@@ -51,6 +56,7 @@ import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
 public class BugContainer {
 	@Context HttpServletResponse response;
 	@Context UriInfo uriInfo;
+	@Context HttpHeaders headers;
 
 	@GET
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
@@ -62,7 +68,15 @@ public class BugContainer {
 				response.createResource(uriInfo.getAbsolutePath().toString(),
 				                        response.getResource(LDP + "BasicContainer"));
 		container.addProperty(DCTerms.title, "Bug Container");
+
+		Set<String> includeParameters = getIncludeParameters();
+		if (includeParameters.contains(OSLC.NS + "PreferDialog")) {
+			this.response.setHeader("Preference-Applied", "return=representation");
+			createDialogResource(response);
+		}
+
 		Persistence.getInstance().addContainmentTriples(container);
+
 		setETagHeader(response);
 
 		return response;
@@ -145,8 +159,11 @@ public class BugContainer {
 		response.addHeader("Link", "<" + shape + ">;rel=\"" + Constants.LINK_REL_CONSTRAINED_BY + "\"");
 
 		// OSLC Creation Dialog
-		URI creationDialog = uriInfo.getAbsolutePathBuilder().path("creationDialog").build();
-		response.addHeader("Link", "<" + creationDialog + ">;rel=\"" + OSLC.NS + "creationDialog\"");
+		response.addHeader("Link", "<" + getDialogURI() + ">;rel=\"" + OSLC.NS + "creationDialog\"");
+	}
+
+	private URI getDialogURI() {
+		return uriInfo.getBaseUriBuilder().path("bugs/creationDialog").build();
 	}
 
 	private void setResourceResponseHeaders() {
@@ -161,12 +178,16 @@ public class BugContainer {
 
 	private Model createDialogModel() {
 		Model m = ModelFactory.createDefaultModel();
-		Resource dialog = m.createResource(uriInfo.getAbsolutePath().toString(), OSLC.Dialog);
+		createDialogResource(m);
+
+		return m;
+	}
+
+	private void createDialogResource(Model m) {
+		Resource dialog = m.createResource(getDialogURI().toString(), OSLC.Dialog);
 		dialog.addProperty(OSLC.label, "Open Bug");
 		String document = uriInfo.getBaseUriBuilder().path("../newBug.html").build().normalize().toString();
 		dialog.addProperty(OSLC.dialog, m.createResource(document));
-
-		return m;
 	}
 
 	/**
@@ -193,5 +214,25 @@ public class BugContainer {
 
 	private String requestURI() {
 		return uriInfo.getAbsolutePath().toString();
+	}
+
+	private Set<String> getIncludeParameters() {
+		Set<String> include = new HashSet<String>();
+		String prefer = headers.getHeaderString("Prefer");
+		if (prefer != null) {
+			HeaderElement[] preferElements = BasicHeaderValueParser.parseElements(prefer, null);
+			for (HeaderElement e : preferElements) {
+				if ("return".equals(e.getName()) && "representation".equals(e.getValue())) {
+					String includeValue = e.getParameterByName("include").getValue();
+					if (includeValue != null) {
+						for (String s : includeValue.split(" ")) {
+							include.add(s);
+						}
+					}
+				}
+			}
+		}
+
+		return include;
 	}
 }
