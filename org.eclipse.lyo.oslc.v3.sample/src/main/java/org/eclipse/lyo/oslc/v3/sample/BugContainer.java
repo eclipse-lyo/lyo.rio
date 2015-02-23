@@ -135,11 +135,7 @@ public class BugContainer {
 	@OPTIONS
 	@Path("{id}")
 	public void bugOptions() {
-		// Get the union of all graphs.
-		if (!dataset.containsNamedModel(uriInfo.getAbsolutePath().toString())) {
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
-
+		verifyBugExists();
 		setResourceResponseHeaders();
 	}
 
@@ -265,8 +261,19 @@ public class BugContainer {
 	}
 
 	private void verifyBugExists() {
-		if (!dataset.containsNamedModel(requestURI())) {
-			throw new WebApplicationException(Status.NOT_FOUND);
+		final boolean newTransaction = !dataset.isInTransaction();
+		if (newTransaction) {
+			dataset.begin(ReadWrite.READ);
+		}
+
+		try {
+			if (!dataset.containsNamedModel(requestURI())) {
+				throw new WebApplicationException(Status.NOT_FOUND);
+			}
+		} finally {
+			if (newTransaction) {
+				dataset.end();
+			}
 		}
 	}
 
