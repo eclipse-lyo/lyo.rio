@@ -167,7 +167,7 @@ public class BugContainer {
 		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
 		response.addHeader("Link", "<" + LDP + "BasicContainer>;rel=type");
 		response.addHeader("Allow", "GET,HEAD,POST,OPTIONS");
-		response.addHeader("Allow-Post", TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
+		response.addHeader("Accept-Post", TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
 
 		// LDP constrainedBy header should point to the resource shape
 		URI shape = uriInfo.getBaseUriBuilder().path("../Defect-shape.ttl").build().normalize();
