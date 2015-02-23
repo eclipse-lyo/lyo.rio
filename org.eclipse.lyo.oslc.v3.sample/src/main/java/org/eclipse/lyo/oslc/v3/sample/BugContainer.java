@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc.v3.sample;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.UUID;
@@ -33,6 +34,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC_CM;
 
@@ -87,6 +89,7 @@ public class BugContainer {
 				                        response.getResource(LDP + "BasicContainer"));
 		container.addProperty(DCTerms.title, "Bug Container");
 		addContainmentTriples(response, container);
+		setETagHeader(response);
 
 		return response;
 	}
@@ -102,6 +105,8 @@ public class BugContainer {
 	public Model getCreationDialogDescriptor() {
 		setDialogDescriptorResponseHeaders();
 		Model response = createDialogModel();
+		setETagHeader(response);
+
 		return response;
 	}
 
@@ -117,6 +122,7 @@ public class BugContainer {
 	public Model getBug() {
 		Model response = getBugModel();
 		setResourceResponseHeaders();
+		setETagHeader(response);
 
 		return response;
 	}
@@ -222,6 +228,28 @@ public class BugContainer {
 		} finally {
 			dataset.end();
 		}
+	}
+
+	/**
+	 * Create a weak ETag value from a Jena model.
+	 *
+	 * @param m the model that represents the HTTP response body
+	 * @return an ETag value
+	 *
+	 * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19">HTTP 1.1: Section 14.19 - ETag</a>
+	 */
+	private String getETag(Model m) {
+		// Get the MD5 hash of the model as N-Triples.
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		m.write(out,  "N-TRIPLE");
+		String md5 = DigestUtils.md5Hex(out.toByteArray());
+
+		// Create a weak entity tag from the MD5 hash.
+		return "\"" + md5 + "\"";
+	}
+
+	private void setETagHeader(Model m) {
+		response.addHeader("ETag", getETag(m));
 	}
 
 	private void removeBug() {
