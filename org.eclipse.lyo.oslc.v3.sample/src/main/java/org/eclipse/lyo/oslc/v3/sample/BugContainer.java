@@ -52,9 +52,7 @@ import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.LDP;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
+import static org.eclipse.lyo.oslc.v3.sample.Constants.*;
 
 @Path("/bugs")
 public class BugContainer {
@@ -163,7 +161,7 @@ public class BugContainer {
 
 		return Response.created(location).build();
 	}
-	
+
 	private void setContainerResponseHeaders() {
 		// LDP Headers
 		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
@@ -171,9 +169,13 @@ public class BugContainer {
 		response.addHeader("Allow", "GET,HEAD,POST,OPTIONS");
 		response.addHeader("Allow-Post", TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
 
+		// LDP constrainedBy header should point to the resource shape
+		URI shape = uriInfo.getBaseUriBuilder().path("../Defect-shape.ttl").build().normalize();
+		response.addHeader("Link", "<" + shape + ">;rel=\"" + Constants.LINK_REL_CONSTRAINED_BY + "\"");
+
 		// OSLC Creation Dialog
 		URI creationDialog = uriInfo.getAbsolutePathBuilder().path("creationDialog").build();
-		response.addHeader("Link", "<" + creationDialog.toString() + ">;rel=\"" + OSLC.NS + "creationDialog\"");
+		response.addHeader("Link", "<" + creationDialog + ">;rel=\"" + OSLC.NS + "creationDialog\"");
 	}
 
 	private void setResourceResponseHeaders() {

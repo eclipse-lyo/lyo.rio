@@ -1,0 +1,228 @@
+@prefix foaf:  <http://http://xmlns.com/foaf/0.1/> .
+@prefix oslc_cm: <http://open-services.net/ns/cm#> .
+@prefix oslc:  <http://open-services.net/ns/core#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<>  a                        oslc:ResourceShape ;
+        oslc:describes       oslc_cm:Defect ;
+        dcterms:title        "A software or product defect." ;
+        dcterms:description  "Used by Quality Management tools to report defects in testing." ;
+        oslc:property
+            <#affectsPlanItem>,
+            <#affectsRequirement>,
+            <#attachment>,
+            <#closeDate>,
+            <#contributor>,
+            <#created>,
+            <#creator>,
+            <#description>,
+            <#discussedBy>,
+            <#identifier>,
+            <#instanceShape>,
+            <#modified>,
+            <#priority>,
+            <#relatedChangeRequest>,
+            <#severity>,
+            <#shortTitle>,
+            <#state>,
+            <#subject>,
+            <#title>,
+            <#tracksChangeSet>,
+            <#type>
+        .
+
+
+<#affectsPlanItem>  a            oslc:Property ;
+        oslc:name                "affectsPlanItem" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:affectsPlanItem ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Change request affects plan item."^^rdf:XMLLiteral ;
+        dcterms:title            "Affects PlanItem" .
+
+<#affectsRequirement>  a         oslc:Property ;
+        oslc:name                "affectsRequirement" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:affectsRequirement ;
+        oslc:range               <http://open-services.net/ns/rm#Requirement> ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Change request affecting a Requirement. It is likely that the target resource will be an <code>oslc_rm:Requirement</code> but that is not necessarily the case."^^rdf:XMLLiteral ;
+        dcterms:title            "Affects Requirement" .
+
+<#attachment>  a                 oslc:Property ;
+        oslc:name                "attachment" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc:attachment ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "An attachment associated with this change request."^^rdf:XMLLiteral .
+
+<#closeDate>  a                  oslc:Property ;
+        oslc:name                "closeDate" ;
+        oslc:occurs              oslc:Zero-or-one ;
+        oslc:propertyDefinition  oslc_cm:closeDate ;
+        oslc:readOnly            "true" ;
+        oslc:valueType           <http://www.w3.org/2001/XMLSchema#dateTime> ;
+        dcterms:description      "The date at which no further activity or work is intended to be conducted."^^rdf:XMLLiteral .
+
+<#contributor>  a                oslc:Property ;
+        oslc:name                "contributor" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  dcterms:contributor ;
+        oslc:range               foaf:Person ;
+        oslc:representation      oslc:Either ;
+        oslc:valueType           oslc:AnyResource ;
+        dcterms:description      "The person(s) who are responsible for the work needed to complete the change request (reference: Dublin Core). It is likely that the target resource will be a <code>foaf:Person</code> but that is not necessarily the case."^^rdf:XMLLiteral .
+
+<#created>  a                    oslc:Property ;
+        oslc:name                "created" ;
+        oslc:occurs              oslc:Zero-or-one ;
+        oslc:propertyDefinition  dcterms:created ;
+        oslc:readOnly            "true" ;
+        oslc:valueType           <http://www.w3.org/2001/XMLSchema#dateTime> ;
+        dcterms:description      "Timestamp of resource creation (reference: Dublin Core)."^^rdf:XMLLiteral .
+
+<#creator>  a                    oslc:Property ;
+        oslc:name                "creator" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  dcterms:creator ;
+        oslc:range               foaf:Person ;
+        oslc:representation      oslc:Either ;
+        oslc:valueType           oslc:AnyResource ;
+        dcterms:description      "Creator or creators of resource (reference: Dublin Core). It is likely that the target resource will be a <code>foaf:Person</code> but that is not necessarily the case."^^rdf:XMLLiteral .
+
+<#description>  a                oslc:Property ;
+        oslc:name                "description" ;
+        oslc:occurs              oslc:Zero-or-one ;
+        oslc:propertyDefinition  dcterms:description ;
+        oslc:valueType           rdf:XMLLiteral ;
+        dcterms:description      "Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML &lt;div&gt; element."^^rdf:XMLLiteral .
+
+<#discussedBy>  a                oslc:Property ;
+        oslc:name                "discussedBy" ;
+        oslc:occurs              oslc:Zero-or-one ;
+        oslc:propertyDefinition  oslc:discussedBy ;
+        oslc:range               oslc:Discussion ;
+        oslc:representation      oslc:Either ;
+        oslc:valueType           oslc:AnyResource ;
+        dcterms:description      "A series of notes and comments about this change request."^^rdf:XMLLiteral .
+
+<#identifier>  a                 oslc:Property ;
+        oslc:name                "identifier" ;
+        oslc:occurs              oslc:Exactly-one ;
+        oslc:propertyDefinition  dcterms:identifier ;
+        oslc:readOnly            "true" ;
+        oslc:valueType           <http://www.w3.org/2001/XMLSchema#string> ;
+        dcterms:description      "A unique identifier for a resource. Assigned by the service provider when a resource is created. Not intended for end-user display."^^rdf:XMLLiteral .
+
+<#implementsRequirement>  a      oslc:Property ;
+        oslc:name                "implementsRequirement" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:implementsRequirement ;
+        oslc:range               <http://open-services.net/ns/rm#Requirement> ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Implements associated Requirement. It is likely that the target resource will be an <code>oslc_rm:Requirement</code> but that is not necessarily the case."^^rdf:XMLLiteral ;
+        dcterms:title            "Implements Requirement" .
+
+<#instanceShape>  a              oslc:Property ;
+        oslc:name                "instanceShape" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc:instanceShape ;
+        oslc:range               oslc:ResourceShape ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Resource Shape that provides hints as to resource property value-types and allowed values."^^rdf:XMLLiteral .
+
+<#modified>  a                   oslc:Property ;
+        oslc:name                "modified" ;
+        oslc:occurs              oslc:Zero-or-one ;
+        oslc:propertyDefinition  dcterms:modified ;
+        oslc:readOnly            "true" ;
+        oslc:valueType           <http://www.w3.org/2001/XMLSchema#dateTime> ;
+        dcterms:description      "Timestamp of latest resource modification (reference: Dublin Core)."^^rdf:XMLLiteral .
+
+<#priority>  a                   oslc:Property ;
+        oslc:name                "priority" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:priority ;
+        oslc:range               oslc_cm:Priority ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Priority of this change request."^^rdf:XMLLiteral .
+
+<#relatedChangeRequest>  a       oslc:Property ;
+        oslc:name                "relatedChangeRequest" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:relatedChangeRequest ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "This relationship is loosely coupled and has no specific meaning."^^rdf:XMLLiteral ;
+        dcterms:title            "Related ChangeRequest" .
+
+<#severity>  a                   oslc:Property ;
+        oslc:name                "severity" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:severity ;
+        oslc:range               oslc_cm:Severity ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Severity or criticality of this change request."^^rdf:XMLLiteral .
+
+<#shortTitle>  a                 oslc:Property ;
+        oslc:name                "shortTitle" ;
+        oslc:occurs              oslc:Zero-or-one ;
+        oslc:propertyDefinition  oslc:shortTitle ;
+        oslc:valueType           <http://www.w3.org/2001/XMLSchema#XMLLiteral> ;
+        dcterms:description      "Short name identifying a resource, often used as an abbreviated identifier for presentation to end-users. SHOULD include only content that is valid inside an XHTML &lt;span&gt; element."^^rdf:XMLLiteral ;
+        dcterms:title            "Short title" .
+
+<#state>  a                      oslc:Property ;
+        oslc:name                "state" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:state ;
+        oslc:range               oslc_cm:State ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Used to indicate the status of the change request. This property is read-only, but can be changed using actions."^^rdf:XMLLiteral .
+
+<#subject>  a                    oslc:Property ;
+        oslc:name                "subject" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  dcterms:subject ;
+        oslc:valueType           <http://www.w3.org/2001/XMLSchema#string> ;
+        dcterms:description      "Tag or keyword for a resource. Each occurrence of a dcterms:subject property denotes an additional tag for the resource."^^rdf:XMLLiteral .
+
+<#title>  a                      oslc:Property ;
+        oslc:name                "title" ;
+        oslc:occurs              oslc:Exactly-one ;
+        oslc:propertyDefinition  dcterms:title ;
+        oslc:valueType           rdf:XMLLiteral ;
+        dcterms:description      "Title (reference: Dublin Core) or often a single line summary of the resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML &lt;div&gt; element."^^rdf:XMLLiteral .
+
+<#tracksChangeSet>  a            oslc:Property ;
+        oslc:name                "tracksChangeSet" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:tracksChangeSet ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Tracks SCM change set resource."^^rdf:XMLLiteral ;
+        dcterms:title            "Tracks ChangeSet" .
+
+<#tracksRequirement>  a          oslc:Property ;
+        oslc:name                "tracksRequirement" ;
+        oslc:occurs              oslc:Zero-or-many ;
+        oslc:propertyDefinition  oslc_cm:tracksRequirement ;
+        oslc:range               <http://open-services.net/ns/rm#Requirement> ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "Tracks the associated Requirement or Requirement ChangeSet resources. It is likely that the target resource will be an <code>oslc_rm:Requirement</code> but that is not necessarily the case."^^rdf:XMLLiteral ;
+        dcterms:title            "Tracks Requirement" .
+
+<#type>  a                       oslc:Property ;
+        oslc:name                "type" ;
+        oslc:occurs              oslc:One-or-many ;
+        oslc:propertyDefinition  rdf:type ;
+        oslc:representation      oslc:Reference ;
+        oslc:valueType           oslc:Resource ;
+        dcterms:description      "The resource type URIs."^^rdf:XMLLiteral .

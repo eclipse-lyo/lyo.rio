@@ -21,7 +21,16 @@ public class Constants {
 	// Media types
 	public static final String TEXT_TURTLE = "text/turtle";
 	public static final String APPLICATION_JSON_LD = "application/ld+json";
-	public static final String[] MEDIA_TYPES = { TEXT_TURTLE,
-			APPLICATION_JSON_LD, MediaType.APPLICATION_JSON };
+
+	/**
+	 * LDP namespace
+	 *
+	 * @see <a href="http://www.w3.org/TR/ldp/">Linked Data Platform 1.0</a>
+	 */
 	public static final String LDP = "http://www.w3.org/ns/ldp#";
+
+	/**
+	 * @see <a href="http://www.w3.org/TR/ldp/#ldpr-gen-pubclireqs">LDP 4.2.1.6</a>
+	 */
+	public static final String LINK_REL_CONSTRAINED_BY = LDP + "constrainedBy";
 }
