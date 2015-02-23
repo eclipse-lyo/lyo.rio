@@ -165,7 +165,7 @@ public class BugContainer {
 	private void setContainerResponseHeaders() {
 		// LDP Headers
 		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
-		response.addHeader("Link", "<" + LDP + "Container>;rel=type");
+		response.addHeader("Link", "<" + LDP + "BasicContainer>;rel=type");
 		response.addHeader("Allow", "GET,HEAD,POST,OPTIONS");
 		response.addHeader("Allow-Post", TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
 
