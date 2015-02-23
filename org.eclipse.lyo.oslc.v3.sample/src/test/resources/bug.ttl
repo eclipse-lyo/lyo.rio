@@ -1,0 +1,5 @@
+<> a <http://open-services.net/ns/cm#Defect> ;
+        <http://purl.org/dc/terms/description>
+                "Bug to use for the W3C LDP testsuite." ;
+        <http://purl.org/dc/terms/title>
+                "Test Bug" .

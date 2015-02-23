@@ -146,11 +146,10 @@ public class BugContainer {
 	@POST
 	@Consumes({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
 	public Response createBug(Model m) {
-		// Is the null-relative resource a Defect?
-		if (!m.contains(m.getResource(""),
-		                RDF.type,
-		                OSLC_CM.Defect)) {
-			// TODO: constrainedBy link header
+		if (System.getProperty("constrainContent") != null
+				&& !m.contains(m.getResource(""),
+				               RDF.type,
+				               OSLC_CM.Defect)) {
 			return Response.status(Status.CONFLICT).build();
 		}
 
