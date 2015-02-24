@@ -110,6 +110,10 @@ public class Persistence {
 	}
 
 	public Model getBugModel(String uri) {
+		if (!dataset.containsNamedModel(uri)) {
+			return null;
+		}
+
 		return dataset.getNamedModel(uri);
 	}
 

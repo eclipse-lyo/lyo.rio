@@ -1,0 +1,30 @@
+html {
+    background: #FFF;
+    color: #333;
+}
+
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,Verdana,Geneva,sans-serif;
+}
+
+.logo {
+    opacity: 0.2;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+label {
+    color: #555555;
+    display: inline-block;
+    width: 75px;
+}
+
+div {
+    margin-bottom: 5px;
+}
+
+.description {
+    white-space: pre;
+    margin-left: 15px;
+}

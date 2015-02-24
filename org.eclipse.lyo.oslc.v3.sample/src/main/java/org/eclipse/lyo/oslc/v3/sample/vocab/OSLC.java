@@ -23,9 +23,16 @@ import com.hp.hpl.jena.rdf.model.Resource;
 public class OSLC {
     private static Model model = ModelFactory.createDefaultModel();
 	public static final String NS = "http://open-services.net/ns/core#";
+
+    public static final Resource Compact = model.createResource(NS + "Compact");
     public static final Resource Dialog = model.createResource(NS + "Dialog");
+    public static final Resource Preview = model.createResource(NS + "Preview");
+
     public static final Property label = model.createProperty(NS + "label");
     public static final Property dialog = model.createProperty(NS + "dialog");
+    public static final Property document = model.createProperty(NS + "document");
     public static final Property hintHeight = model.createProperty(NS + "hintHeight");
     public static final Property hintWidth = model.createProperty(NS + "hintWidth");
+    public static final Property largePreview = model.createProperty(NS + "largePreview");
+    public static final Property smallPreview = model.createProperty(NS + "smallPreview");
 }

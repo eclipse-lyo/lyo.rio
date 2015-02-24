@@ -17,10 +17,12 @@ package org.eclipse.lyo.oslc.v3.sample.vocab;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 public class OSLC_CM {
     private static Model model = ModelFactory.createDefaultModel();
 	public static final String NS = "http://open-services.net/ns/cm#";
     public static final Resource Defect = model.createResource(NS + "Defect");
+    public static final Property severity = model.createProperty(NS + "severity");
 }

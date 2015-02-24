@@ -30,7 +30,7 @@ public class ETag {
 	/**
 	 * Create a weak ETag value from a Jena model.
 	 *
-	 * @param m the model that represents the HTTP httpResponse body
+	 * @param m the model that represents the HTTP response body
 	 * @return an ETag value
 	 *
 	 * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19">HTTP 1.1: Section 14.19 - ETag</a>
