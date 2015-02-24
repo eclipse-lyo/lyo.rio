@@ -25,6 +25,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.Provider;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -38,11 +39,13 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
 
+@Provider
 @Consumes({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
 public class ModelMessageBodyReader implements MessageBodyReader<Model> {
 	private final static String FAKE_BASE =
 			"http://eclipse.org/lyo/" + ModelMessageBodyReader.class.getPackage() + "/";
 
+	@Override
 	public boolean isReadable(Class<?> type,
 							  Type genericType,
 							  Annotation[] annotations,
@@ -73,6 +76,7 @@ public class ModelMessageBodyReader implements MessageBodyReader<Model> {
 		}
 	}
 
+	@Override
 	public Model readFrom(Class<Model> type,
 						  Type genericType,
 						  Annotation[] annotations,

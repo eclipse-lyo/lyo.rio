@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -63,10 +64,10 @@ import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
 
 @Path("/bugs")
 public class BugContainer {
-	@Context HttpServletRequest request;
-	@Context HttpServletResponse response;
-	@Context UriInfo uriInfo;
-	@Context HttpHeaders requestHeaders;
+	@Context private HttpServletRequest request;
+	@Context private HttpServletResponse response;
+	@Context private UriInfo uriInfo;
+	@Context private HttpHeaders headers;
 
 	private static final String PREVIEW_HEIGHT = "200px";
 	private static final String PREVIEW_WIDTH = "300px";
@@ -449,8 +450,12 @@ public class BugContainer {
 	}
 
 	private void parsePrefer() {
-		String prefer = requestHeaders.getHeaderString("Prefer");
-		if (prefer != null) {
+		final List<String> preferValues = headers.getRequestHeader("Prefer");
+		if (preferValues == null) {
+			return;
+		}
+
+		for (String prefer : preferValues) {
 			HeaderElement[] preferElements = BasicHeaderValueParser.parseElements(prefer, null);
 			for (HeaderElement e : preferElements) {
 				if ("return".equals(e.getName()) && "representation".equals(e.getValue())) {
@@ -473,9 +478,15 @@ public class BugContainer {
 	}
 
 	private void testIfNoneMatch(String etag) {
-		final String ifNoneMatch = requestHeaders.getHeaderString(ETag.IF_NONE_MATCH_HEADER);
-		if (ETag.matches(ifNoneMatch, etag)) {
-			throw new WebApplicationException(Status.NOT_MODIFIED);
+		final List<String> ifNoneMatchValues = headers.getRequestHeader(ETag.IF_NONE_MATCH_HEADER);
+		if (ifNoneMatchValues == null) {
+			return;
+		}
+
+		for (String ifNoneMatch : ifNoneMatchValues) {
+			if (ETag.matches(ifNoneMatch, etag)) {
+				throw new WebApplicationException(Status.NOT_MODIFIED);
+			}
 		}
 	}
 

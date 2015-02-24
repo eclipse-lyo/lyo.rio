@@ -15,9 +15,6 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc.v3.sample.provider;
 
-import static org.eclipse.lyo.oslc.v3.sample.Constants.*;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
@@ -27,12 +24,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
+import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
+
+@Provider
 @Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
 public class ModelMessageBodyWriter implements MessageBodyWriter<Model> {
+	@Override
 	public boolean isWriteable(Class<?> type,
 							   Type genericType,
 							   Annotation[] annotations,
@@ -40,14 +45,16 @@ public class ModelMessageBodyWriter implements MessageBodyWriter<Model> {
 		return true;
 	}
 
+	@Override
 	public long getSize(Model t,
 						Class<?> type,
 						Type genericType,
 						Annotation[] annotations,
 						MediaType mediaType) {
-		return 0;
+		return -1;
 	}
 
+	@Override
 	public void writeTo(Model model,
 						Class<?> type,
 						Type genericType,
@@ -57,7 +64,7 @@ public class ModelMessageBodyWriter implements MessageBodyWriter<Model> {
 						OutputStream entityStream) throws IOException,
 			WebApplicationException {
 		final String lang;
-		if (mediaType.isCompatible(MediaType.valueOf("text/turtle"))) {
+		if (mediaType.isCompatible(MediaType.valueOf(TEXT_TURTLE))) {
 			lang = "TURTLE";
 		} else {
 			lang = "JSON-LD";

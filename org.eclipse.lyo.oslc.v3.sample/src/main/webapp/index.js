@@ -130,8 +130,8 @@ window.addEventListener("message", function(event) {
 
 function loadBugs() {
 	var request = $.ajax('r/bugs', {
-		accepts: 'text/turtle',
 		headers: {
+			Accept: 'text/turtle',
 			Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferContainment http://open-services.net/ns/core#PreferDialog"'
 		}
 	});
