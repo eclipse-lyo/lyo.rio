@@ -267,6 +267,8 @@ public class BugContainer {
 		dialog.addProperty(OSLC.label, "Open Bug");
 		String document = uriInfo.getBaseUriBuilder().path("../newBug.html").build().normalize().toString();
 		dialog.addProperty(OSLC.dialog, m.createResource(document));
+		dialog.addProperty(OSLC.hintWidth, "450px");
+		dialog.addProperty(OSLC.hintHeight, "385px");
 	}
 
 	private void setETagHeader(String etag) {

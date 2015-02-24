@@ -26,4 +26,6 @@ public class OSLC {
     public static final Resource Dialog = model.createResource(NS + "Dialog");
     public static final Property label = model.createProperty(NS + "label");
     public static final Property dialog = model.createProperty(NS + "dialog");
+    public static final Property hintHeight = model.createProperty(NS + "hintHeight");
+    public static final Property hintWidth = model.createProperty(NS + "hintWidth");
 }
