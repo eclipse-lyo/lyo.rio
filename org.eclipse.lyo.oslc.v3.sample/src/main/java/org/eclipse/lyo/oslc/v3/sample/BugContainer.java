@@ -246,9 +246,8 @@ public class BugContainer {
 		final Model bugModel = getBugModel(bugURI);
 		final Resource bug = bugModel.getResource("");
 		final String label = getBugLabel(bug);
-		final String document = uriInfo.getAbsolutePathBuilder().path("../preview").build().normalize().toString();
 
-		return createCompactModel(label, document);
+		return createCompactModel(label, bugURI);
 	}
 
 	@GET
