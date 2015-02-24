@@ -18,9 +18,6 @@ package org.eclipse.lyo.oslc.v3.sample;
 import java.net.URI;
 import java.util.Iterator;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response.Status;
-
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
@@ -41,6 +38,13 @@ public class Persistence {
 
 	private final Dataset dataset;
 
+	/**
+	 * An ETag for the container based on the containment. The other properties
+	 * of the container are not editable, so we can simply create a new ETag
+	 * value when bugs are added or removed.
+	 */
+	private String etag;
+
 	private Persistence() {
 		TDB.getContext().set(TDB.symUnionDefaultGraph, true);
 		TDB.setOptimizerWarningFlag(false);
@@ -51,72 +55,67 @@ public class Persistence {
 		} else {
 			dataset = TDBFactory.createDataset(DATASET_DIR);
 		}
+		etag = ETag.generateRandom();
 	}
 
 	public static Persistence getInstance() {
 		return instance;
 	}
 
-	public void addContainmentTriples(Resource container) {
+	public void readLock() {
 		dataset.begin(ReadWrite.READ);
-		try {
-			final Model model = container.getModel();
-			final Iterator<Node> iter = dataset.asDatasetGraph().listGraphNodes();
-			while (iter.hasNext()) {
-				Node n = iter.next();
-				container.addProperty(model.createProperty(LDP, "contains"),
-				                      model.createResource(n.getURI()));
-			}
-		} finally {
-			dataset.end();
+	}
+
+	public void writeLock() {
+		dataset.begin(ReadWrite.WRITE);
+	}
+
+	public void commit() {
+		dataset.commit();
+	}
+
+	public void end() {
+		dataset.end();
+	}
+
+	/**
+	 * Gets the ETag for the container.
+	 *
+	 * @return
+	 */
+	public String getETag() {
+		return etag;
+	}
+
+	public void addContainmentTriples(Resource container) {
+		final Model model = container.getModel();
+		final Iterator<Node> iter = dataset.asDatasetGraph().listGraphNodes();
+		while (iter.hasNext()) {
+			Node n = iter.next();
+			container.addProperty(model.createProperty(LDP, "contains"),
+			                      model.createResource(n.getURI()));
 		}
 	}
 
 	public void addBugModel(Model m, URI location) {
-		dataset.begin(ReadWrite.WRITE);
-		try {
-			dataset.addNamedModel(location.toString(), m);
-			dataset.commit();
-		} finally {
-			dataset.end();
-		}
+		dataset.addNamedModel(location.toString(), m);
+
+		// Generate a new ETag value.
+		etag = ETag.generateRandom();
 	}
 
 	public Model getBugModel(String uri) {
-		dataset.begin(ReadWrite.READ);
-		try {
-			verifyBugExists(uri);
-			return dataset.getNamedModel(uri);
-		} finally {
-			dataset.end();
-		}
+		return dataset.getNamedModel(uri);
 	}
 
 	public void removeBug(String uri) {
-		dataset.begin(ReadWrite.WRITE);
-		try {
-			verifyBugExists(uri);
-			dataset.removeNamedModel(uri);
-			dataset.commit();
-		} finally {
-			dataset.end();
-		}
+		dataset.removeNamedModel(uri);
+
+		// Generate a new ETag value.
+		etag = ETag.generateRandom();
 	}
 
-	public void verifyBugExists(String uri) {
-		final boolean newTransaction = !dataset.isInTransaction();
-		if (newTransaction) {
-			dataset.begin(ReadWrite.READ);
-		}
-
-		try {
-			if (!dataset.containsNamedModel(uri)) {
-				throw new WebApplicationException(Status.NOT_FOUND);
-			}
-		} finally {
-			if (newTransaction) {
-				dataset.end();
-			}
-		}
+	public boolean exists(String uri) {
+		return dataset.containsNamedModel(uri);
 	}
 }

@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc.v3.sample;
 
-import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,14 +28,15 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HeaderElement;
+import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC_CM;
@@ -54,9 +54,12 @@ import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
 
 @Path("/bugs")
 public class BugContainer {
-	@Context HttpServletResponse response;
+	@Context HttpServletResponse httpResponse;
 	@Context UriInfo uriInfo;
-	@Context HttpHeaders headers;
+	@Context HttpHeaders requestHeaders;
+
+	private Set<String> include = new HashSet<String>();
+	private Set<String> omit = new HashSet<String>();
 
 	@GET
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
@@ -69,17 +72,56 @@ public class BugContainer {
 				                        response.getResource(LDP + "BasicContainer"));
 		container.addProperty(DCTerms.title, "Bug Container");
 
-		Set<String> includeParameters = getIncludeParameters();
-		if (includeParameters.contains(OSLC.NS + "PreferDialog")) {
-			this.response.setHeader("Preference-Applied", "return=representation");
-			createDialogResource(response);
+		// Check the Prefer header to see what to include or omit.
+		parsePrefer();
+
+		// Use a read lock so the containment triples match the ETag.
+		Persistence.getInstance().readLock();
+		try {
+			String etag = Persistence.getInstance().getETag();
+			testIfNoneMatch(etag);
+			setETagHeader(etag);
+
+			// Include dialogs?
+			if (include.contains(OSLC.NS + "PreferDialog")) {
+				setPreferenceAppliedHeader();
+				createDialogResource(response);
+			}
+
+			// Include containment by default. This is up to the server.
+			boolean includeContainment = true;
+
+			// Include containment?
+			if (include.contains(LDP + "PreferContainment")) {
+				setPreferenceAppliedHeader();
+			} else if (include.contains(LDP + "PreferMinimalContainer")
+					|| omit.contains(LDP + "PreferContainment")) {
+				setPreferenceAppliedHeader();
+				includeContainment = false;
+			}
+
+			if (includeContainment) {
+				Persistence.getInstance().addContainmentTriples(container);
+			}
+		} finally {
+			Persistence.getInstance().end();
 		}
 
-		Persistence.getInstance().addContainmentTriples(container);
-
-		setETagHeader(response);
-
 		return response;
+	}
+
+	private void testIfNoneMatch(String etag) {
+		final String ifNoneMatch = requestHeaders.getHeaderString(ETag.IF_NONE_MATCH_HEADER);
+		if (ETag.matches(ifNoneMatch, etag)) {
+			throw new WebApplicationException(Status.NOT_MODIFIED);
+		}
+	}
+
+	/**
+	 * Sets the Preference-Applied httpResponse header for preference <code>return=representation</code>.
+	 */
+	private void setPreferenceAppliedHeader() {
+		this.httpResponse.setHeader("Preference-Applied", "return=representation");
 	}
 
 	@OPTIONS
@@ -91,26 +133,37 @@ public class BugContainer {
 	@Path("creationDialog")
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
 	public Model getCreationDialogDescriptor() {
-		setDialogDescriptorResponseHeaders();
 		Model response = createDialogModel();
-		setETagHeader(response);
-
 		return response;
 	}
 
 	@OPTIONS
 	@Path("creationDialog")
 	public void creationDialogDescriptorOptions() {
-		setDialogDescriptorResponseHeaders();
+		// Prefill is not yet supported.
+		httpResponse.addHeader("Allow", "GET,HEAD,OPTIONS");
 	}
 
 	@GET
 	@Path("{id}")
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
 	public Model getBug() {
-		Model response = Persistence.getInstance().getBugModel(requestURI());
+		Persistence.getInstance().readLock();
+		final Model response;
+		try {
+			response = Persistence.getInstance().getBugModel(requestURI());
+		} finally {
+			Persistence.getInstance().end();
+		}
+
+		if (response == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+
 		setResourceResponseHeaders();
-		setETagHeader(response);
+		String etag = ETag.generate(response);
+		testIfNoneMatch(etag);
+		setETagHeader(etag);
 
 		return response;
 	}
@@ -118,20 +171,36 @@ public class BugContainer {
 	@DELETE
 	@Path("{id}")
 	public Response deleteBug() {
-		Persistence.getInstance().removeBug(requestURI());
+		Persistence.getInstance().writeLock();
+		try {
+			verifyBugExists();
+			Persistence.getInstance().removeBug(requestURI());
+			Persistence.getInstance().commit();
+		} finally {
+			Persistence.getInstance().end();
+		}
+
 		return Response.noContent().build();
 	}
 
 	@OPTIONS
 	@Path("{id}")
 	public void bugOptions() {
-		Persistence.getInstance().verifyBugExists(requestURI());
+		Persistence.getInstance().readLock();
+		try {
+			verifyBugExists();
+		} finally {
+			Persistence.getInstance().end();
+		}
+
 		setResourceResponseHeaders();
 	}
 
 	@POST
 	@Consumes({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
 	public Response createBug(Model m) {
+		setContainerResponseHeaders();
+
 		if (System.getProperty("constrainContent") != null
 				&& !m.contains(m.getResource(""),
 				               RDF.type,
@@ -141,25 +210,30 @@ public class BugContainer {
 
 		String id = UUID.randomUUID().toString();
 		URI location = uriInfo.getAbsolutePathBuilder().path(id).build();
-		Persistence.getInstance().addBugModel(m, location);
-		setContainerResponseHeaders();
+		Persistence.getInstance().writeLock();
+		try {
+			Persistence.getInstance().addBugModel(m, location);
+			Persistence.getInstance().commit();
+		} finally {
+			Persistence.getInstance().end();
+		}
 
 		return Response.created(location).build();
 	}
 
 	private void setContainerResponseHeaders() {
 		// LDP Headers
-		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
-		response.addHeader("Link", "<" + LDP + "BasicContainer>;rel=type");
-		response.addHeader("Allow", "GET,HEAD,POST,OPTIONS");
-		response.addHeader("Accept-Post", TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
+		httpResponse.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
+		httpResponse.addHeader("Link", "<" + LDP + "BasicContainer>;rel=type");
+		httpResponse.addHeader("Allow", "GET,HEAD,POST,OPTIONS");
+		httpResponse.addHeader("Accept-Post", TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
 
 		// LDP constrainedBy header should point to the resource shape
 		URI shape = uriInfo.getBaseUriBuilder().path("../Defect-shape.ttl").build().normalize();
-		response.addHeader("Link", "<" + shape + ">;rel=\"" + Constants.LINK_REL_CONSTRAINED_BY + "\"");
+		httpResponse.addHeader("Link", "<" + shape + ">;rel=\"" + Constants.LINK_REL_CONSTRAINED_BY + "\"");
 
 		// OSLC Creation Dialog
-		response.addHeader("Link", "<" + getDialogURI() + ">;rel=\"" + OSLC.NS + "creationDialog\"");
+		httpResponse.addHeader("Link", "<" + getDialogURI() + ">;rel=\"" + OSLC.NS + "creationDialog\"");
 	}
 
 	private URI getDialogURI() {
@@ -167,13 +241,8 @@ public class BugContainer {
 	}
 
 	private void setResourceResponseHeaders() {
-		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
-		response.addHeader("Allow", "GET,HEAD,OPTIONS,DELETE");
-	}
-
-	private void setDialogDescriptorResponseHeaders() {
-		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
-		response.addHeader("Allow", "GET,HEAD,OPTIONS");
+		httpResponse.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
+		httpResponse.addHeader("Allow", "GET,HEAD,OPTIONS,DELETE");
 	}
 
 	private Model createDialogModel() {
@@ -190,49 +259,41 @@ public class BugContainer {
 		dialog.addProperty(OSLC.dialog, m.createResource(document));
 	}
 
-	/**
-	 * Create a weak ETag value from a Jena model.
-	 *
-	 * @param m the model that represents the HTTP response body
-	 * @return an ETag value
-	 *
-	 * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19">HTTP 1.1: Section 14.19 - ETag</a>
-	 */
-	private String getETag(Model m) {
-		// Get the MD5 hash of the model as N-Triples.
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		m.write(out,  "N-TRIPLE");
-		String md5 = DigestUtils.md5Hex(out.toByteArray());
-
-		// Create a weak entity tag from the MD5 hash.
-		return "W/\"" + md5 + "\"";
-	}
-
-	private void setETagHeader(Model m) {
-		response.addHeader("ETag", getETag(m));
+	private void setETagHeader(String etag) {
+		httpResponse.addHeader("ETag", etag);
 	}
 
 	private String requestURI() {
 		return uriInfo.getAbsolutePath().toString();
 	}
 
-	private Set<String> getIncludeParameters() {
-		Set<String> include = new HashSet<String>();
-		String prefer = headers.getHeaderString("Prefer");
+	private void verifyBugExists() {
+		if (!Persistence.getInstance().exists(requestURI())) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+	}
+
+	private void parsePrefer() {
+		String prefer = requestHeaders.getHeaderString("Prefer");
 		if (prefer != null) {
 			HeaderElement[] preferElements = BasicHeaderValueParser.parseElements(prefer, null);
 			for (HeaderElement e : preferElements) {
 				if ("return".equals(e.getName()) && "representation".equals(e.getValue())) {
-					String includeValue = e.getParameterByName("include").getValue();
-					if (includeValue != null) {
-						for (String s : includeValue.split(" ")) {
-							include.add(s);
-						}
-					}
+					addValues(e.getParameterByName("include"), include);
+					addValues(e.getParameterByName("omit"), omit);
 				}
 			}
 		}
+	}
 
-		return include;
+	private void addValues(NameValuePair parameter, Set<String> values) {
+		if (parameter != null) {
+			String parameterValue = parameter.getValue();
+			if (parameterValue != null) {
+				for (String s : parameterValue.split(" ")) {
+					values.add(s);
+				}
+			}
+		}
 	}
 }
