@@ -25,6 +25,6 @@ div {
 }
 
 .description {
-    white-space: pre;
+    white-space: pre-wrap;
     margin-left: 15px;
 }

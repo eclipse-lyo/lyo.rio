@@ -69,7 +69,7 @@ public class BugContainer {
 	@Context private UriInfo uriInfo;
 	@Context private HttpHeaders headers;
 
-	private static final String PREVIEW_HEIGHT = "200px";
+	private static final String PREVIEW_HEIGHT = "150px";
 	private static final String PREVIEW_WIDTH = "300px";
 
 	private Set<String> include = new HashSet<String>();

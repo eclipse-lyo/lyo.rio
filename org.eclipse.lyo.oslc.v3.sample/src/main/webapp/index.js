@@ -51,7 +51,7 @@ function createBug(bug) {
 	var content = $.extend({
 		"@id": "",
 		"@type": "Defect",
-		"@context": context,
+		"@context": context
 	}, bug);
 
 	return $.ajax({
@@ -95,6 +95,80 @@ function showDialog() {
 	$('.dialog').css('display', '');
 }
 
+function getCompact(uri) {
+	return $.ajax(uri, {
+		headers: {
+			Accept: 'application/json',
+			Prefer: 'return=representation; include="http://open-services.net/ns/core#PreferCompact"'
+		}
+	});
+}
+
+function createPreview(link, compact) {
+	var offset = link.offset();
+	preview = $('<div class="preview"/>').css({
+			top: offset.top + 30 + "px",
+			left: offset.left + 10 + "px",
+			display: 'none'
+	});
+
+	if (compact.title) {
+		// FIXME: markup?
+		link.text(compact.title);
+		preview.append($('<div class="previewTitle"/>').text(compact.title));
+	}
+
+	var p = compact.smallPreview || compact.largePreview;
+	if (p) {
+		var document = p.document;
+		var width = p.hintWidth || '400px';
+		var height = p.hintHeight || '300px';
+		preview.append($('<iframe/>', {
+					src: document
+		}).css({
+				width: width,
+				height: height,
+				border: 0
+		}));
+		preview.appendTo('body').fadeIn('fast');
+	}
+
+	return preview;
+}
+
+function setupPreview(link, uri) {
+	var preview;
+	var mouseInsidePreview = false;
+
+	// Show the preview on hover.
+	link.hover(function() {
+		var request = getCompact(uri);
+		request.done(function(data) {
+			if (preview) {
+				preview.fadeIn('fast');
+			} else if (data.compact) {
+				preview = createPreview(link, data.compact);
+				preview.hover(function() {
+					mouseInsidePreview = true;
+				}, function() {
+					mouseInsidePreview = false;
+					preview.fadeOut('fast');
+				});
+			}
+		});
+	}, function() {
+		if (preview) {
+			// Allow the user to move the mouse into the preview without it
+			// disappearing.
+			setTimeout(function() {
+				if (!mouseInsidePreview) {
+					preview.fadeOut('fast');
+				}
+			}, 500);
+		}
+	});
+}
+
 window.addEventListener("message", function(event) {
 	var sameOrigin =
 		location.protocol + '//' + location.hostname +
@@ -119,6 +193,7 @@ window.addEventListener("message", function(event) {
 			href: uri
 		}).text(label || uri);
 		$('#message').empty().text('New bug: ').append(link);
+		setupPreview(link, uri);
 	}
 
 	loadBugs();

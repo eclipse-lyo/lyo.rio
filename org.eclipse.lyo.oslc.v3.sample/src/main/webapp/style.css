@@ -54,14 +54,17 @@ select {
     height: 250px;
 }
 
-.dialog {
+.dialog, .preview {
     box-shadow: 7px 7px 8px #818181;
     border: solid 1px #cccccc;
-    top: 100px;
-    left: 100px;
     background: #ffffff;
     position: absolute;
     z-index: 1000;
+}
+
+.dialog {
+    top: 100px;
+    left: 100px;
 }
 
 .dialogTitle {
@@ -71,4 +74,11 @@ select {
     font-size: 9pt;
     height: 20px;
     text-align: left;
+}
+
+.previewTitle {
+    color: #555794;
+    background-color: #f9f9f9;
+    padding: 5px;
+    border-bottom: 1px #cccccc solid;
 }

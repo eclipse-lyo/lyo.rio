@@ -25,7 +25,6 @@
     <link rel="shortcut icon" href="${baseURI}oslc-16x16.png">
 </head>
 <body>
-    <img class="logo" src="${baseURI}/oslc-192x192.png">
     <div>
         <label for="severity">Severity:</label>
         <span id="severity"><c:out value="${severity}" default="Unassigned"/></span>
