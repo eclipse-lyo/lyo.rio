@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc.v3.sample;
 
-import javax.ws.rs.core.MediaType;
 
 public class Constants {
 	// Media types

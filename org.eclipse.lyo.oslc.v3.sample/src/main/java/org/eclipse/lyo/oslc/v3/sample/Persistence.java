@@ -18,9 +18,6 @@ package org.eclipse.lyo.oslc.v3.sample;
 import java.net.URI;
 import java.util.Iterator;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response.Status;
-
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
@@ -33,6 +30,11 @@ import com.hp.hpl.jena.tdb.sys.SystemTDB;
 
 import static org.eclipse.lyo.oslc.v3.sample.Constants.LDP;
 
+/**
+ * Stores resources using Jena TDB. Each resource has its own graph in the
+ * dataset where the graph name is the resource URI. Defaults to an in-memory
+ * dataset unless system property <code>dataset.dir</code> is set.
+ */
 public class Persistence {
 	private final static Persistence instance = new Persistence();
 
@@ -57,66 +59,65 @@ public class Persistence {
 		return instance;
 	}
 
-	public void addContainmentTriples(Resource container) {
+	/**
+	 * Begins a read transaction.
+	 *
+	 * @see <a href="https://jena.apache.org/documentation/tdb/tdb_transactions.html">TDB Transactions</a>
+	 */
+	public void readLock() {
 		dataset.begin(ReadWrite.READ);
-		try {
-			final Model model = container.getModel();
-			final Iterator<Node> iter = dataset.asDatasetGraph().listGraphNodes();
-			while (iter.hasNext()) {
-				Node n = iter.next();
-				container.addProperty(model.createProperty(LDP, "contains"),
-				                      model.createResource(n.getURI()));
-			}
-		} finally {
-			dataset.end();
+	}
+
+	/**
+	 * Begins a write transaction.
+	 *
+	 * @see <a href="https://jena.apache.org/documentation/tdb/tdb_transactions.html">TDB Transactions</a>
+	 */
+	public void writeLock() {
+		dataset.begin(ReadWrite.WRITE);
+	}
+
+	/**
+	 * Commits the changes.
+	 *
+	 * @see <a href="https://jena.apache.org/documentation/tdb/tdb_transactions.html">TDB Transactions</a>
+	 */
+	public void commit() {
+		dataset.commit();
+	}
+
+	/**
+	 * Ends the transaction.
+	 *
+	 * @see <a href="https://jena.apache.org/documentation/tdb/tdb_transactions.html">TDB Transactions</a>
+	 */
+	public void end() {
+		dataset.end();
+	}
+
+	public void addContainmentTriples(Resource container) {
+		final Model model = container.getModel();
+		final Iterator<Node> iter = dataset.asDatasetGraph().listGraphNodes();
+		while (iter.hasNext()) {
+			Node n = iter.next();
+			container.addProperty(model.createProperty(LDP, "contains"),
+			                      model.createResource(n.getURI()));
 		}
 	}
 
 	public void addBugModel(Model m, URI location) {
-		dataset.begin(ReadWrite.WRITE);
-		try {
-			dataset.addNamedModel(location.toString(), m);
-			dataset.commit();
-		} finally {
-			dataset.end();
-		}
+		dataset.addNamedModel(location.toString(), m);
 	}
 
 	public Model getBugModel(String uri) {
-		dataset.begin(ReadWrite.READ);
-		try {
-			verifyBugExists(uri);
-			return dataset.getNamedModel(uri);
-		} finally {
-			dataset.end();
-		}
+		return dataset.getNamedModel(uri);
 	}
 
-	public void removeBug(String uri) {
-		dataset.begin(ReadWrite.WRITE);
-		try {
-			verifyBugExists(uri);
-			dataset.removeNamedModel(uri);
-			dataset.commit();
-		} finally {
-			dataset.end();
-		}
+	public void removeBugModel(String uri) {
+		dataset.removeNamedModel(uri);
 	}
 
-	public void verifyBugExists(String uri) {
-		final boolean newTransaction = !dataset.isInTransaction();
-		if (newTransaction) {
-			dataset.begin(ReadWrite.READ);
-		}
-
-		try {
-			if (!dataset.containsNamedModel(uri)) {
-				throw new WebApplicationException(Status.NOT_FOUND);
-			}
-		} finally {
-			if (newTransaction) {
-				dataset.end();
-			}
-		}
+	public boolean exists(String uri) {
+		return dataset.containsNamedModel(uri);
 	}
 }
