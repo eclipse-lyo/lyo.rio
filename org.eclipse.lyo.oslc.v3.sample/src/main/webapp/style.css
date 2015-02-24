@@ -31,20 +31,25 @@ body {
     margin: 10px 0;
 }
 
-label {
-    min-width: 50px;
-    display: inline-block;
+form label {
     line-height: 15px;
     font-size: 11pt;
+    color: #555555;
+}
+
+select {
+    margin-bottom: 10px;
 }
 
 .input {
     border: 1px solid #cccccc;
     margin-bottom: 10px;
-    width: 450px;
+    width: 400px;
 }
 
 .description {
+    margin-top: 3px;
+    width: 400px;
     height: 250px;
 }
 

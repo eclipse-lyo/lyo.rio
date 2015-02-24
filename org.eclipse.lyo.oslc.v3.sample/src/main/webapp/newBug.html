@@ -25,6 +25,19 @@
   <link rel="shortcut icon" href="oslc-16x16.png">
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script type="text/javascript">
+      // Our JSON-LD context for creating defects
+      var context = {
+          oslc_cm: "http://open-services.net/ns/cm#",
+          dcterms: "http://purl.org/dc/terms/",
+          Defect: "oslc_cm:Defect",
+          description: "dcterms:description",
+          severity: {
+              "@id": "oslc_cm:severity",
+              "@type": "@id"
+          },
+          title: "dcterms:title"
+      };
+
       function sendMessage(response) {
           (window.parent || window).postMessage("oslc-response:" + JSON.stringify(response), "*");
       }
@@ -33,13 +46,11 @@
           // Post the form as JSON-LD to the bug container.
           var bug = {
               "@id": "",
-              "@type": "http://open-services.net/ns/cm#Defect",
+              "@type": "Defect",
+              "@context": context,
               title: $("#title").val(),
               description: $("#description").val(),
-              "@context": {
-                  "title": "http://purl.org/dc/terms/title",
-                  "description": "http://purl.org/dc/terms/description"
-              }
+              severity: $("#severity").val()
           };
 
           var request = $.ajax({
@@ -80,20 +91,30 @@
 </head>
 
 <body>
-<form>
-<div>
-<input id="title" type="text" class="input" required autofocus placeholder="Enter bug title"></input>
-</div>
-<div>
-<label for="description">Description:</label>
-</div>
-<div>
-<textarea id="description" class="input description"></textarea>
-</div>
-<div>
-<input type="submit" name="OK"></input>
-<button id="cancel">Cancel</button>
-</div>
-</form>
+    <form>
+        <div>
+            <input id="title" type="text" class="input" required autofocus placeholder="Enter bug title"></input>
+        </div>
+        <div>
+            <label for="severity">Severity:</label>
+            <select id="severity">
+                <option value="oslc_cm:Blocker">Blocker</option>
+                <option value="oslc_cm:Critical">Critical</option>
+                <option value="oslc_cm:Major">Major</option>
+                <option value="oslc_cm:Normal" selected>Normal</option>
+                <option value="oslc_cm:Minor">Minor</option>
+            </select>
+        </div>
+        <div>
+            <label for="description">Description:</label>
+        </div>
+        <div>
+            <textarea id="description" class="input description"></textarea>
+        </div>
+        <div>
+            <input type="submit" name="OK"></input>
+            <button id="cancel">Cancel</button>
+        </div>
+    </form>
 </body>
 </html>
