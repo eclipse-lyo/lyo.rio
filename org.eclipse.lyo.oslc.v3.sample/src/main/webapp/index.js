@@ -95,14 +95,18 @@ function createSampleBugs() {
 }
 
 function showDialog() {
-	$('<iframe/>', {
-		src: 'newBug.html'
-	}).css({
-		border: 0,
-		width: '450px',
-		height: '395px'
-	}).appendTo('#dialogContainer');
-	$('.dialog').fadeIn('fast');
+	var dialog = $('.dialog');
+	// Do nothing if it's already showing.
+	if (dialog.is(':hidden')) {
+		$('<iframe/>', {
+			src: 'newBug.html'
+		}).css({
+			border: 0,
+			width: '450px',
+			height: '395px'
+		}).appendTo('#dialogContainer');
+		dialog.fadeIn('fast');
+	}
 }
 
 function getCompact(uri) {
@@ -195,8 +199,7 @@ function showOnHover(link, preview) {
 
 			// Hide any other previews and show this one.
 			$('.preview').fadeOut('fast').promise().done(function() {
-				console.log('faded out done');
-				preview.fadeIn('fast');
+				if (preview.is(':hidden')) preview.fadeIn('fast');
 			});
 		}, 350);
 	}, function() {
