@@ -15,12 +15,19 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc.v3.sample;
 
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ReadWrite;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDB;
@@ -44,7 +51,6 @@ public class Persistence {
 	private final Dataset dataset;
 
 	private Persistence() {
-		TDB.getContext().set(TDB.symUnionDefaultGraph, true);
 		TDB.setOptimizerWarningFlag(false);
 		SystemTDB.setFileMode(FileMode.direct) ;
 		System.out.println("Using dataset directory: " + DATASET_DIR);
@@ -123,5 +129,17 @@ public class Persistence {
 
 	public boolean exists(String uri) {
 		return dataset.containsNamedModel(uri);
+	}
+
+	public void query(String queryString, OutputStream out) {
+		Query query = QueryFactory.create(queryString);
+		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
+		qexec.getContext().set(TDB.symUnionDefaultGraph, true);
+		ResultSet result = qexec.execSelect();
+		try {
+			ResultSetFormatter.outputAsJSON(out, result);
+		} finally {
+			qexec.close();
+		}
 	}
 }

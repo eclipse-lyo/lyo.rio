@@ -20,6 +20,8 @@ public class Constants {
 	// Media types
 	public static final String TEXT_TURTLE = "text/turtle";
 	public static final String APPLICATION_JSON_LD = "application/ld+json";
+	public static final String APPLICATION_SPARQL_QUERY = "application/sparql-query";
+	public static final String APPLICATION_SPARQL_RESULTS_JSON = "application/sparql-results+json";
 
 	/**
 	 * LDP namespace

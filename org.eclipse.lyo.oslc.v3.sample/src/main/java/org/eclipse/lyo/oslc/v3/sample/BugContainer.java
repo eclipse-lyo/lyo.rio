@@ -16,6 +16,8 @@
 package org.eclipse.lyo.oslc.v3.sample;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +42,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
@@ -55,10 +58,11 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.vocabulary.DCTerms;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
+import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_SPARQL_QUERY;
+import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_SPARQL_RESULTS_JSON;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.LDP;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
 
@@ -166,7 +170,7 @@ public class BugContainer {
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD })
 	public Model getBugRDF() {
 		final String bugURI = getRequestURI();
-		final Model bugModel = getBugModel(getRequestURI());
+		final Model bugModel = getBugModel(bugURI);
 		setBugResponseHeaders();
 
 		final String etag = ETag.generate(bugModel);
@@ -182,7 +186,7 @@ public class BugContainer {
 
 		// Compact requested.
 		setPreferenceAppliedHeader();
-		final Resource bug = bugModel.getResource("");
+		final Resource bug = bugModel.getResource(bugURI);
 		Model compactModel = createCompactModel(getBugLabel(bug), bugURI);
 
 		// Add in the Bug triples (not required, but we have them).
@@ -225,7 +229,7 @@ public class BugContainer {
 	private JsonObject createCompactJSON(final String bugURI, final Model bugModel) {
 		final JsonObject compact = new JsonObject();
 
-		final Resource bug = bugModel.getResource("");
+		final Resource bug = bugModel.getResource(bugURI);
 		compact.put("title", getBugLabel(bug));
 		compact.put("icon", getIconURI().toString());
 
@@ -245,7 +249,7 @@ public class BugContainer {
 	public Model getCompactRDF(@PathParam("id") String id) {
 		final String bugURI = getBugURI(id);
 		final Model bugModel = getBugModel(bugURI);
-		final Resource bug = bugModel.getResource("");
+		final Resource bug = bugModel.getResource(bugURI);
 		final String label = getBugLabel(bug);
 
 		return createCompactModel(label, bugURI);
@@ -270,7 +274,7 @@ public class BugContainer {
 
 		final String bugURI = getBugURI(id);
 		final Model model = getBugModel(bugURI);
-		final Resource r = model.getResource("");
+		final Resource r = model.getResource(bugURI);
 
 		final Statement severity = r.getProperty(OSLC_CM.severity);
 		if (severity != null && severity.getObject().isURIResource()) {
@@ -317,19 +321,32 @@ public class BugContainer {
 	}
 
 	@POST
-	@Consumes({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
-	public Response createBug(Model m) {
+	@Consumes(TEXT_TURTLE)
+	public Response createBugTurtle(InputStream in) {
+		return createBug(in, "TURTLE");
+	}
+
+	@POST
+	@Consumes({ APPLICATION_JSON_LD, APPLICATION_JSON })
+	public Response createBugJSON(InputStream in) {
+		return createBug(in, "JSON-LD");
+	}
+
+	private Response createBug(InputStream in, String lang) {
 		setContainerResponseHeaders();
 
-		if (System.getProperty("constrainContent") != null
-				&& !m.contains(m.getResource(""),
-				               RDF.type,
-				               OSLC_CM.Defect)) {
-			return Response.status(Status.CONFLICT).build();
+		// Create a URI.
+		final String id = UUID.randomUUID().toString();
+		final URI location = uriInfo.getAbsolutePathBuilder().path(id).build();
+
+		// Read the model ourselves so we can set the correct base to resolve relative URIs.
+		final Model m = ModelFactory.createDefaultModel();
+		try {
+			m.read(in, location.toString(), lang);
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).build();
 		}
 
-		String id = UUID.randomUUID().toString();
-		URI location = uriInfo.getAbsolutePathBuilder().path(id).build();
 		Persistence.getInstance().writeLock();
 		try {
 			Persistence.getInstance().addBugModel(m, location);
@@ -340,6 +357,26 @@ public class BugContainer {
 		}
 
 		return Response.created(location).build();
+	}
+
+	@POST
+	@Path("sparql")
+	@Consumes(APPLICATION_SPARQL_QUERY)
+	@Produces(APPLICATION_SPARQL_RESULTS_JSON)
+	public StreamingOutput postQuery(final String queryString) {
+		return new StreamingOutput() {
+			public void write(OutputStream out) throws IOException, WebApplicationException {
+				Persistence.getInstance().readLock();
+				try {
+					Persistence.getInstance().query(queryString, out);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new WebApplicationException(Response.status(Status.BAD_REQUEST).build());
+				} finally {
+					Persistence.getInstance().end();
+				}
+			}
+		};
 	}
 
 	private String getBaseURI() {
