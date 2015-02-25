@@ -103,11 +103,12 @@
                 <version>2.8</version>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>8.1.14.v20131031</version>
+                <version>9.2.2.v20140723</version>
 
                 <configuration>
+                    <webAppSourceDirectory>${basedir}/WebContent</webAppSourceDirectory>
                     <webAppConfig>
                         <contextPath>/OSLC4JChangeManagement</contextPath>
                     </webAppConfig>
