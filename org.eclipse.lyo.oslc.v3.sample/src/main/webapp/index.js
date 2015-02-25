@@ -131,11 +131,11 @@ function createPreview(link, compact) {
 		return null;
 	}
 
+	// Position the preview to the right of the link with some padding.
 	var offset = link.offset();
 	var previewDiv = $('<div class="preview"/>').css({
-			top: offset.top + 30 + "px",
-			left: offset.left + 10 + "px",
-			display: 'none'
+		left: offset.left + link.width() + 25 + 'px',
+		display: 'none'
 	});
 
 	if (compact.title) {
@@ -160,7 +160,7 @@ function createPreview(link, compact) {
 			height: height,
 			border: 0
 	}).appendTo(previewDiv);
-	previewDiv.appendTo('body');
+	link.after(previewDiv);
 
 	return previewDiv;
 }

@@ -59,9 +59,9 @@ select {
 }
 
 .dialog, .preview {
-    box-shadow: 7px 7px 8px #818181;
-    border: solid 1px #cccccc;
     background: #ffffff;
+    border: solid 1px #cccccc;
+    box-shadow: 7px 7px 8px #818181;
     position: absolute;
     z-index: 1000;
 }
@@ -78,6 +78,35 @@ select {
     font-size: 9pt;
     height: 20px;
     text-align: left;
+}
+
+.preview {
+    margin-top: -77px;
+}
+
+/* Use CSS to add a tooltip arrow */
+.preview:after, .preview:before {
+    right: 100%;
+    top: 50px;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+}
+
+.preview:after {
+    border-color: transparent;
+    border-right-color: #ffffff;
+    border-width: 17px;
+    margin-left: -17px;
+}
+
+.preview:before {
+    border-color: transparent;
+    border-right-color: #818181;
+    border-width: 18px;
+    margin-left: -18px;
 }
 
 .previewTitle {
