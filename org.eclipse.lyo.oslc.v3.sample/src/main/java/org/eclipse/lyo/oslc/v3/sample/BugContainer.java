@@ -398,7 +398,7 @@ public class BugContainer {
 		String document = uriInfo.getBaseUriBuilder().path("../newBug.html").build().normalize().toString();
 		dialog.addProperty(OSLC.dialog, m.createResource(document));
 		dialog.addProperty(OSLC.hintWidth, "450px");
-		dialog.addProperty(OSLC.hintHeight, "385px");
+		dialog.addProperty(OSLC.hintHeight, "395px");
 	}
 
 	private Model getBugModel(String uri) {

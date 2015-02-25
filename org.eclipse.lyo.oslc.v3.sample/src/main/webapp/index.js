@@ -90,7 +90,7 @@ function showDialog() {
 	}).css({
 		border: 0,
 		width: '450px',
-		height: '385px'
+		height: '395px'
 	}).appendTo('#dialogContainer');
 	$('.dialog').css('display', '');
 }
