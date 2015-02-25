@@ -65,17 +65,27 @@ function createBug(bug) {
 function createNextSample(i) {
 	var bug = sampleBugs[i];
 	var request = createBug(bug);
-	request.done(function() {
+	request.done(function(data, status, xhr) {
+		// Add the link.
+		var location = xhr.getResponseHeader('Location');
+		if (location) {
+			addLink(location, bug.title);
+		} else {
+			$('#message').text('Error creating bug: ' + bug.title + '. Stopping.');
+			return;
+		}
+
+		// Create the next bug.
 		i++;
 		if (i < sampleBugs.length) {
 			createNextSample(i);
 		} else {
-			$('#message').empty().text(sampleBugs.length + ' sample bugs created!');
+			$('#message').text(sampleBugs.length + ' sample bugs created!');
 			loadBugs();
 		}
 	});
 	request.fail(function() {
-		$('#message').empty().text('Error creating bug: ' + bug.title + '. Stopping.');
+		$('#message').text('Error creating bug: ' + bug.title + '. Stopping.');
 		loadBugs();
 	});
 }
@@ -104,69 +114,138 @@ function getCompact(uri) {
 	});
 }
 
+function createIcon(src) {
+	return $('<img/>', {
+		'class': 'icon',
+	   	src: src
+   	});
+}
+
 function createPreview(link, compact) {
+	var preview = compact.smallPreview || compact.largePreview;
+	if (!preview) {
+		return null;
+	}
+
 	var offset = link.offset();
-	preview = $('<div class="preview"/>').css({
+	var previewDiv = $('<div class="preview"/>').css({
 			top: offset.top + 30 + "px",
 			left: offset.left + 10 + "px",
 			display: 'none'
 	});
 
 	if (compact.title) {
+		var titleDiv = $('<div class="previewTitle"/>');
+		if (compact.icon) {
+			// Add an icon before the link.
+			createIcon(compact.icon).appendTo(titleDiv);
+		}
+
 		// FIXME: markup?
-		link.text(compact.title);
-		preview.append($('<div class="previewTitle"/>').text(compact.title));
+		$('<span/>').text(compact.title).appendTo(titleDiv);
+		previewDiv.append(titleDiv);
 	}
 
-	var p = compact.smallPreview || compact.largePreview;
-	if (p) {
-		var document = p.document;
-		var width = p.hintWidth || '400px';
-		var height = p.hintHeight || '300px';
-		preview.append($('<iframe/>', {
-					src: document
-		}).css({
-				width: width,
-				height: height,
-				border: 0
-		}));
-		preview.appendTo('body').fadeIn('fast');
-	}
+	var document = preview.document;
+	var width = preview.hintWidth || '400px';
+	var height = preview.hintHeight || '300px';
+	$('<iframe/>', {
+			src: document
+	}).css({
+			width: width,
+			height: height,
+			border: 0
+	}).appendTo(previewDiv);
+	previewDiv.appendTo('body');
 
-	return preview;
+	return previewDiv;
 }
 
-function setupPreview(link, uri) {
-	var preview;
+function updateLink(link, compact) {
+	if (compact.title) {
+		// FIXME: markup?
+		link.text(compact.title);
+	}
+
+	if (compact.icon) {
+		// Add an icon before the link.
+		createIcon(compact.icon).insertBefore(link);
+	}
+}
+
+function showOnHover(link, preview) {
+	if (!preview) {
+		return;
+	}
+
+	// Track whether the user moved the mouse into the preview itself.
 	var mouseInsidePreview = false;
+	var cancel = false;
 
 	// Show the preview on hover.
 	link.hover(function() {
-		var request = getCompact(uri);
-		request.done(function(data) {
-			if (preview) {
-				preview.fadeIn('fast');
-			} else if (data.compact) {
-				preview = createPreview(link, data.compact);
-				preview.hover(function() {
-					mouseInsidePreview = true;
-				}, function() {
-					mouseInsidePreview = false;
-					preview.fadeOut('fast');
-				});
+		cancel = false;
+		// Don't show preview until the mouse lingers just a bit.
+		// cancel will be true if the mouse leaves the area before
+		// the setTimeout callback.
+		setTimeout(function() {
+			if (cancel) {
+				return;
 			}
-		});
+
+			// Hide any other previews and show this one.
+			$('.preview').fadeOut('fast').promise().done(function() {
+				console.log('faded out done');
+				preview.fadeIn('fast');
+			});
+		}, 350);
 	}, function() {
-		if (preview) {
-			// Allow the user to move the mouse into the preview without it
-			// disappearing.
-			setTimeout(function() {
-				if (!mouseInsidePreview) {
-					preview.fadeOut('fast');
-				}
-			}, 500);
-		}
+		cancel = true;
+
+		// User is no longer hovering over the link.
+		// Allow the user to move the mouse into the preview without it
+		// disappearing.
+		setTimeout(function() {
+			if (!mouseInsidePreview) {
+				preview.fadeOut('fast');
+			}
+		}, 500);
 	});
+
+	preview.hover(function() {
+		mouseInsidePreview = true;
+	}, function() {
+		// Hide the preview when the user mouses out of the
+		// preview node.
+		mouseInsidePreview = false;
+		preview.fadeOut('fast');
+	});
+}
+
+function setupPreview(link, uri) {
+	// Request the Compact resource.
+	getCompact(uri).done(function(data) {
+		if (!data.compact) {
+			return;
+		}
+
+		// Update the icon and title of the link.
+		updateLink(link, data.compact);
+
+		// Create the preview.
+		var preview = createPreview(link, data.compact);
+		showOnHover(link, preview);
+	});
+}
+
+function addLink(uri, label) {
+	var div = $('<div/>');
+	var link = $('<a/>', {
+		href: uri
+	}).text(label || uri).appendTo(div);
+	$('#message').text('Bug created!');
+	$('#bugs').append(div);
+	setupPreview(link, uri);
 }
 
 window.addEventListener("message", function(event) {
@@ -189,11 +268,8 @@ window.addEventListener("message", function(event) {
 	for (var i = 0; i < results.length; i++) {
 		var label = results[i]["oslc:label"];
 		var uri = results[i]["rdf:resource"];
-		var link = $('<a/>', {
-			href: uri
-		}).text(label || uri);
-		$('#message').empty().text('New bug: ').append(link);
-		setupPreview(link, uri);
+		addLink(uri, label);
+		$('#message').text('Bug created!');
 	}
 
 	loadBugs();
@@ -213,7 +289,7 @@ function loadBugs() {
 	});
 
 	request.done(function(data) {
-		$('#bugs').text(data);
+		$('#container').text(data);
 	});
 }
 

@@ -227,6 +227,7 @@ public class BugContainer {
 
 		final Resource bug = bugModel.getResource("");
 		compact.put("title", getBugLabel(bug));
+		compact.put("icon", getIconURI().toString());
 
 		final JsonObject preview = new JsonObject();
 		final String document = UriBuilder.fromUri(bugURI).path("preview").build().toString();
@@ -353,6 +354,10 @@ public class BugContainer {
 		return uriInfo.getBaseUriBuilder().path("bugs/creationDialog").build();
 	}
 
+	private URI getIconURI() {
+		return uriInfo.getBaseUriBuilder().path("../oslc-16x16.png").build().normalize();
+	}
+
 	private String getRequestURI() {
 		return uriInfo.getAbsolutePath().toString();
 	}
@@ -373,6 +378,7 @@ public class BugContainer {
 		if (title != null) {
 			compact.addProperty(DCTerms.title, title);
 		}
+		compact.addProperty(OSLC.icon, m.createResource(getIconURI().toString()));
 
 		Resource preview = m.createResource(OSLC.Preview);
 		String document = UriBuilder.fromUri(bugURI).path("preview").build().toString();

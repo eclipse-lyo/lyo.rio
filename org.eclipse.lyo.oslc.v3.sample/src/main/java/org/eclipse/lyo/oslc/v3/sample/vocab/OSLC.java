@@ -33,6 +33,7 @@ public class OSLC {
     public static final Property document = model.createProperty(NS + "document");
     public static final Property hintHeight = model.createProperty(NS + "hintHeight");
     public static final Property hintWidth = model.createProperty(NS + "hintWidth");
+    public static final Property icon = model.createProperty(NS + "icon");
     public static final Property largePreview = model.createProperty(NS + "largePreview");
     public static final Property smallPreview = model.createProperty(NS + "smallPreview");
 }

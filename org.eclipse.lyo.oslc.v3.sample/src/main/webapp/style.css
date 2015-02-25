@@ -14,9 +14,13 @@ body {
     right: 10px;
 }
 
-.message {
+.message, .bugList {
     margin-top: 15px;
     margin-bottom: 15px;
+}
+
+.bugList div {
+    margin-bottom: 4px;
 }
 
 .fixed {
@@ -81,4 +85,11 @@ select {
     background-color: #f9f9f9;
     padding: 5px;
     border-bottom: 1px #cccccc solid;
+}
+
+.icon {
+    height: 16px;
+    margin-right: 4px;
+    vertical-align: middle;
+    width: 16px;
 }
