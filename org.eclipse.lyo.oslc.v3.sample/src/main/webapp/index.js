@@ -81,12 +81,10 @@ function createNextSample(i) {
 			createNextSample(i);
 		} else {
 			$('#message').text(sampleBugs.length + ' sample bugs created!');
-			loadBugs();
 		}
 	});
 	request.fail(function() {
 		$('#message').text('Error creating bug: ' + bug.title + '. Stopping.');
-		loadBugs();
 	});
 }
 
@@ -246,7 +244,6 @@ function addLink(uri, label) {
 	var link = $('<a/>', {
 		href: uri
 	}).text(label || uri).appendTo(div);
-	$('#message').text('Bug created!');
 	$('#bugs').append(div);
 	setupPreview(link, uri);
 }
@@ -272,10 +269,7 @@ window.addEventListener("message", function(event) {
 		var label = results[i]["oslc:label"];
 		var uri = results[i]["rdf:resource"];
 		addLink(uri, label);
-		$('#message').text('Bug created!');
 	}
-
-	loadBugs();
 
 	// Remove the dialog from the page.
 	$('.dialog').fadeOut('fast', function() {
@@ -284,20 +278,50 @@ window.addEventListener("message", function(event) {
 }, false);
 
 function loadBugs() {
-	var request = $.ajax('r/bugs', {
+	var query =
+		'PREFIX dcterms: <http://purl.org/dc/terms/> \
+		 PREFIX oslc_cm: <http://open-services.net/ns/cm#> \
+		 SELECT * WHERE { \
+			 ?defect a oslc_cm:Defect ;\
+			   dcterms:title ?title . \
+		 } LIMIT 50';
+
+	var request = $.ajax('r/bugs/sparql', {
 		headers: {
-			Accept: 'text/turtle',
-			Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferContainment http://open-services.net/ns/core#PreferDialog"'
-		}
+			Accept: 'application/sparql-results+json',
+			'Content-Type': 'application/sparql-query'
+		},
+		data: query,
+		type: 'post',
 	});
 
 	request.done(function(data) {
-		$('#container').text(data);
+		if (!data.results.bindings.length) {
+			// No bugs. Offer to create some.
+			$('<span>No bugs here. </span>').appendTo('#message');
+			$('<a/>', {
+				href: '#'
+			}).text('Create some?').
+				on('click', createSampleBugs).
+				appendTo('#message');
+		} else {
+			$.each(data.results.bindings, function(i, result) {
+				var uri = result.defect.value;
+				var label = result.title.value;
+				addLink(uri, label);
+			});
+		}
 	});
 }
 
 $(document).ready(function() {
-	$('#openBug').on('click', showDialog);
-	$('#createSample').on('click', createSampleBugs);
+	$('#openBug').on('click', function() {
+		$('#message').empty();
+		showDialog();
+	});
+	$('#createSample').on('click', function() {
+		$('#message').empty();
+		createSampleBugs();
+	});
 	loadBugs();
 });
