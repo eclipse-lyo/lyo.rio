@@ -92,7 +92,7 @@ function showDialog() {
 		width: '450px',
 		height: '395px'
 	}).appendTo('#dialogContainer');
-	$('.dialog').css('display', '');
+	$('.dialog').fadeIn('fast');
 }
 
 function getCompact(uri) {
@@ -199,8 +199,9 @@ window.addEventListener("message", function(event) {
 	loadBugs();
 
 	// Remove the dialog from the page.
-	$('#dialogContainer').empty();
-	$('.dialog').css('display', 'none');
+	$('.dialog').fadeOut('fast', function() {
+		$('#dialogContainer').empty();
+	});
 }, false);
 
 function loadBugs() {
