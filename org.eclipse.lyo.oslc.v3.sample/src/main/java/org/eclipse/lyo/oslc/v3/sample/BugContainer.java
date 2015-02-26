@@ -168,14 +168,6 @@ public class BugContainer {
 
 	@GET
 	@Path("{id}")
-	@Produces(TEXT_HTML)
-	public void getBugHTML() throws ServletException, IOException {
-		setRequestAttributes(getRequestURI());
-		request.getRequestDispatcher("/WEB-INF/bug.jsp").forward(request, response);
-	}
-
-	@GET
-	@Path("{id}")
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD })
 	public Model getBugRDF() {
 		final String bugURI = getRequestURI();
@@ -235,6 +227,23 @@ public class BugContainer {
 		return Response.ok(jsonResponse.toString()).build();
 	}
 
+	@GET
+	@Path("{id}")
+	@Produces(TEXT_HTML)
+	public void getBugHTML() throws ServletException, IOException {
+		final String bugURI = getRequestURI();
+		final Model model = getBugModel(getRequestURI());
+		setBugResponseHeaders();
+
+		final String etag = ETag.generate(model);
+		testIfNoneMatch(etag);
+		setETagHeader(etag);
+
+		setBugAttributes(model, bugURI);
+
+		request.getRequestDispatcher("/WEB-INF/bug.jsp").forward(request, response);
+	}
+
 	private JsonObject createCompactJSON(final String bugURI, final Model bugModel) {
 		final JsonObject compact = new JsonObject();
 
@@ -270,7 +279,7 @@ public class BugContainer {
 	public Response getCompactJSON(@PathParam("id") String id) {
 		final String bugURI = getBugURI(id);
 		final Model bugModel = getBugModel(bugURI);
-		JsonObject compact = createCompactJSON(bugURI, bugModel);
+		final JsonObject compact = createCompactJSON(bugURI, bugModel);
 
 		return Response.ok(compact.toString()).build();
 	}
@@ -280,16 +289,19 @@ public class BugContainer {
 	@Produces(TEXT_HTML)
 	public void getBugPreview(@PathParam("id") String id) throws ServletException, IOException {
 		final String bugURI = getBugURI(id);
-		setRequestAttributes(bugURI);
+		final Model m = getBugModel(bugURI);
+		final String etag = ETag.generate(m);
+		testIfNoneMatch(etag);
+		setETagHeader(etag);
+		setBugAttributes(m, bugURI);
 
 		request.getRequestDispatcher("/WEB-INF/preview.jsp").forward(request, response);
 	}
 
-	private void setRequestAttributes(final String bugURI)
+	private void setBugAttributes(Model model, String bugURI)
 			throws ServletException, IOException {
 		request.setAttribute("baseURI", getBaseURI());
-
-		final Model model = getBugModel(bugURI);
+		request.setAttribute("bugURI", bugURI);
 		final Resource r = model.getResource(bugURI);
 
 		final Statement title = r.getProperty(DCTerms.title);
