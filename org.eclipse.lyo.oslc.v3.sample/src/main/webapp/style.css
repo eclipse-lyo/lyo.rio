@@ -122,3 +122,17 @@ select {
     vertical-align: middle;
     width: 16px;
 }
+
+@media only screen and (max-device-width: 760px) {
+    .input, .description {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 95%;
+        font-size: 16px;
+    }
+
+    .description {
+        height: 150px;
+    }
+}

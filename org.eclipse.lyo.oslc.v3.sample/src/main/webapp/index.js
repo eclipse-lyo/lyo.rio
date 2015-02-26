@@ -14,6 +14,9 @@
  *     Samuel Padgett       - initial API and implementation
  *******************************************************************************/
 
+// Window for the OSLC dialog on mobile devies.
+var dialogWindow;
+
 // JSON-LD context for creating bugs
 var context = {
 	oslc_cm: "http://open-services.net/ns/cm#",
@@ -45,6 +48,16 @@ var sampleBugs = [{
 	severity: "oslc_cm:Minor",
 	description: "User is spelled 'luser'. I'm going to assume this is a mistake."
 }];
+
+function isTouch() {
+	return 'ontouchstart' in document.documentElement;
+}
+
+function isSmallScreen() {
+	return isTouch() &&
+		window.matchMedia &&
+		window.matchMedia("only screen and (max-width: 760px)").matches;
+}
 
 function createBug(bug) {
 	// Post the form as JSON-LD to the bug container.
@@ -93,17 +106,22 @@ function createSampleBugs() {
 }
 
 function showDialog() {
-	var dialog = $('.dialog');
-	// Do nothing if it's already showing.
-	if (dialog.is(':hidden')) {
-		$('<iframe/>', {
-			src: 'newBug.html'
-		}).css({
-			border: 0,
-			width: '450px',
-			height: '395px'
-		}).appendTo('#dialogContainer');
-		dialog.fadeIn('fast');
+	if (isSmallScreen()) {
+		// For small screens, open a new window.
+		dialogWindow = window.open('newBug.html', 'oslcDialog');
+	} else {
+		var dialog = $('.dialog');
+		// Do nothing if it's already showing.
+		if (dialog.is(':hidden')) {
+			$('<iframe/>', {
+				src: 'newBug.html'
+			}).css({
+				border: 0,
+				width: '450px',
+				height: '395px'
+			}).appendTo('#dialogContainer');
+			dialog.fadeIn('fast');
+		}
 	}
 }
 
@@ -271,10 +289,16 @@ window.addEventListener("message", function(event) {
 		addLink(uri, label);
 	}
 
-	// Remove the dialog from the page.
-	$('.dialog').fadeOut('fast', function() {
-		$('#dialogContainer').empty();
-	});
+	if (dialogWindow) {
+		// If we opened a separate window, close that.
+		dialogWindow.close();
+		dialogWindow = null;
+	} else {
+		// Otherwise remove the dialog from the page.
+		$('.dialog').fadeOut('fast', function() {
+			$('#dialogContainer').empty();
+		});
+	}
 }, false);
 
 function loadBugs() {
@@ -292,7 +316,7 @@ function loadBugs() {
 			'Content-Type': 'application/sparql-query'
 		},
 		data: query,
-		type: 'post',
+		type: 'post'
 	});
 
 	request.done(function(data) {

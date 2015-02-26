@@ -20,6 +20,7 @@
 
 <head>
   <meta charset="utf-8" />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
   <title>New Bug - OSLC 3.0 Reference Implementation</title>
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="shortcut icon" href="oslc-16x16.png">
@@ -39,7 +40,7 @@
       };
 
       function sendMessage(response) {
-          (window.parent || window).postMessage("oslc-response:" + JSON.stringify(response), "*");
+          (window.opener || window.parent || window).postMessage("oslc-response:" + JSON.stringify(response), "*");
       }
 
       function submit() {
