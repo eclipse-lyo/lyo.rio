@@ -253,7 +253,9 @@ function setupPreview(link, uri) {
 
 		// Create the preview.
 		var preview = createPreview(link, data.compact);
-		showOnHover(link, preview);
+		if (!isTouch()) {
+			showOnHover(link, preview);
+		}
 	});
 }
 
