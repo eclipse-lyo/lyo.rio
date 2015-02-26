@@ -49,6 +49,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.http.HeaderElement;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
+import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.atlas.json.JsonObject;
 import org.apache.jena.riot.Lang;
 import org.eclipse.lyo.oslc.v3.sample.vocab.LDP;
@@ -102,51 +103,63 @@ public class BugContainer {
 	private static String etag = ETag.generateRandom();
 
 	@GET
-	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
-	public Model getBugContainer() {
+	@Produces(TEXT_TURTLE)
+	public StreamingOutput getContainerTurtle() {
+		return getContainer(Lang.TURTLE);
+	}
+
+	@GET
+	@Produces({ APPLICATION_JSON_LD, APPLICATION_JSON })
+	public StreamingOutput getContainerJSONLD() {
+		return getContainer(Lang.JSONLD);
+	}
+
+	public StreamingOutput getContainer(final Lang lang) {
 		setContainerResponseHeaders();
+		return new StreamingOutput() {
+			public void write(OutputStream out) throws IOException, WebApplicationException {
+				Persistence.getInstance().readLock();
+				try {
+					Model model = ModelFactory.createDefaultModel();
+					Resource container =
+							model.createResource(uriInfo.getAbsolutePath().toString(),
+							                     LDP.BasicContainer);
+					container.addProperty(DCTerms.title, "Bug Container");
 
-		Model model = ModelFactory.createDefaultModel();
-		Resource container =
-				model.createResource(uriInfo.getAbsolutePath().toString(),
-				                        LDP.BasicContainer);
-		container.addProperty(DCTerms.title, "Bug Container");
+					// Check the Prefer header to see what to include or omit.
+					parsePrefer();
 
-		// Check the Prefer header to see what to include or omit.
-		parsePrefer();
+					testIfNoneMatch(etag);
+					setETagHeader(etag);
 
-		// Use a read lock so the containment triples match the ETag.
-		Persistence.getInstance().readLock();
-		try {
-			testIfNoneMatch(etag);
-			setETagHeader(etag);
+					// Include dialogs?
+					if (include.contains(OSLC.NS + "PreferDialog")) {
+						setPreferenceAppliedHeader();
+						createDialogResource(model);
+					}
 
-			// Include dialogs?
-			if (include.contains(OSLC.NS + "PreferDialog")) {
-				setPreferenceAppliedHeader();
-				createDialogResource(model);
+					// Include containment by default. This is up to the server.
+					boolean includeContainment = true;
+
+					// Include containment?
+					if (include.contains(LDP.NS + "PreferContainment")) {
+						setPreferenceAppliedHeader();
+					} else if (include.contains(LDP.NS + "PreferMinimalContainer")
+							|| omit.contains(LDP.NS + "PreferContainment")) {
+						setPreferenceAppliedHeader();
+						includeContainment = false;
+					}
+
+					if (includeContainment) {
+						Persistence.getInstance().addContainmentTriples(container);
+					}
+
+					model.write(out, lang.getName(), getRequestURI());
+				} finally {
+					Persistence.getInstance().end();
+				}
 			}
-
-			// Include containment by default. This is up to the server.
-			boolean includeContainment = true;
-
-			// Include containment?
-			if (include.contains(LDP.NS + "PreferContainment")) {
-				setPreferenceAppliedHeader();
-			} else if (include.contains(LDP.NS + "PreferMinimalContainer")
-					|| omit.contains(LDP.NS + "PreferContainment")) {
-				setPreferenceAppliedHeader();
-				includeContainment = false;
-			}
-
-			if (includeContainment) {
-				Persistence.getInstance().addContainmentTriples(container);
-			}
-		} finally {
-			Persistence.getInstance().end();
-		}
-
-		return model;
+		};
 	}
 
 	@OPTIONS
@@ -170,30 +183,46 @@ public class BugContainer {
 
 	@GET
 	@Path("{id}")
-	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD })
-	public Model getBugRDF() {
-		final String bugURI = getRequestURI();
-		final Model bugModel = getBugModel(bugURI);
-		setBugResponseHeaders();
+	@Produces(TEXT_TURTLE)
+	public StreamingOutput getBugTurtle() {
+		return getBug(Lang.TURTLE);
+	}
 
-		handleETags(bugModel);
+	@GET
+	@Path("{id}")
+	@Produces(APPLICATION_JSON_LD)
+	public StreamingOutput getBugJSONLD() {
+		return getBug(Lang.JSONLD);
+	}
 
-		// Check the Prefer header to see what to include or omit.
-		parsePrefer();
-		if (!include.contains(OSLC.NS + "PreferCompact")) {
-			// Nothing special to do. Return the bug model.
-			return bugModel;
-		}
+	public StreamingOutput getBug(final Lang lang) {
+		return new StreamingOutput() {
+			public void write(OutputStream out) throws IOException, WebApplicationException {
+				Persistence.getInstance().readLock();
+				try {
+					final String bugURI = getRequestURI();
+					final Model bugModel = getBugModel(bugURI);
+					setBugResponseHeaders();
+					handleETags(bugModel);
 
-		// Compact requested.
-		setPreferenceAppliedHeader();
-		final Resource bug = bugModel.getResource(bugURI);
-		Model compactModel = createCompactModel(getBugLabel(bug), bugURI);
-
-		// Add in the Bug triples (not required, but we have them).
-		compactModel.add(bugModel);
-
-		return compactModel;
+					// Check the Prefer header to see what to include or omit.
+					parsePrefer();
+					if (include.contains(OSLC.NS + "PreferCompact")) {
+						// Compact requested.
+						setPreferenceAppliedHeader();
+						final Resource bug = bugModel.getResource(bugURI);
+						Model compactModel = createCompactModel(getBugLabel(bug), bugURI);
+						// Add in the Bug triples (not required, but we have them).
+						compactModel.add(bugModel);
+						compactModel.write(out, lang.getName(), getRequestURI());
+					} else {
+						bugModel.write(out, lang.getName(), getRequestURI());
+					}
+				} finally {
+					Persistence.getInstance().end();
+				}
+			}
+		};
 	}
 
 	/*
@@ -202,42 +231,44 @@ public class BugContainer {
 	@GET
 	@Path("{id}")
 	@Produces({ APPLICATION_JSON })
-	public Response getBugJSON() {
-		final String bugURI = getRequestURI();
-		final Model bugModel = getBugModel(bugURI);
-		setBugResponseHeaders();
+	public StreamingOutput getBugJSON() {
+		return new StreamingOutput() {
+			public void write(OutputStream out) throws IOException, WebApplicationException {
+				final String bugURI = getRequestURI();
+				Persistence.getInstance().readLock();
+				try {
+					final Model bugModel = getBugModel(bugURI);
+					setBugResponseHeaders();
+					handleETags(bugModel);
 
-		handleETags(bugModel);
+					parsePrefer();
+					if (include.contains(OSLC.NS + "PreferCompact")) {
+						// Compact requested. Return the JSON Compact representation.
+						setPreferenceAppliedHeader();
 
-		parsePrefer();
-		if (!include.contains(OSLC.NS + "PreferCompact")) {
-			// Return the Bug as JSON-LD.
-			return Response.ok(bugModel).build();
-		}
+						final JsonObject jsonResponse = new JsonObject();
+						final JsonObject compact = createCompactJSON(bugURI, bugModel);
+						jsonResponse.put("compact", compact);
 
-		// Compact requested. Return the JSON Compact representation.
-		setPreferenceAppliedHeader();
-
-		final JsonObject jsonResponse = new JsonObject();
-		final JsonObject compact = createCompactJSON(bugURI, bugModel);
-		jsonResponse.put("compact", compact);
-
-		return Response.ok(jsonResponse.toString()).build();
+						jsonResponse.output(new IndentedWriter(out));
+					} else {
+						// Return the Bug as JSON-LD.
+						bugModel.write(out, Lang.JSONLD.getName(), getRequestURI());
+					}
+				} finally {
+					Persistence.getInstance().end();
+				}
+			}
+		};
 	}
 
 	@GET
 	@Path("{id}")
 	@Produces(TEXT_HTML)
-	public void getBugHTML() throws ServletException, IOException {
+	public void getBugHTML()
+			throws ServletException, IOException {
 		final String bugURI = getRequestURI();
-		final Model model = getBugModel(getRequestURI());
-		setBugResponseHeaders();
-
-		handleETags(model);
-
-		setBugAttributes(model, bugURI);
-
-		request.getRequestDispatcher("/WEB-INF/bug.jsp").forward(request, response);
+		forwardBugJSP(bugURI, "/WEB-INF/bug.jsp");
 	}
 
 	private JsonObject createCompactJSON(final String bugURI, final Model bugModel) {
@@ -262,11 +293,16 @@ public class BugContainer {
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD })
 	public Model getCompactRDF(@PathParam("id") String id) {
 		final String bugURI = getBugURI(id);
-		final Model bugModel = getBugModel(bugURI);
-		final Resource bug = bugModel.getResource(bugURI);
-		final String label = getBugLabel(bug);
+		Persistence.getInstance().readLock();
+		try {
+			final Model bugModel = getBugModel(bugURI);
+			final Resource bug = bugModel.getResource(bugURI);
+			final String label = getBugLabel(bug);
 
-		return createCompactModel(label, bugURI);
+			return createCompactModel(label, bugURI);
+		} finally {
+			Persistence.getInstance().end();
+		}
 	}
 
 	@GET
@@ -283,13 +319,24 @@ public class BugContainer {
 	@GET
 	@Path("{id}/preview")
 	@Produces(TEXT_HTML)
-	public void getBugPreview(@PathParam("id") String id) throws ServletException, IOException {
+	public void getBugPreview(@PathParam("id") String id)
+			throws ServletException, IOException {
 		final String bugURI = getBugURI(id);
-		final Model m = getBugModel(bugURI);
-		handleETags(m);
-		setBugAttributes(m, bugURI);
+		forwardBugJSP(bugURI, "/WEB-INF/preview.jsp");
+	}
 
-		request.getRequestDispatcher("/WEB-INF/preview.jsp").forward(request, response);
+	public void forwardBugJSP(final String bugURI, final String path)
+			throws ServletException, IOException {
+		Persistence.getInstance().readLock();
+		try {
+			final Model model = getBugModel(bugURI);
+			setBugResponseHeaders();
+			handleETags(model);
+			setBugAttributes(model, bugURI);
+		} finally {
+			Persistence.getInstance().end();
+		}
+		request.getRequestDispatcher(path).forward(request, response);
 	}
 
 	private void setBugAttributes(Model model, String bugURI)
@@ -470,14 +517,7 @@ public class BugContainer {
 	}
 
 	private Model getBugModel(String uri) {
-		Persistence.getInstance().readLock();
-		final Model model;
-		try {
-			model = Persistence.getInstance().getBugModel(uri);
-		} finally {
-			Persistence.getInstance().end();
-		}
-
+		final Model model = Persistence.getInstance().getBugModel(uri);
 		if (model == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
