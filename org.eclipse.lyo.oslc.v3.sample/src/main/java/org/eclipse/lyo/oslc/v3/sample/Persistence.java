@@ -19,6 +19,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Iterator;
 
+import org.eclipse.lyo.oslc.v3.sample.vocab.LDP;
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
@@ -34,8 +36,6 @@ import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.block.FileMode;
 import com.hp.hpl.jena.tdb.sys.SystemTDB;
-
-import static org.eclipse.lyo.oslc.v3.sample.Constants.LDP;
 
 /**
  * Stores resources using Jena TDB. Each resource has its own graph in the
@@ -106,8 +106,7 @@ public class Persistence {
 		final Iterator<Node> iter = dataset.asDatasetGraph().listGraphNodes();
 		while (iter.hasNext()) {
 			Node n = iter.next();
-			container.addProperty(model.createProperty(LDP, "contains"),
-			                      model.createResource(n.getURI()));
+			container.addProperty(LDP.contains, model.createResource(n.getURI()));
 		}
 	}
 

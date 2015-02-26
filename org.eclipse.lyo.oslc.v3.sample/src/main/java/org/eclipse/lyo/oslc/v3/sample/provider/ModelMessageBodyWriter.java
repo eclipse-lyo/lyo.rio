@@ -27,11 +27,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.jena.riot.Lang;
+
 import com.hp.hpl.jena.rdf.model.Model;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
+import static org.eclipse.lyo.oslc.v3.sample.MediaTypeContants.APPLICATION_JSON_LD;
+import static org.eclipse.lyo.oslc.v3.sample.MediaTypeContants.TEXT_TURTLE;
 
 @Provider
 @Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
@@ -62,13 +64,13 @@ public class ModelMessageBodyWriter implements MessageBodyWriter<Model> {
 						MultivaluedMap<String, Object> httpHeaders,
 						OutputStream entityStream) throws IOException,
 			WebApplicationException {
-		final String lang;
-		if (mediaType.isCompatible(MediaType.valueOf(TEXT_TURTLE))) {
-			lang = "TURTLE";
+		final Lang lang;
+		if (mediaType.isCompatible(MediaType.valueOf("text/turtle"))) {
+			lang = Lang.TURTLE;
 		} else {
-			lang = "JSON-LD";
+			lang = Lang.JSONLD;
 		}
 
-		model.write(entityStream, lang, "");
+		model.write(entityStream, lang.getName(), "");
 	}
 }

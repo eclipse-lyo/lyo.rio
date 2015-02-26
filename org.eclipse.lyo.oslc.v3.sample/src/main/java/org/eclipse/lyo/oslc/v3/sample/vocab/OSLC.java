@@ -36,4 +36,7 @@ public class OSLC {
     public static final Property icon = model.createProperty(NS + "icon");
     public static final Property largePreview = model.createProperty(NS + "largePreview");
     public static final Property smallPreview = model.createProperty(NS + "smallPreview");
+
+	public static final String LINK_REL_COMPACT = Compact.getURI().toString();
+	public static final String LINK_REL_CREATION_DIALOG = NS + "creationDialog";
 }

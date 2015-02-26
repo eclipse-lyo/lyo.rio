@@ -50,6 +50,8 @@ import org.apache.http.HeaderElement;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.jena.atlas.json.JsonObject;
+import org.apache.jena.riot.Lang;
+import org.eclipse.lyo.oslc.v3.sample.vocab.LDP;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC_CM;
 
@@ -61,11 +63,11 @@ import com.hp.hpl.jena.vocabulary.DCTerms;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_SPARQL_QUERY;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_SPARQL_RESULTS_JSON;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.LDP;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
+import static org.eclipse.lyo.oslc.v3.sample.MediaTypeContants.*;
+import static org.eclipse.lyo.oslc.v3.sample.Headers.*;
+import static org.eclipse.lyo.oslc.v3.sample.vocab.LDP.LINK_REL_CONSTRAINED_BY;
+import static org.eclipse.lyo.oslc.v3.sample.vocab.OSLC.LINK_REL_COMPACT;
+import static org.eclipse.lyo.oslc.v3.sample.vocab.OSLC.LINK_REL_CREATION_DIALOG;
 
 @Path("/bugs")
 public class BugContainer {
@@ -107,7 +109,7 @@ public class BugContainer {
 		Model model = ModelFactory.createDefaultModel();
 		Resource container =
 				model.createResource(uriInfo.getAbsolutePath().toString(),
-				                        model.getResource(LDP + "BasicContainer"));
+				                        LDP.BasicContainer);
 		container.addProperty(DCTerms.title, "Bug Container");
 
 		// Check the Prefer header to see what to include or omit.
@@ -129,10 +131,10 @@ public class BugContainer {
 			boolean includeContainment = true;
 
 			// Include containment?
-			if (include.contains(LDP + "PreferContainment")) {
+			if (include.contains(LDP.NS + "PreferContainment")) {
 				setPreferenceAppliedHeader();
-			} else if (include.contains(LDP + "PreferMinimalContainer")
-					|| omit.contains(LDP + "PreferContainment")) {
+			} else if (include.contains(LDP.NS + "PreferMinimalContainer")
+					|| omit.contains(LDP.NS + "PreferContainment")) {
 				setPreferenceAppliedHeader();
 				includeContainment = false;
 			}
@@ -163,7 +165,7 @@ public class BugContainer {
 	@Path("creationDialog")
 	public void creationDialogDescriptorOptions() {
 		// Prefill is not yet supported.
-		response.addHeader("Allow", "GET,HEAD,OPTIONS");
+		response.addHeader(ALLOW, "GET,HEAD,OPTIONS");
 	}
 
 	@GET
@@ -174,9 +176,7 @@ public class BugContainer {
 		final Model bugModel = getBugModel(bugURI);
 		setBugResponseHeaders();
 
-		final String etag = ETag.generate(bugModel);
-		testIfNoneMatch(etag);
-		setETagHeader(etag);
+		handleETags(bugModel);
 
 		// Check the Prefer header to see what to include or omit.
 		parsePrefer();
@@ -207,9 +207,7 @@ public class BugContainer {
 		final Model bugModel = getBugModel(bugURI);
 		setBugResponseHeaders();
 
-		final String etag = ETag.generate(bugModel);
-		testIfNoneMatch(etag);
-		setETagHeader(etag);
+		handleETags(bugModel);
 
 		parsePrefer();
 		if (!include.contains(OSLC.NS + "PreferCompact")) {
@@ -235,9 +233,7 @@ public class BugContainer {
 		final Model model = getBugModel(getRequestURI());
 		setBugResponseHeaders();
 
-		final String etag = ETag.generate(model);
-		testIfNoneMatch(etag);
-		setETagHeader(etag);
+		handleETags(model);
 
 		setBugAttributes(model, bugURI);
 
@@ -290,9 +286,7 @@ public class BugContainer {
 	public void getBugPreview(@PathParam("id") String id) throws ServletException, IOException {
 		final String bugURI = getBugURI(id);
 		final Model m = getBugModel(bugURI);
-		final String etag = ETag.generate(m);
-		testIfNoneMatch(etag);
-		setETagHeader(etag);
+		handleETags(m);
 		setBugAttributes(m, bugURI);
 
 		request.getRequestDispatcher("/WEB-INF/preview.jsp").forward(request, response);
@@ -354,16 +348,16 @@ public class BugContainer {
 	@POST
 	@Consumes(TEXT_TURTLE)
 	public Response createBugTurtle(InputStream in) {
-		return createBug(in, "TURTLE");
+		return createBug(in, Lang.TURTLE);
 	}
 
 	@POST
 	@Consumes({ APPLICATION_JSON_LD, APPLICATION_JSON })
 	public Response createBugJSON(InputStream in) {
-		return createBug(in, "JSON-LD");
+		return createBug(in, Lang.JSONLD);
 	}
 
-	private Response createBug(InputStream in, String lang) {
+	private Response createBug(InputStream in, Lang lang) {
 		setContainerResponseHeaders();
 
 		// Create a URI.
@@ -373,7 +367,7 @@ public class BugContainer {
 		// Read the model ourselves so we can set the correct base to resolve relative URIs.
 		final Model m = ModelFactory.createDefaultModel();
 		try {
-			m.read(in, location.toString(), lang);
+			m.read(in, location.toString(), lang.getName());
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
@@ -491,29 +485,53 @@ public class BugContainer {
 		return model;
 	}
 
+	/**
+	 * Sets the ETag response header using an MD5 hash of the model and tests
+	 * the If-None-Match request header against the ETag if set.
+	 *
+	 * @param bugModel
+	 *            the model
+	 * @throws WebApplicationException
+	 *             Thrown with {@link Status#NOT_MODIFIED} when If-None-Match
+	 *             matches the ETag
+	 */
+	private void handleETags(final Model bugModel) {
+		final String etag = ETag.generate(bugModel);
+		testIfNoneMatch(etag);
+		setETagHeader(etag);
+	}
+
+	private void setLinkHeader(URI uri, String relation) {
+		setLinkHeader(uri.toString(), relation);
+	}
+
+	private void setLinkHeader(String uri, String relation) {
+		response.addHeader(LINK, "<" + uri + ">; rel=\"" + relation + "\"");
+	}
+
 	private void setBugResponseHeaders() {
-		response.addHeader("Allow", "GET,HEAD,OPTIONS,DELETE");
-		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
-		response.addHeader("Link", "<" + uriInfo.getAbsolutePathBuilder().path("compact").build() + ">;rel=\"" + OSLC.Compact.getURI() + "\"");
+		response.addHeader(ALLOW, "GET,HEAD,OPTIONS,DELETE");
+		setLinkHeader(LDP.Resource.getURI(), LINK_REL_TYPE);
+		setLinkHeader(uriInfo.getAbsolutePathBuilder().path("compact").build(), LINK_REL_COMPACT);
 	}
 
 	private void setContainerResponseHeaders() {
 		// LDP Headers
-		response.addHeader("Link", "<" + LDP + "Resource"+">;rel=type");
-		response.addHeader("Link", "<" + LDP + "BasicContainer>;rel=type");
-		response.addHeader("Allow", "GET,HEAD,POST,OPTIONS");
-		response.addHeader("Accept-Post", TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
+		response.addHeader(ALLOW, "GET,HEAD,POST,OPTIONS");
+		response.addHeader(ACCEPT_POST, TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
+		setLinkHeader(LDP.Resource.getURI(), LINK_REL_TYPE);
+		setLinkHeader(LDP.BasicContainer.getURI(), LINK_REL_TYPE);
 
 		// LDP constrainedBy header should point to the resource shape
 		URI shape = uriInfo.getBaseUriBuilder().path("../Defect-shape.ttl").build().normalize();
-		response.addHeader("Link", "<" + shape + ">;rel=\"" + Constants.LINK_REL_CONSTRAINED_BY + "\"");
+		setLinkHeader(shape, LINK_REL_CONSTRAINED_BY);
 
 		// OSLC Creation Dialog
-		response.addHeader("Link", "<" + getDialogURI() + ">;rel=\"" + OSLC.NS + "creationDialog\"");
+		setLinkHeader(getDialogURI(), LINK_REL_CREATION_DIALOG);
 	}
 
 	private void setETagHeader(String etag) {
-		response.addHeader("ETag", etag);
+		response.addHeader(ETAG, etag);
 	}
 
 	private void verifyBugExists() {
@@ -523,7 +541,7 @@ public class BugContainer {
 	}
 
 	private void parsePrefer() {
-		final List<String> preferValues = headers.getRequestHeader("Prefer");
+		final List<String> preferValues = headers.getRequestHeader(PREFER);
 		if (preferValues == null) {
 			return;
 		}
@@ -551,7 +569,7 @@ public class BugContainer {
 	}
 
 	private void testIfNoneMatch(String etag) {
-		final List<String> ifNoneMatchValues = headers.getRequestHeader(ETag.IF_NONE_MATCH_HEADER);
+		final List<String> ifNoneMatchValues = headers.getRequestHeader(IF_NONE_MATCH);
 		if (ifNoneMatchValues == null) {
 			return;
 		}
@@ -567,6 +585,6 @@ public class BugContainer {
 	 * Sets the Preference-Applied response header for preference <code>return=representation</code>.
 	 */
 	private void setPreferenceAppliedHeader() {
-		response.setHeader("Preference-Applied", "return=representation");
+		response.setHeader(PREFERENCE_APPLIED, "return=representation");
 	}
 }

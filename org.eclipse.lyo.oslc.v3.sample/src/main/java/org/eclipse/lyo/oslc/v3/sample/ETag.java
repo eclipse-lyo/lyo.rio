@@ -23,10 +23,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class ETag {
-	public static final String ETAG_HEADER = "ETag";
-	public static final String IF_MATCH_HEADER = "If-Match";
-	public static final String IF_NONE_MATCH_HEADER = "If-None-Match";
-
 	/**
 	 * Create a weak ETag value from a Jena model.
 	 *

@@ -11,27 +11,31 @@
  *
  * Contributors:
  *
- *     Samuel Padgett       - initial API and implementation
+ *	 Samuel Padgett	   - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc.v3.sample;
+package org.eclipse.lyo.oslc.v3.sample.vocab;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 
-public class Constants {
-	// Media types
-	public static final String TEXT_TURTLE = "text/turtle";
-	public static final String APPLICATION_JSON_LD = "application/ld+json";
-	public static final String APPLICATION_SPARQL_QUERY = "application/sparql-query";
-	public static final String APPLICATION_SPARQL_RESULTS_JSON = "application/sparql-results+json";
-
+public class LDP {
+	private static Model model = ModelFactory.createDefaultModel();
 	/**
 	 * LDP namespace
 	 *
 	 * @see <a href="http://www.w3.org/TR/ldp/">Linked Data Platform 1.0</a>
 	 */
-	public static final String LDP = "http://www.w3.org/ns/ldp#";
+	public static final String NS = "http://www.w3.org/ns/ldp#";
+
+	public static final Resource Resource = model.createResource(NS + "Resource");
+	public static final Resource BasicContainer = model.createResource(NS + "BasicContainer");
+
+	public static final Property contains = model.createProperty(NS + "contains");
 
 	/**
 	 * @see <a href="http://www.w3.org/TR/ldp/#ldpr-gen-pubclireqs">LDP 4.2.1.6</a>
 	 */
-	public static final String LINK_REL_CONSTRAINED_BY = LDP + "constrainedBy";
+	public static final String LINK_REL_CONSTRAINED_BY = NS + "constrainedBy";
 }

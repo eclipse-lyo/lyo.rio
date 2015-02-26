@@ -27,6 +27,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.jena.riot.Lang;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -36,8 +38,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.ResourceUtils;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
-import static org.eclipse.lyo.oslc.v3.sample.Constants.TEXT_TURTLE;
+import static org.eclipse.lyo.oslc.v3.sample.MediaTypeContants.APPLICATION_JSON_LD;
+import static org.eclipse.lyo.oslc.v3.sample.MediaTypeContants.TEXT_TURTLE;
 
 @Provider
 @Consumes({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
@@ -84,17 +86,17 @@ public class ModelMessageBodyReader implements MessageBodyReader<Model> {
 						  MultivaluedMap<String, String> httpHeaders,
 						  InputStream entityStream) throws IOException,
 			WebApplicationException {
-		final String lang;
+		final Lang lang;
 		if (mediaType.isCompatible(MediaType.valueOf("text/turtle"))) {
-			lang = "TURTLE";
+			lang = Lang.TURTLE;
 		} else {
-			lang = "JSON-LD";
+			lang = Lang.JSONLD;
 		}
 
 		Model m = ModelFactory.createDefaultModel();
 
 		// Take care to preserve relative URIs.
-		m.read(entityStream, FAKE_BASE, lang);
+		m.read(entityStream, FAKE_BASE, lang.getName());
 		keepRelative(m.listSubjects());
 		keepRelative(m.listObjects());
 
