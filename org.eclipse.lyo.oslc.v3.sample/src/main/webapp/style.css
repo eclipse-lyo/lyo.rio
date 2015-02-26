@@ -46,13 +46,13 @@ select {
     margin-bottom: 10px;
 }
 
-.input {
+.bugInput {
     border: 1px solid #cccccc;
     margin-bottom: 10px;
     width: 400px;
 }
 
-.description {
+.descriptionTextArea {
     margin-top: 3px;
     width: 400px;
     height: 250px;
@@ -123,8 +123,12 @@ select {
     width: 16px;
 }
 
+.back {
+    margin-top: 15px;
+}
+
 @media only screen and (max-device-width: 760px) {
-    .input, .description {
+    .bugInput, .descriptionTextArea {
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
@@ -132,7 +136,7 @@ select {
         font-size: 16px;
     }
 
-    .description {
+    .descriptionTextArea {
         height: 150px;
     }
 }

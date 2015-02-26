@@ -60,6 +60,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.vocabulary.DCTerms;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_JSON_LD;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_SPARQL_QUERY;
 import static org.eclipse.lyo.oslc.v3.sample.Constants.APPLICATION_SPARQL_RESULTS_JSON;
@@ -167,6 +168,14 @@ public class BugContainer {
 
 	@GET
 	@Path("{id}")
+	@Produces(TEXT_HTML)
+	public void getBugHTML() throws ServletException, IOException {
+		setRequestAttributes(getRequestURI());
+		request.getRequestDispatcher("/WEB-INF/bug.jsp").forward(request, response);
+	}
+
+	@GET
+	@Path("{id}")
 	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD })
 	public Model getBugRDF() {
 		final String bugURI = getRequestURI();
@@ -268,13 +277,25 @@ public class BugContainer {
 
 	@GET
 	@Path("{id}/preview")
-	@Produces({ TEXT_TURTLE, APPLICATION_JSON_LD, APPLICATION_JSON })
+	@Produces(TEXT_HTML)
 	public void getBugPreview(@PathParam("id") String id) throws ServletException, IOException {
+		final String bugURI = getBugURI(id);
+		setRequestAttributes(bugURI);
+
+		request.getRequestDispatcher("/WEB-INF/preview.jsp").forward(request, response);
+	}
+
+	private void setRequestAttributes(final String bugURI)
+			throws ServletException, IOException {
 		request.setAttribute("baseURI", getBaseURI());
 
-		final String bugURI = getBugURI(id);
 		final Model model = getBugModel(bugURI);
 		final Resource r = model.getResource(bugURI);
+
+		final Statement title = r.getProperty(DCTerms.title);
+		if (title != null && title.getObject().isLiteral()) {
+			request.setAttribute("title", title.getString());
+		}
 
 		final Statement severity = r.getProperty(OSLC_CM.severity);
 		if (severity != null && severity.getObject().isURIResource()) {
@@ -286,8 +307,6 @@ public class BugContainer {
 		if (description != null && description.getObject().isLiteral()) {
 			request.setAttribute("description", description.getString());
 		}
-
-		request.getRequestDispatcher("/WEB-INF/preview.jsp").forward(request, response);
 	}
 
 	@DELETE
