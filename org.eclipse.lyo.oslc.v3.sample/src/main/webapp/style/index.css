@@ -1,23 +1,18 @@
-html {
-    background: #FFF;
-    color: #333;
-}
-
-body {
-    font-family: "Helvetica Neue",Helvetica,Arial,Verdana,Geneva,sans-serif;
-    font-size: 14px;
-}
-
-h1 {
-    font-size: 24px;
-}
-
-.logo {
-    opacity: 0.2;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
+/*******************************************************************************
+ * Copyright (c) 2015 IBM Corporation.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Eclipse Distribution License v. 1.0 which accompanies this distribution.
+ *
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *
+ *     Samuel Padgett       - initial API and implementation
+ *******************************************************************************/
 
 .message, .bugList {
     margin-top: 15px;
@@ -26,41 +21,6 @@ h1 {
 
 .bugList div {
     margin-bottom: 4px;
-}
-
-.fixed {
-    background-color: #f9f9f9;
-    border: 1px dashed #2f6fab;
-    color: black;
-    font-family: monospace;
-    font-size: 90%;
-    line-height: 1.1em;
-    overflow-x: scroll;
-    padding: 1em;
-    white-space: pre-wrap;
-    margin: 10px 0;
-}
-
-form label {
-    line-height: 15px;
-    font-size: 11pt;
-    color: #555555;
-}
-
-select {
-    margin-bottom: 10px;
-}
-
-.bugInput {
-    border: 1px solid #cccccc;
-    margin-bottom: 10px;
-    width: 400px;
-}
-
-.descriptionTextArea {
-    margin-top: 3px;
-    width: 400px;
-    height: 250px;
 }
 
 .dialog, .preview {
@@ -126,22 +86,4 @@ select {
     margin-right: 4px;
     vertical-align: middle;
     width: 16px;
-}
-
-.back {
-    margin-top: 15px;
-}
-
-@media only screen and (max-device-width: 760px) {
-    .bugInput, .descriptionTextArea {
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        width: 95%;
-        font-size: 16px;
-    }
-
-    .descriptionTextArea {
-        height: 150px;
-    }
 }

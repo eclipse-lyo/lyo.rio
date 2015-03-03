@@ -1,0 +1,49 @@
+/*******************************************************************************
+ * Copyright (c) 2015 IBM Corporation.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Eclipse Distribution License v. 1.0 which accompanies this distribution.
+ *
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *
+ *     Samuel Padgett       - initial API and implementation
+ *******************************************************************************/
+
+html {
+    background: #FFF;
+    color: #333;
+}
+
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,Verdana,Geneva,sans-serif;
+    font-size: 14px;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+.logo {
+    opacity: 0.2;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.fixed {
+    background-color: #f9f9f9;
+    border: 1px dashed #2f6fab;
+    color: black;
+    font-family: monospace;
+    font-size: 90%;
+    line-height: 1.1em;
+    overflow-x: scroll;
+    padding: 1em;
+    white-space: pre-wrap;
+    margin: 10px 0;
+}

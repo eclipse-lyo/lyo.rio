@@ -22,8 +22,9 @@
 <head>
     <meta charset="utf-8" />
     <title><c:out value="${title}" default="Bug Preview"/></title>
-    <link rel="stylesheet" type="text/css" href="${baseURI}/preview.css">
-    <link rel="shortcut icon" href="${baseURI}oslc-16x16.png">
+    <link rel="stylesheet" type="text/css" href="${baseURI}/style/common.css">
+    <link rel="stylesheet" type="text/css" href="${baseURI}/style/bug.css">
+    <link rel="shortcut icon" href="${baseURI}/oslc-16x16.png">
 </head>
 <body>
     <div>

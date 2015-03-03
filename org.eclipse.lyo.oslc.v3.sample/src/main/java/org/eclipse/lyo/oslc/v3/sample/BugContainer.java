@@ -580,7 +580,7 @@ public class BugContainer {
 	private void createDialogResource(Model m) {
 		Resource dialog = m.createResource(getDialogURI().toString(), OSLC.Dialog);
 		dialog.addProperty(OSLC.label, "Open Bug");
-		String document = getStaticResource("newBug.html").toString();
+		String document = getStaticResource("creationDialog.html").toString();
 		dialog.addProperty(OSLC.dialog, m.createResource(document));
 		dialog.addProperty(OSLC.hintWidth, "450px");
 		dialog.addProperty(OSLC.hintHeight, "395px");
