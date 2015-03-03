@@ -23,8 +23,8 @@
     <meta charset="utf-8" />
   <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
     <title><c:out value="${title}" default="Untitled"/></title>
-    <link rel="stylesheet" type="text/css" href="${baseURI}/preview.css">
-    <link rel="stylesheet" type="text/css" href="${baseURI}/style.css">
+    <link rel="stylesheet" type="text/css" href="${baseURI}/style/common.css">
+    <link rel="stylesheet" type="text/css" href="${baseURI}/style/bug.css">
     <link rel="shortcut icon" href="${baseURI}oslc-16x16.png">
 </head>
 <body>
@@ -37,7 +37,7 @@
     <div>
         <label for="created">Created:</label>
         <span id="created"><fmt:formatDate value="${created}"
-            type="both" dateStyle="short" timeStyle="short"/></span>
+            type="both" dateStyle="full" timeStyle="short"/></span>
     </div>
     <div>
         <label for="description">Description:</label>

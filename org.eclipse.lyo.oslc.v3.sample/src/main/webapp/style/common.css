@@ -8,6 +8,10 @@ body {
     font-size: 14px;
 }
 
+h1 {
+    font-size: 24px;
+}
+
 .logo {
     opacity: 0.2;
     position: absolute;
@@ -15,17 +19,15 @@ body {
     right: 10px;
 }
 
-label {
-    color: #555555;
-    display: inline-block;
-    width: 75px;
-}
-
-div {
-    margin-bottom: 5px;
-}
-
-.description {
+.fixed {
+    background-color: #f9f9f9;
+    border: 1px dashed #2f6fab;
+    color: black;
+    font-family: monospace;
+    font-size: 90%;
+    line-height: 1.1em;
+    overflow-x: scroll;
+    padding: 1em;
     white-space: pre-wrap;
-    margin-left: 15px;
+    margin: 10px 0;
 }

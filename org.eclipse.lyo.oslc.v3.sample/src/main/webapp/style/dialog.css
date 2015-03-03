@@ -1,0 +1,35 @@
+form label {
+    line-height: 15px;
+    font-size: 11pt;
+    color: #555555;
+}
+
+select {
+    margin-bottom: 10px;
+}
+
+.bugInput {
+    border: 1px solid #cccccc;
+    margin-bottom: 10px;
+    width: 400px;
+}
+
+.descriptionTextArea {
+    margin-top: 3px;
+    width: 400px;
+    height: 250px;
+}
+
+@media only screen and (max-device-width: 760px) {
+    .bugInput, .descriptionTextArea {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 95%;
+        font-size: 16px;
+    }
+
+    .descriptionTextArea {
+        height: 150px;
+    }
+}
