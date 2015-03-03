@@ -477,6 +477,17 @@ public class BugContainer {
 		return Response.created(location).build();
 	}
 
+	@GET
+	@Path("sparql")
+	@Produces(TEXT_HTML)
+	public void showSPARQLPage()
+			throws ServletException, IOException {
+		request.setAttribute("baseURI", getBaseURI());
+		request.setAttribute("endpoint", getRequestURI());
+		request.getRequestDispatcher("/WEB-INF/sparql.jsp").
+			forward(request, response);
+	}
+
 	@POST
 	@Path("sparql")
 	@Consumes(APPLICATION_SPARQL_QUERY)
