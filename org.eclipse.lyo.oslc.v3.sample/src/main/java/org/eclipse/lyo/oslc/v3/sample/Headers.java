@@ -25,4 +25,5 @@ public class Headers {
 	public static final String LINK_REL_TYPE = "type";
 	public static final String PREFER = "Prefer";
 	public static final String PREFERENCE_APPLIED = "Preference-Applied";
+	public static final String VARY = "Vary";
 }

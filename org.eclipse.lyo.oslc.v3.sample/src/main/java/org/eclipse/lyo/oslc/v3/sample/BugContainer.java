@@ -621,6 +621,7 @@ public class BugContainer {
 
 	private void setBugResponseHeaders() {
 		response.addHeader(ALLOW, "GET,HEAD,OPTIONS,DELETE");
+		response.addHeader(VARY, "Accept,Prefer");
 		setLinkHeader(LDP.Resource.getURI(), LINK_REL_TYPE);
 		setLinkHeader(uriInfo.getAbsolutePathBuilder().path("compact").build(), LINK_REL_COMPACT);
 	}
@@ -629,6 +630,7 @@ public class BugContainer {
 		// LDP Headers
 		response.addHeader(ALLOW, "GET,HEAD,POST,OPTIONS");
 		response.addHeader(ACCEPT_POST, TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
+		response.addHeader(VARY, "Accept,Prefer");
 		setLinkHeader(LDP.Resource.getURI(), LINK_REL_TYPE);
 		setLinkHeader(LDP.BasicContainer.getURI(), LINK_REL_TYPE);
 
