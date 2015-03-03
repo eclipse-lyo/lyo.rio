@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.eclipse.lyo.oslc.v3.sample.vocab.LDP;
 
 import com.hp.hpl.jena.graph.Node;
@@ -43,6 +44,7 @@ import com.hp.hpl.jena.tdb.sys.SystemTDB;
  * dataset unless system property <code>dataset.dir</code> is set.
  */
 public class Persistence {
+	private static final Logger logger = Logger.getLogger(Persistence.class);
 	private final static Persistence instance = new Persistence();
 
 	public static final String DATASET_DIR_PROP = "dataset.dir";
@@ -53,7 +55,7 @@ public class Persistence {
 	private Persistence() {
 		TDB.setOptimizerWarningFlag(false);
 		SystemTDB.setFileMode(FileMode.direct) ;
-		System.out.println("Using dataset directory: " + DATASET_DIR);
+		logger.info("Using dataset directory: " + DATASET_DIR);
 		if (DATASET_DIR == null) {
 			dataset = TDBFactory.createDataset();
 		} else {

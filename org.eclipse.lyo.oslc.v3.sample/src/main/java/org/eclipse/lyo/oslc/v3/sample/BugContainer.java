@@ -57,6 +57,7 @@ import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.atlas.json.JsonObject;
 import org.apache.jena.riot.Lang;
+import org.apache.log4j.Logger;
 import org.eclipse.lyo.oslc.v3.sample.vocab.LDP;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC_CM;
@@ -77,6 +78,8 @@ import static org.eclipse.lyo.oslc.v3.sample.vocab.OSLC.LINK_REL_CREATION_DIALOG
 
 @Path("/bugs")
 public class BugContainer {
+	private static final Logger logger = Logger.getLogger(BugContainer.class);
+
 	@Context private HttpServletRequest request;
 	@Context private HttpServletResponse response;
 	@Context private UriInfo uriInfo;
@@ -390,10 +393,10 @@ public class BugContainer {
 				newXMLGregorianCalendar(s.getString()).
 				toGregorianCalendar().getTime();
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			logger.warn(String.format("Invalid date format <%s>" + s.getString()), e);
 			return null;
 		} catch (DatatypeConfigurationException e) {
-			e.printStackTrace();
+			logger.error("Error initializing datatype factory", e);
 			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -529,7 +532,7 @@ public class BugContainer {
 			return UriBuilder.fromUri(baseURI);
 		} catch (URISyntaxException e) {
 			// Should never happen.
-			e.printStackTrace();
+			logger.error("Error determining base URI", e);
 			throw new RuntimeException(e);
 		}
 	}
