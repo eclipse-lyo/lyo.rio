@@ -2,6 +2,7 @@
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8" %>
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!--
  Copyright (c) 2015 IBM Corporation.
 
@@ -28,6 +29,11 @@
     <div>
         <label for="severity">Severity:</label>
         <span id="severity"><c:out value="${severity}" default="Unassigned"/></span>
+    </div>
+    <div>
+        <label for="created">Created:</label>
+        <span id="created"><fmt:formatDate value="${created}"
+            type="both" dateStyle="full" timeStyle="short"/></span>
     </div>
     <div>
         <label for="description">Description:</label>

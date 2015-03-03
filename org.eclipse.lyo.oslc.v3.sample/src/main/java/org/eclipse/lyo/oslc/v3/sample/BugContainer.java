@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +48,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import org.apache.http.HeaderElement;
 import org.apache.http.NameValuePair;
@@ -370,6 +375,26 @@ public class BugContainer {
 		if (description != null && description.getObject().isLiteral()) {
 			request.setAttribute("description", description.getString());
 		}
+
+		request.setAttribute("created", getDate(r.getProperty(DCTerms.created)));
+	}
+
+	private Date getDate(Statement s) {
+		if (s == null || !s.getObject().isLiteral()) {
+			return null;
+		}
+
+		try {
+			return DatatypeFactory.newInstance().
+				newXMLGregorianCalendar(s.getString()).
+				toGregorianCalendar().getTime();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return null;
+		} catch (DatatypeConfigurationException e) {
+			e.printStackTrace();
+			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@DELETE
@@ -419,12 +444,19 @@ public class BugContainer {
 
 		// Create a URI.
 		final String id = UUID.randomUUID().toString();
-		final URI location = uriInfo.getAbsolutePathBuilder().path(id).build();
+		final URI location = getRequestURIBuilder().path(id).build();
 
 		// Read the model ourselves so we can set the correct base to resolve relative URIs.
 		final Model m = ModelFactory.createDefaultModel();
 		try {
 			m.read(in, location.toString(), lang.getName());
+
+			// Add a dcterms:created triple
+			Resource r = m.createResource(location.toString());
+			if (!r.hasProperty(DCTerms.created)) {
+				r.addProperty(DCTerms.created,
+							  m.createTypedLiteral(Calendar.getInstance()));
+			}
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
