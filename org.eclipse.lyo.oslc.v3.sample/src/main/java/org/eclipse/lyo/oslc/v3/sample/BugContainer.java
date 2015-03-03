@@ -121,13 +121,14 @@ public class BugContainer {
 
 	public StreamingOutput getContainer(final Lang lang) {
 		setContainerResponseHeaders();
+		final String requestURI = getRequestURI();
 		return new StreamingOutput() {
 			public void write(OutputStream out) throws IOException, WebApplicationException {
 				Persistence.getInstance().readLock();
 				try {
 					Model model = ModelFactory.createDefaultModel();
 					Resource container =
-							model.createResource(uriInfo.getAbsolutePath().toString(),
+							model.createResource(requestURI,
 							                     LDP.BasicContainer);
 					container.addProperty(DCTerms.title, "Bug Container");
 
@@ -159,7 +160,7 @@ public class BugContainer {
 						Persistence.getInstance().addContainmentTriples(container);
 					}
 
-					model.write(out, lang.getName(), getRequestURI());
+					model.write(out, lang.getName(), requestURI);
 				} finally {
 					Persistence.getInstance().end();
 				}
@@ -201,11 +202,11 @@ public class BugContainer {
 	}
 
 	public StreamingOutput getBug(final Lang lang) {
+		final String bugURI = getRequestURI();
 		return new StreamingOutput() {
 			public void write(OutputStream out) throws IOException, WebApplicationException {
 				Persistence.getInstance().readLock();
 				try {
-					final String bugURI = getRequestURI();
 					final Model bugModel = getBugModel(bugURI);
 					setBugResponseHeaders();
 					handleETags(bugModel);
@@ -237,9 +238,9 @@ public class BugContainer {
 	@Path("{id}")
 	@Produces({ APPLICATION_JSON })
 	public StreamingOutput getBugJSON() {
+		final String bugURI = getRequestURI();
 		return new StreamingOutput() {
 			public void write(OutputStream out) throws IOException, WebApplicationException {
-				final String bugURI = getRequestURI();
 				Persistence.getInstance().readLock();
 				try {
 					final Model bugModel = getBugModel(bugURI);
@@ -284,7 +285,7 @@ public class BugContainer {
 		compact.put("icon", getIconURI().toString());
 
 		final JsonObject preview = new JsonObject();
-		final String document = UriBuilder.fromUri(bugURI).path("preview").build().toString();
+		final String document = getRequestURIBuilder().path("preview").build().toString();
 		preview.put("document", document);
 		preview.put("hintWidth", PREVIEW_WIDTH);
 		preview.put("hintHeight", PREVIEW_HEIGHT);
@@ -493,23 +494,48 @@ public class BugContainer {
 	}
 
 	private String getBaseURI() {
-		return uriInfo.getBaseUriBuilder().path("..").build().normalize().toString().replaceAll("/$", "");
+		return getBaseUriBuilder().path("..").build().normalize().toString().replaceAll("/$", "");
+	}
+
+	private URI getStaticResource(String path) {
+		return getBaseUriBuilder().path("..").path(path).build().normalize();
 	}
 
 	private String getBugURI(String id) {
-		return uriInfo.getBaseUriBuilder().path("bugs/{id}").build(id).toString();
+		return getBaseUriBuilder().path("bugs/{id}").build(id).toString();
 	}
 
 	private URI getDialogURI() {
-		return uriInfo.getBaseUriBuilder().path("bugs/creationDialog").build();
+		return getBaseUriBuilder().path("bugs/creationDialog").build();
 	}
 
 	private URI getIconURI() {
-		return uriInfo.getBaseUriBuilder().path("../oslc-16x16.png").build().normalize();
+		return getStaticResource("oslc-16x16.png");
+	}
+
+	private UriBuilder getRequestURIBuilder() {
+		// uriInfo.getRequestUriBuilder() incorrectly adds the default port in
+		// some environments (e.g., Bluemix)
+		return UriBuilder.fromUri(getRequestURI());
+	}
+
+	private UriBuilder getBaseUriBuilder() {
+		// uriInfo.getBaseUriBuilder() incorrectly adds the default port in
+		// some environments (e.g., Bluemix)
+		try {
+			final String basePath = uriInfo.getBaseUri().getRawPath();
+			final URI baseURI = new URI(getRequestURI()).resolve(basePath);
+
+			return UriBuilder.fromUri(baseURI);
+		} catch (URISyntaxException e) {
+			// Should never happen.
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
 	private String getRequestURI() {
-		return uriInfo.getAbsolutePath().toString();
+		return request.getRequestURL().toString();
 	}
 
 	private String getBugLabel(final Resource bug) {
@@ -551,7 +577,7 @@ public class BugContainer {
 	private void createDialogResource(Model m) {
 		Resource dialog = m.createResource(getDialogURI().toString(), OSLC.Dialog);
 		dialog.addProperty(OSLC.label, "Open Bug");
-		String document = uriInfo.getBaseUriBuilder().path("../newBug.html").build().normalize().toString();
+		String document = getStaticResource("newBug.html").toString();
 		dialog.addProperty(OSLC.dialog, m.createResource(document));
 		dialog.addProperty(OSLC.hintWidth, "450px");
 		dialog.addProperty(OSLC.hintHeight, "395px");
