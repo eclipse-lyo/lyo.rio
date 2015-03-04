@@ -18,6 +18,7 @@ package org.eclipse.lyo.oslc.v3.sample;
 public class Headers {
 	public final static String ACCEPT_POST = "Accept-Post";
 	public final static String ALLOW = "Allow";
+	public final static String CACHE_CONTROL = "Cache-Control";
 	public static final String ETAG = "ETag";
 	public static final String IF_MATCH = "If-Match";
 	public static final String IF_NONE_MATCH = "If-None-Match";

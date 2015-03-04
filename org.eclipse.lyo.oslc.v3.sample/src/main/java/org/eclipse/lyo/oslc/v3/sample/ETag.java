@@ -19,6 +19,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.jena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.json.JsonObject;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -35,6 +37,18 @@ public class ETag {
 		// Get the MD5 hash of the model as N-Triples.
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		m.write(out,  "N-TRIPLE");
+
+		return generate(out);
+	}
+
+	public static String generate(JsonObject object) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		object.output(new IndentedWriter(out));
+
+		return generate(out);
+	}
+
+	private static String generate(ByteArrayOutputStream out) {
 		String md5 = DigestUtils.md5Hex(out.toByteArray());
 
 		// Create a weak entity tag from the MD5 hash.

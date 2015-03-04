@@ -135,11 +135,10 @@ public class BugContainer {
 							                     LDP.BasicContainer);
 					container.addProperty(DCTerms.title, "Bug Container");
 
+					handleETags(etag);
+
 					// Check the Prefer header to see what to include or omit.
 					parsePrefer();
-
-					testIfNoneMatch(etag);
-					setETagHeader(etag);
 
 					// Include dialogs?
 					if (include.contains(OSLC.NS + "PreferDialog")) {
@@ -173,7 +172,7 @@ public class BugContainer {
 
 	@OPTIONS
 	public void bugContainerOptions() {
-		setContainerResponseHeaders();
+		setContainerResponseHeaders(false);
 	}
 
 	@GET
@@ -212,7 +211,6 @@ public class BugContainer {
 				try {
 					final Model bugModel = getBugModel(bugURI);
 					setBugResponseHeaders();
-					handleETags(bugModel);
 
 					// Check the Prefer header to see what to include or omit.
 					parsePrefer();
@@ -223,8 +221,10 @@ public class BugContainer {
 						Model compactModel = createCompactModel(getBugLabel(bug), bugURI);
 						// Add in the Bug triples (not required, but we have them).
 						compactModel.add(bugModel);
+						handleETags(compactModel);
 						compactModel.write(out, lang.getName(), getRequestURI());
 					} else {
+						handleETags(bugModel);
 						bugModel.write(out, lang.getName(), getRequestURI());
 					}
 				} finally {
@@ -248,7 +248,6 @@ public class BugContainer {
 				try {
 					final Model bugModel = getBugModel(bugURI);
 					setBugResponseHeaders();
-					handleETags(bugModel);
 
 					parsePrefer();
 					if (include.contains(OSLC.NS + "PreferCompact")) {
@@ -259,9 +258,11 @@ public class BugContainer {
 						final JsonObject compact = createCompactJSON(bugURI, bugModel);
 						jsonResponse.put("compact", compact);
 
+						handleETags(jsonResponse);
 						jsonResponse.output(new IndentedWriter(out));
 					} else {
 						// Return the Bug as JSON-LD.
+						handleETags(bugModel);
 						bugModel.write(out, Lang.JSONLD.getName(), getRequestURI());
 					}
 				} finally {
@@ -423,12 +424,11 @@ public class BugContainer {
 		Persistence.getInstance().readLock();
 		try {
 			verifyBugExists();
-			etag = ETag.generateRandom();
 		} finally {
 			Persistence.getInstance().end();
 		}
 
-		setBugResponseHeaders();
+		setBugResponseHeaders(false);
 	}
 
 	@POST
@@ -618,6 +618,15 @@ public class BugContainer {
 	 */
 	private void handleETags(final Model bugModel) {
 		final String etag = ETag.generate(bugModel);
+		handleETags(etag);
+	}
+
+	private void handleETags(final JsonObject object) {
+		final String etag = ETag.generate(object);
+		handleETags(etag);
+	}
+
+	private void handleETags(final String etag) {
 		testIfNoneMatch(etag);
 		setETagHeader(etag);
 	}
@@ -631,17 +640,31 @@ public class BugContainer {
 	}
 
 	private void setBugResponseHeaders() {
+		setBugResponseHeaders(true);
+	}
+
+	private void setBugResponseHeaders(boolean includeCacheHeaders) {
 		response.addHeader(ALLOW, "GET,HEAD,OPTIONS,DELETE");
-		response.addHeader(VARY, "Accept,Prefer");
+		if (includeCacheHeaders) {
+			response.addHeader(CACHE_CONTROL, "no-cache");
+			response.addHeader(VARY, "Accept,Prefer");
+		}
 		setLinkHeader(LDP.Resource.getURI(), LINK_REL_TYPE);
 		setLinkHeader(uriInfo.getAbsolutePathBuilder().path("compact").build(), LINK_REL_COMPACT);
 	}
 
 	private void setContainerResponseHeaders() {
+		setContainerResponseHeaders(true);
+	}
+
+	private void setContainerResponseHeaders(boolean includeCacheHeaders) {
 		// LDP Headers
 		response.addHeader(ALLOW, "GET,HEAD,POST,OPTIONS");
 		response.addHeader(ACCEPT_POST, TEXT_TURTLE + "," + APPLICATION_JSON + "," + APPLICATION_JSON);
-		response.addHeader(VARY, "Accept,Prefer");
+		if (includeCacheHeaders) {
+			response.addHeader(CACHE_CONTROL, "no-cache");
+			response.addHeader(VARY, "Accept,Prefer");
+		}
 		setLinkHeader(LDP.Resource.getURI(), LINK_REL_TYPE);
 		setLinkHeader(LDP.BasicContainer.getURI(), LINK_REL_TYPE);
 
