@@ -29,12 +29,12 @@
     <link rel="shortcut icon" href="${baseURI}/oslc-16x16.png">
     <style type="text/css">
         textarea {
-	    width: 500px;
-	    height: 200px;
-	    font-size: 12px;
-	    font-family: monospace;
 	    display: block;
+	    font-family: monospace;
+	    font-size: 12px;
+	    height: 200px;
 	    margin: 10px 0;
+	    width: 500px;
         }
 
 	form {
@@ -42,9 +42,9 @@
 	}
 
 	table, th, td {
-	    padding: 5px;
-	    border: 1px solid black;
 	    border-collapse: collapse;
+	    border: 1px solid black;
+	    padding: 5px;
 	}
 
 	#result {
@@ -53,6 +53,17 @@
 
 	.hint {
 	    color: #777;
+	}
+
+	@media only screen and (max-device-width: 760px) {
+	    textarea {
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		font-size: 14px;
+		height: 150px;
+		width: 95%;
+	    }
 	}
     </style>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
