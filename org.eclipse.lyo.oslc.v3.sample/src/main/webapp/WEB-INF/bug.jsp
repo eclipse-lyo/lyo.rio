@@ -33,7 +33,8 @@
                 dataType: 'text',
                 headers: {
                     Accept: mediaType
-                }
+                },
+                cache: false
             });
 
             request.done(function(content) {
