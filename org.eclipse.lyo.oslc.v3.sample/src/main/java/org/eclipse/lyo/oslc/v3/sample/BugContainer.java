@@ -101,15 +101,6 @@ public class BugContainer {
 		severityLabels.put(OSLC_CM.NS + "SeverityUnassigned", "Unassigned");
 	}
 
-	/**
-	 * An ETag for the container. A new ETag is generated when bugs are added or
-	 * removed. (Other container properties are not editable.)
-	 *
-	 * <p>We manage ETags this way instead of using MD5 so that we can have
-	 * consistent ETags for containers regardless of the Prefer headers.
-	 */
-	private static String etag = ETag.generateRandom();
-
 	@GET
 	@Produces(TEXT_TURTLE)
 	public StreamingOutput getContainerTurtle() {
@@ -134,8 +125,6 @@ public class BugContainer {
 							model.createResource(requestURI,
 							                     LDP.BasicContainer);
 					container.addProperty(DCTerms.title, "Bug Container");
-
-					handleETags(etag);
 
 					// Check the Prefer header to see what to include or omit.
 					parsePrefer();
@@ -162,7 +151,7 @@ public class BugContainer {
 						Persistence.getInstance().addContainmentTriples(container);
 					}
 
-					model.write(out, lang.getName(), requestURI);
+					respond(out, model, lang.getName(), requestURI);
 				} finally {
 					Persistence.getInstance().end();
 				}
@@ -221,11 +210,9 @@ public class BugContainer {
 						Model compactModel = createCompactModel(getBugLabel(bug), bugURI);
 						// Add in the Bug triples (not required, but we have them).
 						compactModel.add(bugModel);
-						handleETags(compactModel);
-						compactModel.write(out, lang.getName(), getRequestURI());
+						respond(out, compactModel, lang.getName(), bugURI);
 					} else {
-						handleETags(bugModel);
-						bugModel.write(out, lang.getName(), getRequestURI());
+						respond(out, bugModel, lang.getName(), bugURI);
 					}
 				} finally {
 					Persistence.getInstance().end();
@@ -258,12 +245,10 @@ public class BugContainer {
 						final JsonObject compact = createCompactJSON(bugURI, bugModel);
 						jsonResponse.put("compact", compact);
 
-						handleETags(jsonResponse);
-						jsonResponse.output(new IndentedWriter(out));
+						respond(out, jsonResponse);
 					} else {
 						// Return the Bug as JSON-LD.
-						handleETags(bugModel);
-						bugModel.write(out, Lang.JSONLD.getName(), getRequestURI());
+						respond(out, bugModel, Lang.JSONLD.getName(), bugURI);
 					}
 				} finally {
 					Persistence.getInstance().end();
@@ -351,7 +336,6 @@ public class BugContainer {
 		try {
 			final Model model = getBugModel(bugURI);
 			setBugResponseHeaders();
-			handleETags(model);
 			setBugAttributes(model, bugURI);
 		} finally {
 			Persistence.getInstance().end();
@@ -410,7 +394,6 @@ public class BugContainer {
 			verifyBugExists();
 			Persistence.getInstance().removeBugModel(getRequestURI());
 			Persistence.getInstance().commit();
-			etag = ETag.generateRandom();
 		} finally {
 			Persistence.getInstance().end();
 		}
@@ -469,7 +452,6 @@ public class BugContainer {
 		try {
 			Persistence.getInstance().addBugModel(m, location);
 			Persistence.getInstance().commit();
-			etag = ETag.generateRandom();
 		} finally {
 			Persistence.getInstance().end();
 		}
@@ -505,6 +487,24 @@ public class BugContainer {
 				}
 			}
 		};
+	}
+
+	private void respond(final OutputStream out,
+	                     final Model m,
+	                     final String lang,
+	                     final String base) throws IOException {
+		String etag = ETag.generate(m, lang, base);
+		testIfNoneMatch(etag);
+		setETagHeader(etag);
+		m.write(out, lang, base);
+	}
+
+	private void respond(final OutputStream out,
+	                     final JsonObject json) throws IOException {
+		String etag = ETag.generate(json);
+		testIfNoneMatch(etag);
+		setETagHeader(etag);
+		json.output(new IndentedWriter(out));
 	}
 
 	private String getBaseURI() {
@@ -604,31 +604,6 @@ public class BugContainer {
 		}
 
 		return model;
-	}
-
-	/**
-	 * Sets the ETag response header using an MD5 hash of the model and tests
-	 * the If-None-Match request header against the ETag if set.
-	 *
-	 * @param bugModel
-	 *            the model
-	 * @throws WebApplicationException
-	 *             Thrown with {@link Status#NOT_MODIFIED} when If-None-Match
-	 *             matches the ETag
-	 */
-	private void handleETags(final Model bugModel) {
-		final String etag = ETag.generate(bugModel);
-		handleETags(etag);
-	}
-
-	private void handleETags(final JsonObject object) {
-		final String etag = ETag.generate(object);
-		handleETags(etag);
-	}
-
-	private void handleETags(final String etag) {
-		testIfNoneMatch(etag);
-		setETagHeader(etag);
 	}
 
 	private void setLinkHeader(URI uri, String relation) {
