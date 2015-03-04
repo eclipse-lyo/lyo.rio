@@ -86,7 +86,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>oslc-v3-rio</finalName>
+        <finalName>oslc3</finalName>
         <plugins>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
@@ -94,7 +94,7 @@
                 <version>8.1.14.v20131031</version>
                 <configuration>
                     <webAppConfig>
-                        <contextPath>/oslc-v3-rio</contextPath>
+                        <contextPath>/oslc3</contextPath>
                     </webAppConfig>
                     <systemProperties>
                         <systemProperty>
