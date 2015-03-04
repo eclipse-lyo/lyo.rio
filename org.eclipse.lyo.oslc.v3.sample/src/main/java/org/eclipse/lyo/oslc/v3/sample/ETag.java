@@ -15,48 +15,76 @@
  *******************************************************************************/
 package org.eclipse.lyo.oslc.v3.sample;
 
-import java.io.ByteArrayOutputStream;
-import java.util.UUID;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.atlas.json.JsonObject;
+import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class ETag {
+	private static final Logger logger = Logger.getLogger(ETag.class);
+
 	/**
-	 * Create a weak ETag value from a Jena model.
+	 * Create an ETag value from a Jena model.
 	 *
 	 * @param m the model that represents the HTTP response body
+	 * @param lang the serialization language
+	 * @param base the base URI
 	 * @return an ETag value
+	 * @throws IOException on I/O errors
 	 *
 	 * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19">HTTP 1.1: Section 14.19 - ETag</a>
 	 */
-	public static String generate(Model m) {
-		// Get the MD5 hash of the model as N-Triples.
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		m.write(out,  "N-TRIPLE");
+	public static String generate(final Model m,
+								  final String lang,
+								  final String base) throws IOException {
+		final PipedInputStream in = new PipedInputStream();
+		final PipedOutputStream out = new PipedOutputStream(in);
+		new Thread(new Runnable() {
+			public void run() {
+				m.write(out, lang, base);
+				try {
+					out.close();
+				} catch (IOException e) {
+					logger.error("Error creating MD5 hash of Model", e);
+				}
+			}
+		}).start();
 
-		return generate(out);
+		return generate(in);
 	}
 
-	public static String generate(JsonObject object) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		object.output(new IndentedWriter(out));
+	public static String generate(final JsonObject object) throws IOException {
+		final PipedInputStream in = new PipedInputStream();
+		final PipedOutputStream out = new PipedOutputStream(in);
+		new Thread(new Runnable() {
+			public void run() {
+				object.output(new IndentedWriter(out));
+				try {
+					out.close();
+				} catch (IOException e) {
+					logger.error("Error creating MD5 hash of JSON", e);
+				}
+			}
+		}).start();
 
-		return generate(out);
+		return generate(in);
 	}
 
-	private static String generate(ByteArrayOutputStream out) {
-		String md5 = DigestUtils.md5Hex(out.toByteArray());
-
-		// Create a weak entity tag from the MD5 hash.
-		return weakETag(md5);
+	private static String generate(final InputStream in) throws IOException {
+		final String md5 = DigestUtils.md5Hex(in);
+		return quote(md5);
 	}
 
-	public static String generateRandom() {
-		return weakETag(UUID.randomUUID().toString());
+	public static String quote(String etag) {
+		// ETags are quoted strings
+		return "\"" + etag + "\"";
 	}
 
 	/**
@@ -85,9 +113,5 @@ public class ETag {
 		}
 
 		return false;
-	}
-
-	private static String weakETag(String value) {
-		return "W/\"" + value + "\"";
 	}
 }

@@ -105,8 +105,7 @@
 		headers: {
 		    Accept: 'application/sparql-results+json',
 		    'Content-Type': 'application/sparql-query'
-		},
-		cache: false
+		}
 	    });
 
 	    request.done(displayTable);
