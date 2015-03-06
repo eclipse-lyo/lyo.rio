@@ -625,7 +625,7 @@ public class BugContainer {
 			response.addHeader(VARY, "Accept,Prefer");
 		}
 		setLinkHeader(LDP.Resource.getURI(), LINK_REL_TYPE);
-		setLinkHeader(uriInfo.getAbsolutePathBuilder().path("compact").build(), LINK_REL_COMPACT);
+		setLinkHeader(getRequestURIBuilder().path("compact").build(), LINK_REL_COMPACT);
 	}
 
 	private void setContainerResponseHeaders() {
