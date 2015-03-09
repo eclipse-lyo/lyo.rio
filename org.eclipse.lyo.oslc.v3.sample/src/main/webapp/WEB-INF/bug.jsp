@@ -21,8 +21,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-  <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
-    <title><c:out value="${title}" default="Untitled"/></title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+    <title><c:out value="${id}" default="No Bug ID"/>: <c:out value="${title}" default="Untitled"/></title>
     <link rel="stylesheet" type="text/css" href="${baseURI}/style/common.css">
     <link rel="stylesheet" type="text/css" href="${baseURI}/style/bug.css">
     <link rel="shortcut icon" href="${baseURI}oslc-16x16.png">
@@ -60,7 +60,7 @@
 </head>
 <body>
     <img class="logo" src="${baseURI}/oslc-192x192.png">
-    <h1><c:out value="${title}" default="Untitled"/></h1>
+    <h1><c:out value="${id}" default="No Bug ID"/>: <c:out value="${title}" default="Untitled"/></h1>
     <div class="small"><a href="#" id="turtle">Turtle</a> | <a href="#" id="json">JSON-LD</a></div>
     <div>
         <label for="severity">Severity:</label>

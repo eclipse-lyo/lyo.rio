@@ -32,7 +32,9 @@ import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.block.FileMode;
@@ -101,6 +103,28 @@ public class Persistence {
 	 */
 	public void end() {
 		dataset.end();
+	}
+
+	/**
+	 * Reserves the next sequential ID. Must be called in the context of a write lock.
+	 *
+	 * @return the next ID
+	 */
+	public Long reserveID() {
+		final Model defaultModel = dataset.getDefaultModel();
+		final Resource resource = defaultModel.createResource("");
+		final Property lastID = defaultModel.createProperty("http://www.eclipse.org/lyo/ns/oslc3#lastID");
+		final long next;
+		if (defaultModel.contains(resource, lastID)) {
+			final Statement s = defaultModel.getProperty(resource, lastID);
+			next = s.getLong() + 1;
+			s.changeLiteralObject(next);
+		} else {
+			next = 1L;
+			defaultModel.addLiteral(resource, lastID, next);
+		}
+
+		return next;
 	}
 
 	public void addContainmentTriples(Resource container) {

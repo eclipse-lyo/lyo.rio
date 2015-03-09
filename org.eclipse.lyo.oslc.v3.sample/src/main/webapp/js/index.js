@@ -103,6 +103,7 @@ function createNextSample(i) {
 
 function createSampleBugs() {
 	createNextSample(0);
+	$('#bugs').fadeIn();
 }
 
 function showDialog() {
@@ -243,7 +244,8 @@ function showOnHover(link, preview) {
 
 function setupPreview(link, uri) {
 	// Request the Compact resource.
-	getCompact(uri).done(function(data) {
+	var request = getCompact(uri);
+	request.done(function(data) {
 		if (!data.compact) {
 			return;
 		}
@@ -257,12 +259,19 @@ function setupPreview(link, uri) {
 			showOnHover(link, preview);
 		}
 	});
+
+	request.always(function() {
+		link.show();
+	});
 }
 
 function addLink(uri, label) {
 	var div = $('<div/>');
 	var link = $('<a/>', {
-		href: uri
+		href: uri,
+		css: {
+			display: 'none'
+		}
 	}).text(label || uri).appendTo(div);
 	$('#bugs').append(div);
 	setupPreview(link, uri);
@@ -315,13 +324,15 @@ function loadBugs() {
 	var request = $.ajax('r/bugs/sparql', {
 		headers: {
 			Accept: 'application/sparql-results+json',
-			'Content-Type': 'application/sparql-query'
+			'Content-Type': 'application/sparql-query',
+			cache: false
 		},
 		data: query,
 		type: 'post'
 	});
 
 	request.done(function(data) {
+		$('#bugs').empty();
 		if (!data.results.bindings.length) {
 			// No bugs. Offer to create some.
 			$('<span>No bugs here. </span>').appendTo('#message');
@@ -336,7 +347,12 @@ function loadBugs() {
 				var label = result.title.value;
 				addLink(uri, label);
 			});
+			$('#bugs').fadeIn();
 		}
+	});
+
+	request.fail(function(data) {
+		$('#message').text('Failed to load bugs.');
 	});
 }
 

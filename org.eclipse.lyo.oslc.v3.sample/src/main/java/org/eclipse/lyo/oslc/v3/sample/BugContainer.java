@@ -11,7 +11,7 @@
  *
  * Contributors:
  *
- *     Samuel Padgett       - initial API and implementation
+ *	 Samuel Padgett	   - initial API and implementation
  *******************************************************************************/
 package org.eclipse.lyo.oslc.v3.sample;
 
@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -68,13 +67,11 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.vocabulary.DCTerms;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.TEXT_HTML;
-import static org.eclipse.lyo.oslc.v3.sample.MediaTypeContants.*;
+import static javax.ws.rs.core.MediaType.*;
 import static org.eclipse.lyo.oslc.v3.sample.Headers.*;
-import static org.eclipse.lyo.oslc.v3.sample.vocab.LDP.LINK_REL_CONSTRAINED_BY;
-import static org.eclipse.lyo.oslc.v3.sample.vocab.OSLC.LINK_REL_COMPACT;
-import static org.eclipse.lyo.oslc.v3.sample.vocab.OSLC.LINK_REL_CREATION_DIALOG;
+import static org.eclipse.lyo.oslc.v3.sample.MediaTypeContants.*;
+import static org.eclipse.lyo.oslc.v3.sample.vocab.LDP.*;
+import static org.eclipse.lyo.oslc.v3.sample.vocab.OSLC.*;
 
 @Path("/bugs")
 public class BugContainer {
@@ -117,13 +114,14 @@ public class BugContainer {
 		setContainerResponseHeaders();
 		final String requestURI = getRequestURI();
 		return new StreamingOutput() {
+			@Override
 			public void write(OutputStream out) throws IOException, WebApplicationException {
 				Persistence.getInstance().readLock();
 				try {
 					Model model = ModelFactory.createDefaultModel();
 					Resource container =
 							model.createResource(requestURI,
-							                     LDP.BasicContainer);
+												 LDP.BasicContainer);
 					container.addProperty(DCTerms.title, "Bug Container");
 
 					// Check the Prefer header to see what to include or omit.
@@ -195,6 +193,7 @@ public class BugContainer {
 	public StreamingOutput getBug(final Lang lang) {
 		final String bugURI = getRequestURI();
 		return new StreamingOutput() {
+			@Override
 			public void write(OutputStream out) throws IOException, WebApplicationException {
 				Persistence.getInstance().readLock();
 				try {
@@ -230,6 +229,7 @@ public class BugContainer {
 	public StreamingOutput getBugJSON() {
 		final String bugURI = getRequestURI();
 		return new StreamingOutput() {
+			@Override
 			public void write(OutputStream out) throws IOException, WebApplicationException {
 				Persistence.getInstance().readLock();
 				try {
@@ -305,6 +305,7 @@ public class BugContainer {
 	@Produces({ APPLICATION_JSON })
 	public StreamingOutput getCompactJSON(@PathParam("id") final String id) {
 		return new StreamingOutput() {
+			@Override
 			public void write(OutputStream out) throws IOException, WebApplicationException {
 				final JsonObject compact;
 				final String bugURI = getBugURI(id);
@@ -348,6 +349,11 @@ public class BugContainer {
 		request.setAttribute("baseURI", getBaseURI());
 		request.setAttribute("bugURI", bugURI);
 		final Resource r = model.getResource(bugURI);
+
+		final Statement id = r.getProperty(DCTerms.identifier);
+		if (id != null && id.getObject().isLiteral()) {
+			request.setAttribute("id", id.getString());
+		}
 
 		final Statement title = r.getProperty(DCTerms.title);
 		if (title != null && title.getObject().isLiteral()) {
@@ -429,34 +435,37 @@ public class BugContainer {
 	private Response createBug(InputStream in, Lang lang) {
 		setContainerResponseHeaders();
 
-		// Create a URI.
-		final String id = UUID.randomUUID().toString();
-		final URI location = getRequestURIBuilder().path(id).build();
-
-		// Read the model ourselves so we can set the correct base to resolve relative URIs.
-		final Model m = ModelFactory.createDefaultModel();
-		try {
-			m.read(in, location.toString(), lang.getName());
-
-			// Add a dcterms:created triple
-			Resource r = m.createResource(location.toString());
-			if (!r.hasProperty(DCTerms.created)) {
-				r.addProperty(DCTerms.created,
-							  m.createTypedLiteral(Calendar.getInstance()));
-			}
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-
 		Persistence.getInstance().writeLock();
 		try {
+			// Create a URI.
+			final String id = Persistence.getInstance().reserveID().toString();
+			final URI location = getRequestURIBuilder().path(id).build();
+
+			// Read the model ourselves so we can set the correct base to resolve relative URIs.
+			final Model m = ModelFactory.createDefaultModel();
+			try {
+				m.read(in, location.toString(), lang.getName());
+
+				// Add a dcterms:created triple
+				Resource r = m.createResource(location.toString());
+				if (!r.hasProperty(DCTerms.created)) {
+					r.addProperty(DCTerms.created,
+								  m.createTypedLiteral(Calendar.getInstance()));
+				}
+
+				m.removeAll(r, DCTerms.identifier, null);
+				r.addProperty(DCTerms.identifier, id);
+			} catch (Exception e) {
+				return Response.status(Status.BAD_REQUEST).build();
+			}
+
 			Persistence.getInstance().addBugModel(m, location);
 			Persistence.getInstance().commit();
+
+			return Response.created(location).build();
 		} finally {
 			Persistence.getInstance().end();
 		}
-
-		return Response.created(location).build();
 	}
 
 	@GET
@@ -476,6 +485,7 @@ public class BugContainer {
 	@Produces(APPLICATION_SPARQL_RESULTS_JSON)
 	public StreamingOutput postQuery(final String queryString) {
 		return new StreamingOutput() {
+			@Override
 			public void write(OutputStream out) throws IOException, WebApplicationException {
 				Persistence.getInstance().readLock();
 				try {
@@ -490,9 +500,9 @@ public class BugContainer {
 	}
 
 	private void respond(final OutputStream out,
-	                     final Model m,
-	                     final String lang,
-	                     final String base) throws IOException {
+						 final Model m,
+						 final String lang,
+						 final String base) throws IOException {
 		String etag = ETag.generate(m, lang, base);
 		testIfNoneMatch(etag);
 		setETagHeader(etag);
@@ -500,7 +510,7 @@ public class BugContainer {
 	}
 
 	private void respond(final OutputStream out,
-	                     final JsonObject json) throws IOException {
+						 final JsonObject json) throws IOException {
 		String etag = ETag.generate(json);
 		testIfNoneMatch(etag);
 		setETagHeader(etag);
@@ -554,20 +564,31 @@ public class BugContainer {
 
 	private String getBugLabel(final Resource bug) {
 		final Statement title = bug.getProperty(DCTerms.title);
-		if (title == null || !title.getObject().isLiteral()) {
-			return null;
+		final Statement id = bug.getProperty(DCTerms.identifier);
+		if (!literal(title)) {
+			if (!literal(id)) {
+				return "<Untitled>";
+			}
+
+			return id.getString();
 		}
 
-		return title.getString();
+		if (!literal(id)) {
+			return title.getString();
+		}
+
+		return id.getString() + ": " + title.getString();
+	}
+
+	private boolean literal(Statement s) {
+		return s != null && s.getObject().isLiteral();
 	}
 
 	private Model createCompactModel(String title, String bugURI) {
 		Model m = ModelFactory.createDefaultModel();
 		String compactURI = UriBuilder.fromUri(bugURI).path("compact").build().toString();
 		Resource compact = m.createResource(compactURI, OSLC.Compact);
-		if (title != null) {
-			compact.addProperty(DCTerms.title, title);
-		}
+		compact.addProperty(DCTerms.title, title);
 		compact.addProperty(OSLC.icon, m.createResource(getIconURI().toString()));
 
 		Resource preview = m.createResource(OSLC.Preview);
