@@ -54,6 +54,7 @@ import org.apache.http.HeaderElement;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.jena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.json.JSON;
 import org.apache.jena.atlas.json.JsonObject;
 import org.apache.jena.riot.Lang;
 import org.apache.log4j.Logger;
@@ -88,14 +89,20 @@ public class BugContainer {
 	private Set<String> include = new HashSet<String>();
 	private Set<String> omit = new HashSet<String>();
 
-	private static Map<String, String> severityLabels = new HashMap<String, String>();
+	private static final Map<String, String> SEVERITY_LABELS = new HashMap<String, String>();
 	static {
-		severityLabels.put(OSLC_CM.NS + "Blocker", "Blocker");
-		severityLabels.put(OSLC_CM.NS + "Critical", "Critical");
-		severityLabels.put(OSLC_CM.NS + "Major", "Major");
-		severityLabels.put(OSLC_CM.NS + "Normal", "Normal");
-		severityLabels.put(OSLC_CM.NS + "Minor", "Minor");
-		severityLabels.put(OSLC_CM.NS + "SeverityUnassigned", "Unassigned");
+		SEVERITY_LABELS.put(OSLC_CM.NS + "Blocker", "Blocker");
+		SEVERITY_LABELS.put(OSLC_CM.NS + "Critical", "Critical");
+		SEVERITY_LABELS.put(OSLC_CM.NS + "Major", "Major");
+		SEVERITY_LABELS.put(OSLC_CM.NS + "Normal", "Normal");
+		SEVERITY_LABELS.put(OSLC_CM.NS + "Minor", "Minor");
+		SEVERITY_LABELS.put(OSLC_CM.NS + "SeverityUnassigned", "Unassigned");
+	}
+
+	private static final JsonObject COMPACT_CONTEXT;
+	static {
+		final InputStream in = BugContainer.class.getResourceAsStream("/preview.jsonld");
+		COMPACT_CONTEXT = JSON.parse(in);
 	}
 
 	@GET
@@ -244,6 +251,7 @@ public class BugContainer {
 						final JsonObject jsonResponse = new JsonObject();
 						final JsonObject compact = createCompactJSON(bugURI, bugModel);
 						jsonResponse.put("compact", compact);
+						jsonResponse.put("@context", COMPACT_CONTEXT);
 
 						respond(out, jsonResponse);
 					} else {
@@ -268,13 +276,15 @@ public class BugContainer {
 
 	private JsonObject createCompactJSON(final String bugURI, final Model bugModel) {
 		final JsonObject compact = new JsonObject();
+		final String uri = UriBuilder.fromUri(bugURI).path("compact").build().toString();
+		compact.put("@id", uri);
 
 		final Resource bug = bugModel.getResource(bugURI);
 		compact.put("title", getBugLabel(bug));
 		compact.put("icon", getIconURI().toString());
 
 		final JsonObject preview = new JsonObject();
-		final String document = getRequestURIBuilder().path("preview").build().toString();
+		final String document = UriBuilder.fromUri(bugURI).path("preview").build().toString();
 		preview.put("document", document);
 		preview.put("hintWidth", PREVIEW_WIDTH);
 		preview.put("hintHeight", PREVIEW_HEIGHT);
@@ -313,6 +323,7 @@ public class BugContainer {
 				try {
 					final Model bugModel = getBugModel(bugURI);
 					compact = createCompactJSON(bugURI, bugModel);
+					compact.put("@context", COMPACT_CONTEXT);
 				} finally {
 					Persistence.getInstance().end();
 				}
@@ -363,7 +374,7 @@ public class BugContainer {
 		final Statement severity = r.getProperty(OSLC_CM.severity);
 		if (severity != null && severity.getObject().isURIResource()) {
 			String uri = severity.getResource().getURI();
-			request.setAttribute("severity", severityLabels.get(uri));
+			request.setAttribute("severity", SEVERITY_LABELS.get(uri));
 		}
 
 		final Statement description = r.getProperty(DCTerms.description);
