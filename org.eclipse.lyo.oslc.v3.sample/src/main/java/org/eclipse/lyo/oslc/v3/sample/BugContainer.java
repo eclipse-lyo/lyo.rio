@@ -611,6 +611,7 @@ public class BugContainer {
 
 	private void createDialogResource(Model m) {
 		Resource dialog = m.createResource(getDialogURI().toString(), OSLC.Dialog);
+		dialog.addProperty(DCTerms.title, "Open Bug");
 		dialog.addProperty(OSLC.label, "Open Bug");
 		String document = getStaticResource("creationDialog.html").toString();
 		dialog.addProperty(OSLC.dialog, m.createResource(document));
