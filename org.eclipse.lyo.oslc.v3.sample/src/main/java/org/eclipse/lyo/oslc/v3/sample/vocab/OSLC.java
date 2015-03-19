@@ -28,6 +28,7 @@ public class OSLC {
     public static final Resource Dialog = model.createResource(NS + "Dialog");
     public static final Resource Preview = model.createResource(NS + "Preview");
 
+    public static final Property creationType = model.createProperty(NS + "creationType");
     public static final Property label = model.createProperty(NS + "label");
     public static final Property dialog = model.createProperty(NS + "dialog");
     public static final Property document = model.createProperty(NS + "document");

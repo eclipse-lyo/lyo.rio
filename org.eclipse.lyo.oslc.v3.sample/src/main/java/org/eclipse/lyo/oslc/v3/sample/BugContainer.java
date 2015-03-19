@@ -663,6 +663,7 @@ public class BugContainer {
 		}
 		setLinkHeader(LDP.Resource.getURI(), LINK_REL_TYPE);
 		setLinkHeader(LDP.BasicContainer.getURI(), LINK_REL_TYPE);
+		setLinkHeader(OSLC_CM.Defect.getURI(), OSLC.creationType.getURI());
 
 		// LDP constrainedBy header should point to the resource shape
 		URI shape = uriInfo.getBaseUriBuilder().path("../Defect-shape.ttl").build().normalize();
