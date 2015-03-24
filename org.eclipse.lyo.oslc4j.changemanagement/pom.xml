@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.eclipse.lyo.oslc4j.rio</groupId>
     <artifactId>oslc4j-cm-sample</artifactId>
@@ -65,6 +65,14 @@
     </dependencies>
     <build>
         <sourceDirectory>${basedir}/src/</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+        </resources>
         <testResources>
             <testResource>
                 <directory>test/resources</directory>
@@ -84,13 +92,6 @@
                 <configuration>
                     <warSourceDirectory>WebContent</warSourceDirectory>
                     <webXml>WebContent\WEB-INF\web.xml</webXml>
-                    <webResources>
-                        <resource>
-                            <directory>src</directory>
-                            <include>log4j.properties</include>
-                            <targetPath>WEB-INF/classes</targetPath>
-                        </resource>
-                    </webResources>
                 </configuration>
 
             </plugin>
@@ -116,7 +117,7 @@
                     <!-- Also start OSLC4JRegistry webApp -->
                     <contextHandlers>
                         <contextHandler
-                            implementation="org.eclipse.jetty.webapp.WebAppContext">
+                                implementation="org.eclipse.jetty.webapp.WebAppContext">
                             <war>${basedir}/../../org.eclipse.lyo.core/org.eclipse.lyo.oslc4j.registry/target/oslc4j-registry-3.0.0-SNAPSHOT.war</war>
                             <contextPath>/OSLC4JRegistry</contextPath>
                         </contextHandler>
