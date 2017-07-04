@@ -61,7 +61,7 @@ We choose to use a very minimal set of dependencies for RIO because we want it t
 
 ## CONTRIBUTING
 
-See [the instructions](CONTRIBUTING) for details.
+See [the instructions](CONTRIBUTING.md) for details.
 
 ## LICENSE
 
