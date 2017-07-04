@@ -19,4 +19,4 @@ In order to get your commit merged into master, you need to follow a few steps.
 * Fork this repository.
 * Clone your fork and make changes on a new branch.
 * Make sure to [include Singed-off-by](https://stackoverflow.com/questions/13457203/how-to-add-the-signed-off-by-field-in-the-git-patch) line in your commit message (by doing this, you are signing off on a [Developer Certificate of Origin](https://www.eclipse.org/legal/DCO.php)). **Commits without a Singed-off-by line are not accepted!**
-* Submit a pull request and assign Jim and Andrew to review it.
+* Submit a pull request and assign @jamsden and @berezovskyi to review it.
