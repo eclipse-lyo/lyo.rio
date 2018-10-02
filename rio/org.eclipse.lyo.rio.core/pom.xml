@@ -1,21 +1,21 @@
 <!--
     Copyright (c) 2011 IBM Corporation.
-   
+
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
-    and Eclipse Distribution License v. 1.0 which accompanies this distribution. 
-   
+    and Eclipse Distribution License v. 1.0 which accompanies this distribution.
+
     The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
-    and the Eclipse Distribution License is available at 
+    and the Eclipse Distribution License is available at
     http://www.eclipse.org/org/documents/edl-v10.php.
-   
+
     Contributors:
-   
+
        Jim Conallen - initial API and implementation
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+
     <modelVersion>4.0.0</modelVersion>
 
     <name>rio-core</name>
@@ -27,6 +27,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <antlr.version>3.5.2</antlr.version>
     </properties>
 
     <dependencies>
@@ -145,7 +146,7 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
-            <version>3.2</version>
+            <version>${antlr.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -154,7 +155,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.wink</groupId>
             <artifactId>wink-json4j</artifactId>
@@ -190,7 +191,7 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr3-maven-plugin</artifactId>
-                <version>3.2</version>
+                <version>${antlr.version}</version>
                 <configuration>
                     <verbose>true</verbose>
                 </configuration>
@@ -231,7 +232,7 @@
                     </systemProperties>
                 </configuration>
             </plugin>
-                
+
         </plugins>
 
         <pluginManagement>
