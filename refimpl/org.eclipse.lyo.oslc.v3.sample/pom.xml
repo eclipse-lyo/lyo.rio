@@ -22,6 +22,9 @@
     <version>3.0.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <name>OSLC 3.0 Reference Implementation</name>
     <url>http://maven.apache.org</url>
@@ -91,7 +94,7 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.2.2.v20140723</version>
+                <version>9.2.26.v20180806</version>
                 <configuration>
                     <webAppConfig>
                         <contextPath>/oslc3</contextPath>
