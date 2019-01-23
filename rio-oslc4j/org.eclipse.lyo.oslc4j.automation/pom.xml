@@ -3,10 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.eclipse.lyo.oslc4j.rio</groupId>
     <artifactId>oslc4j-auto-sample</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <lyo.version>4.0.0-SNAPSHOT</lyo.version>
     </properties>
     <repositories>
         <repository>
@@ -34,33 +38,45 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
+		<dependency>
+		  <groupId>jstl</groupId>
+		  <artifactId>jstl</artifactId>
+		  <version>1.2</version>
+		  <scope>compile</scope>
+		</dependency>
+		<dependency>
+		  <groupId>taglibs</groupId>
+		  <artifactId>standard</artifactId>
+		  <version>1.1.2</version>
+		  <scope>compile</scope>
+		</dependency>
         <dependency>
             <groupId>org.eclipse.lyo.oslc4j.core</groupId>
             <artifactId>oslc4j-core</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>${lyo.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.lyo.oslc4j.core</groupId>
             <artifactId>oslc4j-wink</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>${lyo.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.lyo.oslc4j.core</groupId>
             <artifactId>oslc4j-json4j-provider</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>${lyo.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.lyo.oslc4j.core</groupId>
             <artifactId>oslc4j-jena-provider</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>${lyo.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.lyo.oslc4j.rio</groupId>
             <artifactId>oslc4j-auto-common</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>${lyo.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -84,10 +100,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -115,9 +127,9 @@
                 <version>2.8</version>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>8.1.14.v20131031</version>
+                <version>9.3.25.v20180904</version>
 
                 <configuration>
                     <webAppConfig>
@@ -127,8 +139,8 @@
                     <!-- Also start OSLC4JRegistry webApp -->
                     <contextHandlers>
                         <contextHandler
-                            implementation="org.eclipse.jetty.webapp.WebAppContext">
-                            <war>${basedir}/../../org.eclipse.lyo.core/org.eclipse.lyo.oslc4j.registry/target/oslc4j-registry-3.0.0-SNAPSHOT.war</war>
+                                implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+                            <war>${basedir}/../../../lyo.server/oslc4j-registry/target/oslc4j-registry-4.0.0-SNAPSHOT.war</war>
                             <contextPath>/OSLC4JRegistry</contextPath>
                         </contextHandler>
                     </contextHandlers>

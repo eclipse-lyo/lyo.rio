@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="org.eclipse.lyo.oslc4j.automation">
+    <wb-module deploy-name="oslc4j-auto-sample-4.0.0-SNAPSHOT">
         <wb-resource deploy-path="/WEB-INF/web.xml" source-path="/src/main/webapp/WEB-INF/web.xml"/>
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="oslc4j-core-2.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/org.eclipse.lyo.oslc4j.core/org.eclipse.lyo.oslc4j.core">
+        <dependent-module archiveName="oslc4j-core-4.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oslc4j-core/oslc4j-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="oslc4j-wink-2.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/org.eclipse.lyo.oslc4j.wink/org.eclipse.lyo.oslc4j.wink">
+        <dependent-module archiveName="oslc4j-wink-4.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oslc4j-wink/oslc4j-wink">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="oslc4j-json4j-provider-2.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/org.eclipse.lyo.oslc4j.provider.json4j/org.eclipse.lyo.oslc4j.provider.json4j">
+        <dependent-module archiveName="oslc4j-json4j-provider-4.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oslc4j-json4j-provider/oslc4j-json4j-provider">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="oslc4j-jena-provider-2.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/org.eclipse.lyo.oslc4j.provider.jena/org.eclipse.lyo.oslc4j.provider.jena">
+        <dependent-module archiveName="oslc4j-jena-provider-4.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oslc4j-jena-provider/oslc4j-jena-provider">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="oslc4j-auto-common-2.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/org.eclipse.lyo.oslc4j.automation.common/org.eclipse.lyo.oslc4j.automation.common">
+        <dependent-module archiveName="oslc4j-auto-common-4.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oslc4j-auto-common/oslc4j-auto-common">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="oslc4j-auto-sample"/>
