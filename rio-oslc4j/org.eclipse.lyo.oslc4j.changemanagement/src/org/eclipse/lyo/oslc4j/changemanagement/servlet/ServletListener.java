@@ -128,7 +128,7 @@ public class ServletListener
             port = servletContext.getInitParameter(PROPERTY_PORT);
         }
                 
-        return scheme + "://" + HOST + ":" + port + servletContext.getContextPath() + SERVICE_PATH;
+        return scheme + "://" + HOST + ":" + port + servletContext.getContextPath();
     }
 
     private static String getHost()
