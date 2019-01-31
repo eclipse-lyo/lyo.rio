@@ -19,6 +19,7 @@
 package org.eclipse.lyo.oslc4j.changemanagement.servlet;
 
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Timer;
@@ -31,6 +32,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.eclipse.lyo.oslc4j.client.ServiceProviderRegistryClient;
+import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
 import org.eclipse.lyo.oslc4j.core.model.ServiceProvider;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaProvidersRegistry;
 import org.eclipse.lyo.oslc4j.changemanagement.Persistence;
@@ -94,7 +96,17 @@ public class ServletListener
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
         final String basePath = generateBasePath(servletContextEvent);
- 
+        String servletUrlPattern = "services/";
+
+        try {
+            OSLC4JUtils.setPublicURI(basePath);
+            OSLC4JUtils.setServletPath(servletUrlPattern);
+        } catch (MalformedURLException e) {
+            logger.log(Level.SEVERE, "servletListner encountered MalformedURLException.", e);
+        } catch (IllegalArgumentException e) {
+            logger.log(Level.SEVERE, "servletListner encountered IllegalArgumentException.", e);
+        }
+
         Timer timer = new Timer();
         timer.schedule(new RegistrationTask(basePath), REGISTRATION_DELAY);
   
@@ -115,20 +127,23 @@ public class ServletListener
         {
             port = servletContext.getInitParameter(PROPERTY_PORT);
         }
-        
+                
         return scheme + "://" + HOST + ":" + port + servletContext.getContextPath() + SERVICE_PATH;
     }
 
     private static String getHost()
     {
+    	String host = "localhost";
         try
         {
-            return InetAddress.getLocalHost().getCanonicalHostName();
+            host =  InetAddress.getLocalHost().getCanonicalHostName();
         }
         catch (final UnknownHostException exception)
         {
-            return "localhost";
+            host = "localhost";
         }
+        if (host.startsWith("192")) host = "localhost"; // never use an IP address
+        return host;
     }
     
     private class RegistrationTask extends TimerTask
