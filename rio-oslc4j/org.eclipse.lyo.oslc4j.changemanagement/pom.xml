@@ -60,7 +60,7 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.25</version>
         </dependency>
     </dependencies>
@@ -79,6 +79,7 @@
 
                     <!-- Also start OSLC4JRegistry webApp -->
                     <!-- TODO just make its URI a context param -->
+<!--
                     <contextHandlers>
                         <contextHandler
                                 implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
@@ -86,6 +87,7 @@
                             <contextPath>${path.context.registry}</contextPath>
                         </contextHandler>
                     </contextHandlers>
+-->
 
 <!--
                     &lt;!&ndash; Jetty config adds logging &ndash;&gt;
@@ -114,11 +116,10 @@
                         </systemProperty>
                         <systemProperty>
                             <name>org.eclipse.lyo.oslc4j.client.registryuri</name>
-                            <!--for now we host them in the same container-->
-                            <value>http://${path.host}:${port.cm}${path.context.registry}/catalog</value>
+                            <value>http://localhost:8888/OSLC4JRegistry/catalog</value>
                         </systemProperty>
                         <systemProperty>
-                            <!-- same as public for now -->
+                            <!-- FIXME same as public for now -->
                             <name>org.eclipse.lyo.oslc4j.client.uiuri</name>
                             <value>http://${path.host}:${port.cm}${path.context.cm}</value>
                         </systemProperty>

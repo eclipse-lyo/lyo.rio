@@ -106,7 +106,7 @@ public class ServletListener
         }
 
         Timer timer = new Timer();
-        timer.schedule(new RegistrationTask(basePath), REGISTRATION_DELAY);
+        timer.schedule(new RegistrationTask(OSLC4JUtils.getServletURI()), REGISTRATION_DELAY);
 
     }
 
