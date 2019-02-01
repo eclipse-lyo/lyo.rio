@@ -34,7 +34,7 @@ public class ServiceProviderSingleton
         return serviceProviderURISingleton;
     }
 
-    static synchronized void setServiceProviderURI(final URI serviceProviderURI)
+    public static synchronized void setServiceProviderURI(final URI serviceProviderURI)
     {
         serviceProviderURISingleton = serviceProviderURI;
     }

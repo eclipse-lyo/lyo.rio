@@ -33,7 +33,7 @@ import org.eclipse.lyo.oslc4j.core.model.ServiceProviderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RioCmServiceProviderFactory
+public class RioCmServiceProviderFactory
 {
     private final static Logger log = LoggerFactory.getLogger(RioCmServiceProviderFactory.class);
     private static Class<?>[] RESOURCE_CLASSES =
@@ -46,10 +46,10 @@ class RioCmServiceProviderFactory
         super();
     }
 
-    static ServiceProvider createServiceProvider(final String baseURI)
+    public static ServiceProvider createServiceProvider(final String baseURI)
            throws OslcCoreApplicationException, URISyntaxException
     {
-        final String registryUri = ServiceProviderRegistryURIs.getUIURI();
+        final String registryUri = ServiceProviderRegistryURIs.getServiceProviderRegistryURI();
         log.info("Initialising with a Registry @ {}", registryUri);
         log.debug("Creating a Service Provider @ {}", baseURI);
         final ServiceProvider serviceProvider = ServiceProviderFactory.createServiceProvider(baseURI,

@@ -26,7 +26,7 @@ import org.eclipse.lyo.rio.oslc4j.cm.ChangeRequest;
 import org.eclipse.lyo.rio.oslc4j.cm.Severity;
 import org.eclipse.lyo.rio.oslc4j.cm.Type;
 
-final class Populate
+public class Populate
 {
     private final String basePath;
     private final URI    serviceProviderURI;

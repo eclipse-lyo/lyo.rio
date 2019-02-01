@@ -13,34 +13,13 @@
 
         <lyo.version>4.0.0-SNAPSHOT</lyo.version>
 
-        <path.context.cm>/OSLC4JChangeManagement</path.context.cm>
-        <path.context.registry>/OSLC4JRegistry</path.context.registry>
         <path.host>localhost</path.host>
         <port.cm>8080</port.cm>
         <!--<port.registry>8888</port.registry>-->
+        <path.context.cm>/OSLC4JChangeManagement</path.context.cm>
+        <path.context.registry>/OSLC4JRegistry</path.context.registry>
     </properties>
-    <repositories>
-        <repository>
-            <id>lyo-releases</id>
-            <url>https://repo.eclipse.org/content/repositories/lyo-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>lyo-snapshots</id>
-            <url>https://repo.eclipse.org/content/repositories/lyo-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -51,7 +30,7 @@
         <dependency>
             <groupId>org.eclipse.lyo.oslc4j.core</groupId>
             <artifactId>oslc4j-core</artifactId>
-            <version>4.0.0-SNAPSHOT</version>
+            <version>${lyo.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.lyo.oslc4j.core</groupId>
@@ -85,53 +64,15 @@
             <version>1.7.25</version>
         </dependency>
     </dependencies>
+
     <build>
-        <sourceDirectory>${basedir}/src/</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>src/</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                </includes>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>test/resources</directory>
-            </testResource>
-        </testResources>
-
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
-                <configuration>
-                    <warSourceDirectory>WebContent</warSourceDirectory>
-                    <webXml>WebContent\WEB-INF\web.xml</webXml>
-                </configuration>
-
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <configuration>
-                    <wtpversion>2.0</wtpversion>
-                </configuration>
-                <version>2.8</version>
-            </plugin>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.3.25.v20180904</version>
 
                 <configuration>
-                    <webAppSourceDirectory>${basedir}/WebContent</webAppSourceDirectory>
                     <webAppConfig>
                         <contextPath>${path.context.cm}</contextPath>
                     </webAppConfig>
@@ -146,23 +87,19 @@
                         </contextHandler>
                     </contextHandlers>
 
-                    <!-- Jetty config adds logging -->
+<!--
+                    &lt;!&ndash; Jetty config adds logging &ndash;&gt;
                     <jettyConfig>${project.build.directory}/test-classes/jetty.xml</jettyConfig>
+-->
 
                     <!-- enable hot deploy -->
                     <reload>automatic</reload>
                     <scanIntervalSeconds>5</scanIntervalSeconds>
-                    <scanTargets>
-                        <scanTarget>WebContent</scanTarget>
-                    </scanTargets>
-
                     <systemProperties>
-
                         <systemProperty>
                             <name>config.dir</name>
-                            <value>${basedir}/test/resources</value>
+                            <value>${basedir}/src/test/resources</value>
                         </systemProperty>
-
                         <systemProperty>
                             <name>jetty.logs</name>
                             <value>${basedir}/target</value>
@@ -171,7 +108,6 @@
                             <name>jetty.port</name>
                             <value>${port.cm}</value>
                         </systemProperty>
-
                         <systemProperty>
                             <name>org.eclipse.lyo.oslc4j.publicURI</name>
                             <value>http://${path.host}:${port.cm}${path.context.cm}</value>
@@ -181,12 +117,37 @@
                             <!--for now we host them in the same container-->
                             <value>http://${path.host}:${port.cm}${path.context.registry}/catalog</value>
                         </systemProperty>
-
+                        <systemProperty>
+                            <!-- same as public for now -->
+                            <name>org.eclipse.lyo.oslc4j.client.uiuri</name>
+                            <value>http://${path.host}:${port.cm}${path.context.cm}</value>
+                        </systemProperty>
                     </systemProperties>
-
                 </configuration>
-
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>lyo-releases</id>
+            <url>https://repo.eclipse.org/content/repositories/lyo-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>lyo-snapshots</id>
+            <url>https://repo.eclipse.org/content/repositories/lyo-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

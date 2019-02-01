@@ -118,7 +118,7 @@ public class ChangeRequestResource
     public ChangeRequest[] getChangeRequests(@QueryParam("oslc.where") final String where)
     {
 
-        final List<ChangeRequest> results = new ArrayList<ChangeRequest>();
+        final List<ChangeRequest> results = new ArrayList<>();
 
         final ChangeRequest[] changeRequests = Persistence.getChangeRequests();
 
@@ -130,7 +130,7 @@ public class ChangeRequestResource
 
         }
 
-        return results.toArray(new ChangeRequest[results.size()]);
+        return results.toArray(new ChangeRequest[0]);
     }
 
     @GET
@@ -396,7 +396,7 @@ public class ChangeRequestResource
 			}
 		} else 
 		{
-			List<ChangeRequest> matchingResources = new ArrayList<ChangeRequest>();
+			List<ChangeRequest> matchingResources = new ArrayList<>();
 
 			for (ChangeRequest thisResource : Persistence.getChangeRequests()) 
 			{
@@ -436,7 +436,7 @@ public class ChangeRequestResource
 
 		if (changePlan == null) 
 		{
-			Map<String, String> changePlanIDs = new HashMap<String, String>();
+			Map<String, String> changePlanIDs = new HashMap<>();
 
 			for (ChangeRequest thisResource : Persistence.getChangeRequests()) 
 			{
