@@ -16,16 +16,15 @@
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement.servlet;
+package org.eclipse.lyo.rio.oslc4j.cm.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 
-import org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest;
-import org.eclipse.lyo.oslc4j.changemanagement.Persistence;
-import org.eclipse.lyo.oslc4j.changemanagement.Severity;
-import org.eclipse.lyo.oslc4j.changemanagement.Type;
+import org.eclipse.lyo.rio.oslc4j.cm.ChangeRequest;
+import org.eclipse.lyo.rio.oslc4j.cm.Severity;
+import org.eclipse.lyo.rio.oslc4j.cm.Type;
 
 final class Populate
 {

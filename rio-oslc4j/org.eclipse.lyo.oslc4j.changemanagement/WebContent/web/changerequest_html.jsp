@@ -16,7 +16,7 @@
 
 --%>
 
-<%@ page import="org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest"%>
+<%@ page import="org.eclipse.lyo.rio.oslc4j.cm.ChangeRequest"%>
 <%@ page import="org.eclipse.lyo.oslc4j.core.model.Link"%>
 <%@ page import="org.eclipse.lyo.oslc4j.core.model.ServiceProvider"%>
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8" %>

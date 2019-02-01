@@ -16,7 +16,7 @@
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement;
+package org.eclipse.lyo.rio.oslc4j.cm.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +29,7 @@ import java.util.TreeMap;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.eclipse.lyo.rio.oslc4j.cm.ChangeRequest;
 import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaModelHelper;
 

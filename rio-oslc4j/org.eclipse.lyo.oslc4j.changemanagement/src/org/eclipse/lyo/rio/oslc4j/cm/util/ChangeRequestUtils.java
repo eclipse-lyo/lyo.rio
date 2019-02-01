@@ -13,7 +13,7 @@
  *
  *     Paul McMahan <pmcmahan@us.ibm.com>        - initial implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement.resources;
+package org.eclipse.lyo.rio.oslc4j.cm.util;
 
 import java.net.URI;
 import java.util.Set;

@@ -37,7 +37,7 @@
   </context-param>
   <listener>
     <description>Listener for JAX-RS Servlet</description>
-    <listener-class>org.eclipse.lyo.oslc4j.changemanagement.servlet.ServletListener</listener-class>
+    <listener-class>org.eclipse.lyo.rio.oslc4j.cm.servlet.ServletListener</listener-class>
   </listener>
   <servlet>
     <description>JAX-RS Tools Generated - Do not modify</description>
@@ -45,7 +45,7 @@
     <servlet-class>org.apache.wink.server.internal.servlet.RestServlet</servlet-class>
     <init-param>
       <param-name>javax.ws.rs.Application</param-name>
-      <param-value>org.eclipse.lyo.oslc4j.changemanagement.resources.Oslc4JChangeManagementApplication</param-value>
+      <param-value>org.eclipse.lyo.rio.oslc4j.cm.Application</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

@@ -16,7 +16,7 @@
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement.servlet;
+package org.eclipse.lyo.rio.oslc4j.cm.util;
 
 import java.net.URI;
 

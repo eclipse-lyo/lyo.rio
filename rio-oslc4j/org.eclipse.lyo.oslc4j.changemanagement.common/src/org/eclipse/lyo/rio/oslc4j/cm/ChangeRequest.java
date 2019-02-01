@@ -17,7 +17,7 @@
  *     Gianluca Bernardini  - initial API and implementation
  *     Samuel Padgett       - remove final qualifier from class
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement;
+package org.eclipse.lyo.rio.oslc4j.cm;
 
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -16,7 +16,7 @@
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement.resources;
+package org.eclipse.lyo.rio.oslc4j.cm;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -25,14 +25,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.lyo.oslc4j.application.OslcWinkApplication;
-import org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest;
-import org.eclipse.lyo.oslc4j.changemanagement.Constants;
+import org.eclipse.lyo.rio.oslc4j.cm.services.ChangeRequestResource;
 import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaProvidersRegistry;
 import org.eclipse.lyo.oslc4j.provider.json4j.Json4JProvidersRegistry;
 
-public final class Oslc4JChangeManagementApplication
+public final class Application
        extends OslcWinkApplication
 {
     private static final Set<Class<?>>         RESOURCE_CLASSES                          = new HashSet<Class<?>>();
@@ -47,7 +46,7 @@ public final class Oslc4JChangeManagementApplication
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(Constants.PATH_CHANGE_REQUEST, ChangeRequest.class);
     }
 
-    public Oslc4JChangeManagementApplication()
+    public Application()
            throws OslcCoreApplicationException,
                   URISyntaxException
     {

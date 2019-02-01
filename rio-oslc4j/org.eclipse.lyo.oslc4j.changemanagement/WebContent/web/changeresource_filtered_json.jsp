@@ -16,7 +16,7 @@
 
 --%>
 <%@ page contentType="application/json" language="java" pageEncoding="UTF-8" %>
-<%@ page import="org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest" %>
+<%@ page import="org.eclipse.lyo.rio.oslc4j.cm.ChangeRequest" %>
 <%@ page import="java.net.*,java.util.*" %> 
 
 {

@@ -16,7 +16,7 @@
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement;
+package org.eclipse.lyo.rio.oslc4j.cm;
 
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 

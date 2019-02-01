@@ -16,7 +16,7 @@
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement.resources;
+package org.eclipse.lyo.rio.oslc4j.cm.services;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,11 +50,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest;
-import org.eclipse.lyo.oslc4j.changemanagement.Constants;
-import org.eclipse.lyo.oslc4j.changemanagement.Persistence;
-import org.eclipse.lyo.oslc4j.changemanagement.Type;
-import org.eclipse.lyo.oslc4j.changemanagement.servlet.ServiceProviderSingleton;
+import org.eclipse.lyo.rio.oslc4j.cm.ChangeRequest;
+import org.eclipse.lyo.rio.oslc4j.cm.Constants;
+import org.eclipse.lyo.rio.oslc4j.cm.util.Persistence;
+import org.eclipse.lyo.rio.oslc4j.cm.Type;
+import org.eclipse.lyo.rio.oslc4j.cm.util.ChangeRequestUtils;
+import org.eclipse.lyo.rio.oslc4j.cm.util.ServiceProviderSingleton;
 import org.eclipse.lyo.oslc4j.client.OslcRestClient;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcCreationFactory;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcDialog;

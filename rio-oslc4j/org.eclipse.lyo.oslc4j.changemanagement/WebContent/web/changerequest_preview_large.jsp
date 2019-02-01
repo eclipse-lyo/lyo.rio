@@ -17,7 +17,7 @@
 --%>
 <%@ page contentType="text/html" language="java" pageEncoding="UTF-8" %>
 <%@ page import="java.net.*,java.util.*" %>
-<%@ page import="org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest" %>
+<%@ page import="org.eclipse.lyo.rio.oslc4j.cm.ChangeRequest" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 ChangeRequest changeRequest = (ChangeRequest) request.getAttribute("changeRequest");

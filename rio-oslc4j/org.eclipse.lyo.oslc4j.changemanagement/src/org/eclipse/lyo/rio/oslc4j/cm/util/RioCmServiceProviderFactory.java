@@ -16,13 +16,13 @@
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement.servlet;
+package org.eclipse.lyo.rio.oslc4j.cm.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.eclipse.lyo.oslc4j.changemanagement.Constants;
-import org.eclipse.lyo.oslc4j.changemanagement.resources.ChangeRequestResource;
+import org.eclipse.lyo.rio.oslc4j.cm.Constants;
+import org.eclipse.lyo.rio.oslc4j.cm.services.ChangeRequestResource;
 import org.eclipse.lyo.oslc4j.client.ServiceProviderRegistryURIs;
 import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
 import org.eclipse.lyo.oslc4j.core.model.OslcConstants;

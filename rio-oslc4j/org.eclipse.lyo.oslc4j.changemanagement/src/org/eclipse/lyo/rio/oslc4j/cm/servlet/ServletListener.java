@@ -16,7 +16,7 @@
  *     Chris Peters         - initial API and implementation
  *     Gianluca Bernardini  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.lyo.oslc4j.changemanagement.servlet;
+package org.eclipse.lyo.rio.oslc4j.cm.servlet;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -31,11 +31,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.eclipse.lyo.oslc4j.changemanagement.util.Populate;
+import org.eclipse.lyo.oslc4j.changemanagement.util.RioCmServiceProviderFactory;
+import org.eclipse.lyo.rio.oslc4j.cm.util.ServiceProviderSingleton;
 import org.eclipse.lyo.oslc4j.client.ServiceProviderRegistryClient;
 import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
 import org.eclipse.lyo.oslc4j.core.model.ServiceProvider;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaProvidersRegistry;
-import org.eclipse.lyo.oslc4j.changemanagement.Persistence;
+import org.eclipse.lyo.rio.oslc4j.cm.util.Persistence;
 
 public class ServletListener
        implements ServletContextListener

@@ -28,7 +28,7 @@
     @OslcNamespaceDefinition(prefix = Constants.REQUIREMENTS_MANAGEMENT_PREFIX,           namespaceURI = Constants.REQUIREMENTS_MANAGEMENT_NAMESPACE),
     @OslcNamespaceDefinition(prefix = Constants.SOFTWARE_CONFIGURATION_MANAGEMENT_PREFIX, namespaceURI = Constants.SOFTWARE_CONFIGURATION_MANAGEMENT_NAMESPACE)
 })
-package org.eclipse.lyo.oslc4j.changemanagement;
+package org.eclipse.lyo.rio.oslc4j.cm;
 
 import org.eclipse.lyo.oslc4j.core.annotation.OslcNamespaceDefinition;
 import org.eclipse.lyo.oslc4j.core.annotation.OslcSchema;
