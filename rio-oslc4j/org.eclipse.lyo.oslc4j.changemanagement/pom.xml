@@ -10,7 +10,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+
         <lyo.version>4.0.0-SNAPSHOT</lyo.version>
+
+        <path.context.cm>/OSLC4JChangeManagement</path.context.cm>
+        <path.context.registry>/OSLC4JRegistry</path.context.registry>
+        <path.host>localhost</path.host>
+        <port.cm>8080</port.cm>
+        <port.registry>8888</port.registry>
     </properties>
     <repositories>
         <repository>
@@ -126,7 +133,7 @@
                 <configuration>
                     <webAppSourceDirectory>${basedir}/WebContent</webAppSourceDirectory>
                     <webAppConfig>
-                        <contextPath>/OSLC4JChangeManagement</contextPath>
+                        <contextPath>${path.context.cm}</contextPath>
                     </webAppConfig>
 
                     <!-- Also start OSLC4JRegistry webApp -->
@@ -134,8 +141,8 @@
                     <contextHandlers>
                         <contextHandler
                                 implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
-                            <war>${basedir}/../../../lyo.server/oslc4j-registry/target/oslc4j-registry-4.0.0-SNAPSHOT.war</war>
-                            <contextPath>/OSLC4JRegistry</contextPath>
+                            <war>${basedir}/../../../server/oslc4j-registry/target/oslc4j-registry-4.0.0-SNAPSHOT.war</war>
+                            <contextPath>${path.context.registry}</contextPath>
                         </contextHandler>
                     </contextHandlers>
 
@@ -160,9 +167,23 @@
                             <name>jetty.logs</name>
                             <value>${basedir}/target</value>
                         </systemProperty>
+                        <!--<systemProperty>-->
+                            <!--<name>jetty.port</name>-->
+                            <!--<value>8080</value>-->
+                        <!--</systemProperty>-->
                         <systemProperty>
                             <name>jetty.port</name>
-                            <value>8080</value>
+                            <value>${port.cm}</value>
+                        </systemProperty>
+
+                        <systemProperty>
+                            <name>org.eclipse.lyo.oslc4j.publicURI</name>
+                            <value>http://${path.host}:${port.cm}${path.context.cm}</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>org.eclipse.lyo.oslc4j.client.registryuri</name>
+                            <!--for now we host them in the same container-->
+                            <value>http://${path.host}:${port.cm}${path.context.registry}/catalog</value>
                         </systemProperty>
 
                     </systemProperties>
