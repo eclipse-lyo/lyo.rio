@@ -17,7 +17,7 @@
         <path.context.registry>/OSLC4JRegistry</path.context.registry>
         <path.host>localhost</path.host>
         <port.cm>8080</port.cm>
-        <port.registry>8888</port.registry>
+        <!--<port.registry>8888</port.registry>-->
     </properties>
     <repositories>
         <repository>
@@ -167,10 +167,6 @@
                             <name>jetty.logs</name>
                             <value>${basedir}/target</value>
                         </systemProperty>
-                        <!--<systemProperty>-->
-                            <!--<name>jetty.port</name>-->
-                            <!--<value>8080</value>-->
-                        <!--</systemProperty>-->
                         <systemProperty>
                             <name>jetty.port</name>
                             <value>${port.cm}</value>
