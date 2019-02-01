@@ -1,10 +1,10 @@
-/*******************************************************************************
+/*!*****************************************************************************
  * Copyright (c) 2012 IBM Corporation.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v. 1.0 which accompanies this distribution.
- *  
+ *
  * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
@@ -29,30 +29,35 @@ import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import org.eclipse.lyo.oslc4j.core.model.PrefixDefinition;
 import org.eclipse.lyo.oslc4j.core.model.Publisher;
 import org.eclipse.lyo.oslc4j.core.model.ServiceProvider;
+import org.eclipse.lyo.oslc4j.core.model.ServiceProviderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class ServiceProviderFactory
+class RioCmServiceProviderFactory
 {
+    private final static Logger log = LoggerFactory.getLogger(RioCmServiceProviderFactory.class);
     private static Class<?>[] RESOURCE_CLASSES =
     {
         ChangeRequestResource.class
     };
 
-    private ServiceProviderFactory()
+    private RioCmServiceProviderFactory()
     {
         super();
     }
 
-    public static ServiceProvider createServiceProvider(final String baseURI)
+    static ServiceProvider createServiceProvider(final String baseURI)
            throws OslcCoreApplicationException, URISyntaxException
     {
-        final ServiceProvider serviceProvider = org.eclipse.lyo.oslc4j.core.model.ServiceProviderFactory.createServiceProvider(baseURI,
-                                                                                                                               ServiceProviderRegistryURIs.getUIURI(),
-                                                                                                                               "OSLC Lyo Change Management Service Provider",
-                                                                                                                               "Reference Implementation OSLC Eclipse Lyo Change Management Service Provider",
-                                                                                                                               new Publisher("Eclipse Lyo", "urn:oslc:ServiceProvider"),
-                                                                                                                               RESOURCE_CLASSES
+        final String registryUri = ServiceProviderRegistryURIs.getUIURI();
+        log.info("Initialising with a Registry @ {}", registryUri);
+        log.debug("Creating a Service Provider @ {}", baseURI);
+        final ServiceProvider serviceProvider = ServiceProviderFactory.createServiceProvider(baseURI,
+                registryUri, "OSLC Lyo Change Management Service Provider",
+                "Reference Implementation OSLC Eclipse Lyo Change Management Service Provider",
+                new Publisher("Eclipse Lyo", "urn:oslc:ServiceProvider"), RESOURCE_CLASSES
         );
-        URI detailsURIs[] = {new URI(baseURI)};
+        URI[] detailsURIs = {new URI(baseURI)};
         serviceProvider.setDetails(detailsURIs);
 
         final PrefixDefinition[] prefixDefinitions =

@@ -160,7 +160,7 @@ public class ServletListener
 			 final URI serviceProviderURI;
 			try
 	        {
-	            final ServiceProvider serviceProvider = ServiceProviderFactory.createServiceProvider(basePath);
+	            final ServiceProvider serviceProvider = RioCmServiceProviderFactory.createServiceProvider(basePath);
 
 	            client = new ServiceProviderRegistryClient(JenaProvidersRegistry.getProviders());
 
