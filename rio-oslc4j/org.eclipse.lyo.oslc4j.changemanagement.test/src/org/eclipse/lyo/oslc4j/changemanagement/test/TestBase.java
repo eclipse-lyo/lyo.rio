@@ -29,10 +29,10 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.wink.client.ClientResponse;
-import org.eclipse.lyo.oslc4j.changemanagement.ChangeRequest;
-import org.eclipse.lyo.oslc4j.changemanagement.Constants;
-import org.eclipse.lyo.oslc4j.changemanagement.Severity;
-import org.eclipse.lyo.oslc4j.changemanagement.Type;
+import org.eclipse.lyo.rio.oslc4j.cm.ChangeRequest;
+import org.eclipse.lyo.rio.oslc4j.cm.Constants;
+import org.eclipse.lyo.rio.oslc4j.cm.Severity;
+import org.eclipse.lyo.rio.oslc4j.cm.Type;
 import org.eclipse.lyo.oslc4j.client.OslcRestClient;
 import org.eclipse.lyo.oslc4j.client.ServiceProviderRegistryClient;
 import org.eclipse.lyo.oslc4j.core.model.Compact;
