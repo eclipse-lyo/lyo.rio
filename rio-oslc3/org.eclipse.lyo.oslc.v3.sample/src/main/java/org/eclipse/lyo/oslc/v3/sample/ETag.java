@@ -23,12 +23,13 @@ import java.io.PipedOutputStream;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.atlas.json.JsonObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 public class ETag {
-	private static final Logger logger = Logger.getLogger(ETag.class);
+	private static final Logger logger = LogManager.getLogger(ETag.class);
 
 	/**
 	 * Create an ETag value from a Jena model.

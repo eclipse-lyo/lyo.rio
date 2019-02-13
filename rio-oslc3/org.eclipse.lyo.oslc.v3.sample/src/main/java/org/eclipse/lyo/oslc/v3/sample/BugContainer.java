@@ -57,16 +57,17 @@ import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.atlas.json.JSON;
 import org.apache.jena.atlas.json.JsonObject;
 import org.apache.jena.riot.Lang;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.eclipse.lyo.oslc.v3.sample.vocab.LDP;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC;
 import org.eclipse.lyo.oslc.v3.sample.vocab.OSLC_CM;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.vocabulary.DCTerms;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.DCTerms;
 
 import static javax.ws.rs.core.MediaType.*;
 import static org.eclipse.lyo.oslc.v3.sample.Headers.*;
@@ -76,7 +77,7 @@ import static org.eclipse.lyo.oslc.v3.sample.vocab.OSLC.*;
 
 @Path("/bugs")
 public class BugContainer {
-	private static final Logger logger = Logger.getLogger(BugContainer.class);
+	private static final Logger logger = LogManager.getLogger(BugContainer.class.getName());
 
 	@Context private HttpServletRequest request;
 	@Context private HttpServletResponse response;

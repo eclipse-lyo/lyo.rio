@@ -29,7 +29,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.jena.riot.Lang;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.eclipse.lyo.oslc.v3.sample.MediaTypeContants.APPLICATION_JSON_LD;

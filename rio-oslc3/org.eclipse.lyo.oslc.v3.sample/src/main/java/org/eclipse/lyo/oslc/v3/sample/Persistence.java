@@ -19,26 +19,26 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.jena.graph.Node;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.tdb.TDB;
+import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.tdb.base.block.FileMode;
+import org.apache.jena.tdb.sys.SystemTDB;
 import org.eclipse.lyo.oslc.v3.sample.vocab.LDP;
-
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ReadWrite;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.tdb.TDB;
-import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.tdb.base.block.FileMode;
-import com.hp.hpl.jena.tdb.sys.SystemTDB;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Stores resources using Jena TDB. Each resource has its own graph in the
@@ -46,7 +46,7 @@ import com.hp.hpl.jena.tdb.sys.SystemTDB;
  * dataset unless system property <code>dataset.dir</code> is set.
  */
 public class Persistence {
-	private static final Logger logger = Logger.getLogger(Persistence.class);
+	private static final Logger logger = LogManager.getLogger(Persistence.class);
 	private final static Persistence instance = new Persistence();
 
 	public static final String DATASET_DIR_PROP = "dataset.dir";
