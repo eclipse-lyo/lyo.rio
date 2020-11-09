@@ -32,7 +32,7 @@ jobs:
       run: mvn -B validate --file rio/org.eclipse.lyo.rio.cm/pom.xml
     - name: Build OSLC 2.0 DEPRECATED RIO no. 2 (RM)
       run: mvn -B validate --file rio/org.eclipse.lyo.rio.rm/pom.xml
-    - name: Build OSLC 2.0 DEPRECATED RIO no. 2 (TRS)
-      run: mvn -B install --file rio/org.eclipse.lyo.rio.trs/pom.xml
-    - name: Build OSLC 2.0 DEPRECATED RIO no. 2 (TRS Tests)
-      run: mvn -B validate --file rio/org.eclipse.lyo.rio.trs.tests/pom.xml
+#     - name: Build OSLC 2.0 DEPRECATED RIO no. 2 (TRS)
+#       run: mvn -B install --file rio/org.eclipse.lyo.rio.trs/pom.xml
+#     - name: Build OSLC 2.0 DEPRECATED RIO no. 2 (TRS Tests)
+#       run: mvn -B validate --file rio/org.eclipse.lyo.rio.trs.tests/pom.xml
