@@ -1,5 +1,6 @@
 # Lyo Reference Implementation for OSLC
 
+[![CI](https://github.com/eclipse/lyo.rio/workflows/CI/badge.svg)](https://github.com/eclipse/lyo.rio/actions?query=workflow%3ACI)
 [![](https://img.shields.io/badge/misc-discourse-lightgrey.svg)](https://forum.open-services.net/)
 [![](https://img.shields.io/badge/misc-gitter-lightgrey.svg)](https://gitter.im/eclipse/lyo)
 
