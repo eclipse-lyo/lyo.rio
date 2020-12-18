@@ -13,172 +13,132 @@
    
        Jim Conallen - initial API and implementation
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <name>RIO CM</name>
-    <version>1.0.0-SNAPSHOT</version>
+  <name>RIO CM</name>
+  <version>1.0.0-SNAPSHOT</version>
 
-    <groupId>org.eclipse.lyo.rio</groupId>
-    <artifactId>org.eclipse.lyo.rio.cm</artifactId>
-    <packaging>war</packaging>
+  <groupId>org.eclipse.lyo.rio</groupId>
+  <artifactId>org.eclipse.lyo.rio.cm</artifactId>
+  <packaging>war</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-    <dependencies>
-        
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_2.5_spec</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
-        </dependency>
+  <dependencies>
 
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-servlet_2.5_spec</artifactId>
+      <version>1.2</version>
+      <scope>provided</scope>
+    </dependency>
 
 
-        <dependency>
-        	<groupId>org.eclipse.lyo.rio</groupId>
-        	<artifactId>org.eclipse.lyo.rio.core</artifactId>
-        	<version>1.0.0-SNAPSHOT</version>
-        	<type>jar</type>
-        </dependency>
-        <dependency>
-        	<groupId>org.eclipse.lyo.rio</groupId>
-        	<artifactId>org.eclipse.lyo.rio.template-webapp</artifactId>
-        	<version>1.0.0-SNAPSHOT</version>
-        	<type>war</type>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>org.eclipse.lyo.rio</groupId>
+      <artifactId>org.eclipse.lyo.rio.core</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.lyo.rio</groupId>
+      <artifactId>org.eclipse.lyo.rio.template-webapp</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <type>war</type>
+    </dependency>
+  </dependencies>
 
-    <build>
-        <finalName>rio-cm</finalName>
-        
-        <outputDirectory>target/classes</outputDirectory>
+  <build>
+    <finalName>rio-cm</finalName>
 
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
+    <outputDirectory>target/classes</outputDirectory>
 
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
 
-        <plugins>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
 
-			<!-- ********************************************** -->
-			<!-- Compiler Plugin -->
+    <plugins>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
+      <!-- ********************************************** -->
+      <!-- Compiler Plugin -->
 
-			<!-- ********************************************** -->
-			<!-- Test Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
 
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>catalina.base</name>
-                            <value>${project.build.testOutputDirectory}</value>
-                        </property>
-                        <property>
-                            <name>context.realpath</name>
-                            <value>${project.basedir}/src/main/webapp</value>
-                        </property>
-                        <property>
-                            <name>project.build.directory</name>
-                            <value>${project.build.directory}</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
-            </plugin>
+      <!-- ********************************************** -->
+      <!-- Test Plugin -->
 
-			<!-- ********************************************** -->
-			<!-- Jetty 7 plugin See also: http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>7.3.0.v20110203</version>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>catalina.base</name>
+              <value>${project.build.testOutputDirectory}</value>
+            </property>
+            <property>
+              <name>context.realpath</name>
+              <value>${project.basedir}/src/main/webapp</value>
+            </property>
+            <property>
+              <name>project.build.directory</name>
+              <value>${project.build.directory}</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
 
-				<configuration>
-				    <webAppConfig>
-				      <contextPath>/rio-cm</contextPath>
-				    </webAppConfig>
+      <plugin>
+        <!-- <groupId>org.mortbay.jetty</groupId> -->
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.35.v20201120</version>
 
-					<!-- Jetty config adds logging -->
-					<jettyConfig>${project.build.directory}/test-classes/jetty.xml</jettyConfig>
+        <configuration>
+          <webAppConfig>
+            <contextPath>/rio-cm</contextPath>
+          </webAppConfig>
 
-					<!-- enable hot deploy -->
-					<reload>automatic</reload>
-					<scanIntervalSeconds>5</scanIntervalSeconds>
-					<scanTargets>
-						<scanTarget>src/main/webapp</scanTarget>
-					</scanTargets>
-					
-    				<systemProperties>
+          <!-- enable hot deploy -->
+          <reload>automatic</reload>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <scanTargets>
+            <scanTarget>src/main/webapp</scanTarget>
+          </scanTargets>
 
-						<systemProperty>
-							<name>config.dir</name>
-							<value>${basedir}/src/test/resources</value>
-						</systemProperty>
-
-						<systemProperty>
-							<name>jetty.logs</name>
-							<value>${basedir}/target</value>
-						</systemProperty>
-
-					</systemProperties>
-					
-				</configuration>
-
-			</plugin>
-
-            <!-- <plugin>
-                <groupId>org.appfuse.plugins</groupId>
-                <artifactId>maven-warpath-plugin</artifactId>
-                <version>2.1.0-M2</version>
-                <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>add-classes</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            
- 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<dependentWarExcludes>WEB-INF/lib/*</dependentWarExcludes>
-				</configuration>
-			</plugin>  -->    
-			           
-        </plugins>
-
-    </build>
-
+          <systemProperties>
+            <systemProperty>
+              <name>config.dir</name>
+              <value>${basedir}/src/test/resources</value>
+            </systemProperty>
+            <systemProperty>
+              <name>jetty.logs</name>
+              <value>${basedir}/target</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
-
-
-
-
