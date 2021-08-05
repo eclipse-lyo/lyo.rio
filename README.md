@@ -4,6 +4,10 @@
 [![CI](https://github.com/eclipse/lyo.rio/workflows/CI/badge.svg)](https://github.com/eclipse/lyo.rio/actions?query=workflow%3ACI)
 [![Discourse users](https://img.shields.io/discourse/users?color=28bd84&server=https%3A%2F%2Fforum.open-services.net%2F)](https://forum.open-services.net/)
 
+> **WARNING: Reference implementations in this repository are out of date. See [OSLC RefImpl 2020](https://github.com/oslc-op/refimpl) for the most recent reference implementation of OSLC servers.**
+
+---
+
 > RIO is a simple, bare-bones reference implementation of the OSLC specifications. It is written in Java as a standard Java EE web applications with minimal dependencies. It is intended to help those who are adopting OSLC by providing a functioning system that can be explored via a simple UI and REST services, or by taking a look at the source code.
 
 ## Getting started
