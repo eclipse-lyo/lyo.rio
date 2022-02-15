@@ -1,7 +1,6 @@
 # Lyo Reference Implementation for OSLC
 
 [![](https://img.shields.io/badge/project-Eclipse%20Lyo-blue?color=418eeb)](https://github.com/eclipse/lyo)
-[![CI](https://github.com/eclipse/lyo.rio/workflows/CI/badge.svg)](https://github.com/eclipse/lyo.rio/actions?query=workflow%3ACI)
 [![Discourse users](https://img.shields.io/discourse/users?color=28bd84&server=https%3A%2F%2Fforum.open-services.net%2F)](https://forum.open-services.net/)
 
 > **WARNING: Reference implementations in this repository are out of date. See [OSLC RefImpl 2020](https://github.com/oslc-op/refimpl) for the most recent reference implementation of OSLC servers.**
